@@ -1,76 +1,77 @@
-from django.db import models
-from django.utils import timezone
+from mongoengine import (
+    Document, StringField, URLField, ImageField, DateTimeField,
+    ReferenceField, DecimalField, ListField, EmbeddedDocument,
+    EmbeddedDocumentField
+)
+from datetime import datetime
 
 
-class Retailer(models.Model):
+class Retailer(Document):
     """Détaillant/magasin allemand"""
-    name = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
-    website = models.URLField()
-    logo = models.ImageField(upload_to='retailers/', null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    name = StringField(max_length=255, required=True)
+    slug = StringField(max_length=255, unique=True, required=True)
+    website = URLField(required=True)
+    logo = StringField(null=True, blank=True)  # URL or file path
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
 
-    class Meta:
-        verbose_name = 'Retailer'
-        verbose_name_plural = 'Retailers'
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-
-class Product(models.Model):
-    """Produit allemand à comparer"""
-    ean = models.CharField(max_length=13, unique=True, db_index=True)
-    name = models.CharField(max_length=500)
-    description = models.TextField(blank=True)
-    category = models.CharField(max_length=255, db_index=True)
-    image = models.ImageField(upload_to='products/', null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = 'Product'
-        verbose_name_plural = 'Products'
-        indexes = [
-            models.Index(fields=['ean']),
-            models.Index(fields=['category']),
-        ]
+    meta = {
+        'collection': 'retailers',
+        'indexes': ['slug', 'name'],
+        'ordering': ['name']
+    }
 
     def __str__(self):
         return self.name
 
 
-class Price(models.Model):
-    """Prix d'un produit chez un détaillant"""
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='prices')
-    retailer = models.ForeignKey(Retailer, on_delete=models.CASCADE, related_name='prices')
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    currency = models.CharField(max_length=3, default='EUR')
-    stock_status = models.CharField(
+class Price(EmbeddedDocument):
+    """Sous-document pour les prix"""
+    retailer = ReferenceField(Retailer, required=True)
+    price = DecimalField(min_value=0, required=True)
+    currency = StringField(max_length=3, default='EUR')
+    stock_status = StringField(
         max_length=50,
-        choices=[
-            ('in_stock', 'In Stock'),
-            ('low_stock', 'Low Stock'),
-            ('out_of_stock', 'Out of Stock'),
-            ('unknown', 'Unknown'),
-        ],
+        choices=['in_stock', 'low_stock', 'out_of_stock', 'unknown'],
         default='unknown'
     )
-    url = models.URLField(null=True, blank=True)
-    last_checked = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    url = URLField(null=True, blank=True)
+    last_checked = DateTimeField(default=datetime.utcnow)
+    created_at = DateTimeField(default=datetime.utcnow)
 
-    class Meta:
-        verbose_name = 'Price'
-        verbose_name_plural = 'Prices'
-        unique_together = ('product', 'retailer')
-        indexes = [
-            models.Index(fields=['product', 'retailer']),
-            models.Index(fields=['last_checked']),
+
+class Product(Document):
+    """Produit allemand à comparer"""
+    ean = StringField(max_length=13, unique=True, required=True, sparse=True)
+    name = StringField(max_length=500, required=True)
+    description = StringField(null=True, blank=True)
+    category = StringField(max_length=255, required=True)
+    image = StringField(null=True, blank=True)  # URL or file path
+    prices = ListField(EmbeddedDocumentField(Price))
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
+
+    meta = {
+        'collection': 'products',
+        'indexes': [
+            'ean',
+            'category',
+            'created_at',
+            ('ean', '-created_at'),
         ]
-        ordering = ['price']
+    }
 
     def __str__(self):
-        return f"{self.product.name} - {self.retailer.name}: €{self.price}"
+        return self.name
+
+    def get_min_price(self):
+        """Retourne le prix minimum"""
+        if not self.prices:
+            return None
+        return min(self.prices, key=lambda p: float(p.price))
+
+    def get_max_price(self):
+        """Retourne le prix maximum"""
+        if not self.prices:
+            return None
+        return max(self.prices, key=lambda p: float(p.price))

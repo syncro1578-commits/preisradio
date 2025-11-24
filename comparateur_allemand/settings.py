@@ -10,22 +10,24 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-a(zv&+8n_s)c)pzdi8!!mwkc60=cyup9xemwwr%5pso)0u!)xa'
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-a(zv&+8n_s)c)pzdi8!!mwkc60=cyup9xemwwr%5pso)0u!)xa')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
 
 # Application definition
@@ -76,14 +78,45 @@ WSGI_APPLICATION = 'comparateur_allemand.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.dummy',
     }
 }
+
+# MongoDB Configuration
+import mongoengine
+MONGODB_DATABASES = {
+    'default': {
+        'name': os.getenv('MONGODB_DB_NAME', 'preisradio'),
+        'host': os.getenv('MONGODB_HOST', 'localhost'),
+        'port': int(os.getenv('MONGODB_PORT', 27017)),
+        'username': os.getenv('MONGODB_USER', None),
+        'password': os.getenv('MONGODB_PASSWORD', None),
+        'authentication_source': os.getenv('MONGODB_AUTH_SOURCE', 'admin'),
+        'retryWrites': True,
+    }
+}
+
+# Initialize MongoDB connection
+def _get_mongodb_uri():
+    db_config = MONGODB_DATABASES['default']
+    if db_config.get('username') and db_config.get('password'):
+        return f"mongodb://{db_config['username']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['name']}?authSource={db_config['authentication_source']}&retryWrites={db_config['retryWrites']}"
+    else:
+        return f"mongodb://{db_config['host']}:{db_config['port']}/{db_config['name']}"
+
+try:
+    mongoengine.connect(
+        db=MONGODB_DATABASES['default']['name'],
+        host=_get_mongodb_uri(),
+        connectTimeoutMS=5000,
+        serverSelectionTimeoutMS=5000,
+    )
+except Exception as e:
+    print(f"Warning: MongoDB connection failed: {e}")
 
 
 # Password validation
@@ -128,10 +161,11 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://localhost:3001',
-]
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:3000,http://localhost:3001',
+    cast=Csv()
+)
 
 # Django REST Framework Configuration
 REST_FRAMEWORK = {
@@ -142,3 +176,66 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ],
 }
+
+# Security Settings for Production
+SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
+SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=0, cast=int)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = config('SECURE_HSTS_INCLUDE_SUBDOMAINS', default=False, cast=bool)
+SECURE_HSTS_PRELOAD = config('SECURE_HSTS_PRELOAD', default=False, cast=bool)
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {asctime} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+            'level': config('LOG_LEVEL', default='INFO'),
+        },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs' / 'preisradio.log',
+            'maxBytes': 1024 * 1024 * 10,  # 10MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+            'level': config('LOG_LEVEL', default='INFO'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': config('LOG_LEVEL', default='INFO'),
+            'propagate': False,
+        },
+        'products': {
+            'handlers': ['console', 'file'],
+            'level': config('LOG_LEVEL', default='INFO'),
+            'propagate': False,
+        },
+    },
+}
+
+# Create logs directory if it doesn't exist
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(exist_ok=True)
