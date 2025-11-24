@@ -7,3 +7,14 @@ __pycache__/
 .env
 .DS_Store
 *.log
+
+# Frontend
+node_modules/
+frontend/.next/
+frontend/out/
+frontend/dist/
+frontend/.env.local
+frontend/.env.*.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
