@@ -1,0 +1,72 @@
+# Production Environment Configuration for PrixRadio
+# Copy this file to .env and fill in your actual values
+
+# ========================================
+# Django Settings
+# ========================================
+SECRET_KEY=CHANGEZ-MOI-PAR-UNE-CLE-SECRETE-LONGUE-ET-ALEATOIRE
+DEBUG=False
+
+# IMPORTANT: No https://, no trailing slash, just domain names
+ALLOWED_HOSTS=preisradio.de,www.preisradio.de,localhost,127.0.0.1
+
+# ========================================
+# MongoDB Credentials (REQUIRED)
+# ========================================
+# Get these from: https://cloud.mongodb.com → Database Access
+MONGODB_USER=VOTRE_USERNAME_MONGODB_ATLAS
+MONGODB_PASSWORD=VOTRE_PASSWORD_MONGODB_ATLAS
+MONGODB_AUTH_SOURCE=admin
+
+# ========================================
+# Saturn Database Configuration
+# ========================================
+SATURN_MONGODB_HOST=cluster0.pzd9gka.mongodb.net
+SATURN_MONGODB_PORT=27017
+SATURN_MONGODB_DB_NAME=Saturn
+
+# ========================================
+# MediaMarkt Database Configuration
+# ========================================
+MEDIAMARKT_MONGODB_HOST=mediamarkt.iwjamu6.mongodb.net
+MEDIAMARKT_MONGODB_PORT=27017
+MEDIAMARKT_MONGODB_DB_NAME=Mediamarkt
+
+# ========================================
+# CORS Configuration
+# ========================================
+# Allow API access from these origins
+CORS_ALLOWED_ORIGINS=https://preisradio.de,https://www.preisradio.de,http://localhost:3000
+
+# ========================================
+# API Configuration
+# ========================================
+NEXT_PUBLIC_API_URL=https://preisradio.de
+
+# ========================================
+# Logging
+# ========================================
+LOG_LEVEL=INFO
+
+# ========================================
+# Security Settings (Production)
+# ========================================
+SECURE_SSL_REDIRECT=True
+SESSION_COOKIE_SECURE=True
+CSRF_COOKIE_SECURE=True
+SECURE_HSTS_SECONDS=31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS=True
+SECURE_HSTS_PRELOAD=True
+
+# ========================================
+# CHECKLIST BEFORE DEPLOYING:
+# ========================================
+# ✓ SECRET_KEY changed from default
+# ✓ DEBUG set to False
+# ✓ ALLOWED_HOSTS contains preisradio.de and www.preisradio.de
+# ✓ MONGODB_USER is your real MongoDB Atlas username (not "your_mongodb_username")
+# ✓ MONGODB_PASSWORD is your real MongoDB Atlas password
+# ✓ Network Access configured in MongoDB Atlas (IP whitelist)
+# ✓ Database Access user created in MongoDB Atlas
+# ✓ pymongo >= 4.10.1 installed
+# ✓ dnspython >= 2.7.0 installed
