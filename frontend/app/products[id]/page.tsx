@@ -77,8 +77,9 @@ export default function ProductDetail() {
   }
 
   const sortedPrices = [...product.prices].sort(
-    (a, b) => parseFloat(a.price) - parseFloat(b.price)
+  (a, b) => a.price - b.price
   )
+  
   const minPrice = sortedPrices[0]
   const maxPrice = sortedPrices[sortedPrices.length - 1]
 
