@@ -1,0 +1,24 @@
+# Phusion Passenger Configuration for Django
+# serv00.com
+
+# Disable automatic directory index
+Options -Indexes
+
+# Enable mod_rewrite
+RewriteEngine On
+
+# Serve static files directly (no Python processing)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# For all other requests, pass to Passenger
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ - [L]
+
+# Add proper MIME types
+AddType text/html .html
+AddType text/css .css
+AddType application/javascript .js
+AddType image/svg+xml .svg
