@@ -88,35 +88,71 @@ DATABASES = {
 
 # MongoDB Configuration
 import mongoengine
-MONGODB_DATABASES = {
-    'default': {
-        'name': os.getenv('MONGODB_DB_NAME', 'preisradio'),
-        'host': os.getenv('MONGODB_HOST', 'localhost'),
-        'port': int(os.getenv('MONGODB_PORT', 27017)),
-        'username': os.getenv('MONGODB_USER', None),
-        'password': os.getenv('MONGODB_PASSWORD', None),
-        'authentication_source': os.getenv('MONGODB_AUTH_SOURCE', 'admin'),
-        'retryWrites': True,
-    }
-}
 
-# Initialize MongoDB connection
-def _get_mongodb_uri():
-    db_config = MONGODB_DATABASES['default']
-    if db_config.get('username') and db_config.get('password'):
-        return f"mongodb://{db_config['username']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['name']}?authSource={db_config['authentication_source']}&retryWrites={db_config['retryWrites']}"
+def _get_mongodb_uri(host, port, db_name, username, password, auth_source):
+    """Build MongoDB URI for both Atlas and standard connections"""
+    if username and password:
+        # For MongoDB Atlas: use mongodb+srv:// protocol
+        if ':' not in host and int(port) == 27017:
+            # This is likely MongoDB Atlas
+            uri = f"mongodb+srv://{username}:{password}@{host}/{db_name}?authSource={auth_source}&retryWrites=true"
+        else:
+            # Standard MongoDB connection
+            uri = f"mongodb://{username}:{password}@{host}:{port}/{db_name}?authSource={auth_source}&retryWrites=true"
+        return uri
     else:
-        return f"mongodb://{db_config['host']}:{db_config['port']}/{db_config['name']}"
+        return f"mongodb://{host}:{port}/{db_name}"
+
+# Saturn Database Connection
+SATURN_URI = _get_mongodb_uri(
+    host=os.getenv('SATURN_MONGODB_HOST', 'cluster0.pzd9gka.mongodb.net'),
+    port=int(os.getenv('SATURN_MONGODB_PORT', 27017)),
+    db_name=os.getenv('SATURN_MONGODB_DB_NAME', 'Saturn'),
+    username=os.getenv('MONGODB_USER', None),
+    password=os.getenv('MONGODB_PASSWORD', None),
+    auth_source=os.getenv('MONGODB_AUTH_SOURCE', 'admin'),
+)
+
+# MediaMarkt Database Connection
+MEDIAMARKT_URI = _get_mongodb_uri(
+    host=os.getenv('MEDIAMARKT_MONGODB_HOST', 'mediamarkt.iwjamu6.mongodb.net'),
+    port=int(os.getenv('MEDIAMARKT_MONGODB_PORT', 27017)),
+    db_name=os.getenv('MEDIAMARKT_MONGODB_DB_NAME', 'mediamarkt'),
+    username=os.getenv('MONGODB_USER', None),
+    password=os.getenv('MONGODB_PASSWORD', None),
+    auth_source=os.getenv('MONGODB_AUTH_SOURCE', 'admin'),
+)
+
+# Initialize MongoDB connections
+try:
+    # Disconnect any existing connections first
+    mongoengine.disconnect()
+except:
+    pass
 
 try:
+    # Saturn connection (default)
     mongoengine.connect(
-        db=MONGODB_DATABASES['default']['name'],
-        host=_get_mongodb_uri(),
+        'default',
+        host=SATURN_URI,
         connectTimeoutMS=5000,
         serverSelectionTimeoutMS=5000,
     )
+    print("Saturn database connected successfully")
 except Exception as e:
-    print(f"Warning: MongoDB connection failed: {e}")
+    print(f"Warning: Saturn database connection failed: {e}")
+
+try:
+    # MediaMarkt connection
+    mongoengine.connect(
+        'mediamarkt',
+        host=MEDIAMARKT_URI,
+        connectTimeoutMS=5000,
+        serverSelectionTimeoutMS=5000,
+    )
+    print("MediaMarkt database connected successfully")
+except Exception as e:
+    print(f"Warning: MediaMarkt database connection failed: {e}")
 
 
 # Password validation
