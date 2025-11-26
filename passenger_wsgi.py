@@ -26,8 +26,9 @@ log_debug(f"BASE_DIR: {BASE_DIR}")
 # 2. Find virtualenv (check multiple locations)
 VENV_PATH = None
 possible_venv_paths = [
-    BASE_DIR / 'venv',  # In public_python
-    BASE_DIR.parent / 'venv',  # In parent (domain root)
+    BASE_DIR / 'venv',                          # In public_python
+    BASE_DIR.parent / 'venv',                   # In domain root (api.preisradio.de)
+    Path('/home/wael/domains/venv'),            # ✅ GLOBAL VENV (ADD THIS!)
 ]
 
 for path in possible_venv_paths:
@@ -85,4 +86,3 @@ except Exception as e:
     log_debug(f"ERROR during Django initialization: {str(e)}")
     log_debug(f"sys.path at error: {sys.path}")
     raise
-
