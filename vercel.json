@@ -1,9 +1,8 @@
 {
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "buildCommand": "cd preisradio-frontend && npm run build",
+  "devCommand": "cd preisradio-frontend && npm run dev",
+  "installCommand": "cd preisradio-frontend && npm install",
   "framework": "nextjs",
-  "rootDirectory": "preisradio-frontend",
   "regions": ["fra1"],
   "env": {
     "NEXT_PUBLIC_API_URL": "https://preisradio.de",
