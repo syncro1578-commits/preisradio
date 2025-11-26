@@ -7,14 +7,14 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   // Trouver le prix le plus bas
-  const lowestPrice = product.prices.length > 0
+  const lowestPrice = product.prices && product.prices.length > 0
     ? Math.min(...product.prices.map(p => p.price))
     : null;
 
   // Compter les détaillants disponibles
-  const availableRetailers = product.prices.filter(
-    p => p.stock_status === 'in_stock'
-  ).length;
+  const availableRetailers = product.prices
+    ? product.prices.filter(p => p.stock_status === 'in_stock').length
+    : 0;
 
   return (
     <Link href={`/products/${product.id}`}>
