@@ -1,7 +1,4 @@
 {
-  "buildCommand": "cd preisradio-frontend && npm run build",
-  "devCommand": "cd preisradio-frontend && npm run dev",
-  "installCommand": "cd preisradio-frontend && npm install",
   "framework": "nextjs",
   "regions": ["fra1"],
   "env": {
