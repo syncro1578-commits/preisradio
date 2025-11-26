@@ -2,14 +2,14 @@
   "framework": "nextjs",
   "regions": ["fra1"],
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://preisradio.de",
+    "NEXT_PUBLIC_API_URL": "https://api.preisradio.de",
     "NEXT_PUBLIC_API_BASE": "/api",
     "NEXT_PUBLIC_SITE_NAME": "PrixRadio"
   },
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://preisradio.de/api/:path*"
+      "destination": "https://api.preisradio.de/api/:path*"
     }
   ],
   "headers": [
