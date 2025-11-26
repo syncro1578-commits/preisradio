@@ -3,12 +3,19 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
+  "rootDirectory": "preisradio-frontend",
   "regions": ["fra1"],
   "env": {
     "NEXT_PUBLIC_API_URL": "https://preisradio.de",
     "NEXT_PUBLIC_API_BASE": "/api",
     "NEXT_PUBLIC_SITE_NAME": "PrixRadio"
   },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://preisradio.de/api/:path*"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
