@@ -25,9 +25,11 @@ export default function Home() {
       setLoading(true);
       setError(null);
 
-      const response = await api.getProducts({
+      // Charger les produits des deux retailers (Saturn et MediaMarkt)
+      const response = await api.getProductsFromBothRetailers({
         search: searchQuery || undefined,
         category: selectedCategory || undefined,
+        page_size: 100, // Charger 100 produits (50 de chaque retailer)
       });
 
       setProducts(response?.results || []);

@@ -24,7 +24,10 @@ export default function KategorienPage() {
 
   const loadProducts = async () => {
     try {
-      const response = await api.getProducts({});
+      // Charger les produits des deux retailers pour avoir toutes les catégories
+      const response = await api.getProductsFromBothRetailers({
+        page_size: 200, // Charger 200 produits pour avoir toutes les catégories
+      });
       setProducts(response.results);
     } catch (err) {
       console.error('Error loading products:', err);

@@ -52,6 +52,7 @@ class ApiClient {
     category?: string;
     page?: number;
     page_size?: number;
+    retailer?: string;
   }): Promise<ApiResponse<Product>> {
     const queryParams = new URLSearchParams();
 
@@ -59,11 +60,62 @@ class ApiClient {
     if (params?.category) queryParams.append('category', params.category);
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.page_size) queryParams.append('page_size', params.page_size.toString());
+    if (params?.retailer) queryParams.append('retailer', params.retailer);
 
     const query = queryParams.toString();
     const endpoint = query ? `/products/?${query}` : '/products/';
 
     return this.request<ApiResponse<Product>>(endpoint);
+  }
+
+  // Charger les produits des deux retailers et les mélanger
+  async getProductsFromBothRetailers(params?: {
+    search?: string;
+    category?: string;
+    page_size?: number;
+  }): Promise<ApiResponse<Product>> {
+    const pageSize = params?.page_size || 50;
+    const halfSize = Math.floor(pageSize / 2);
+
+    try {
+      // Charger en parallèle depuis Saturn et MediaMarkt
+      const [saturnResponse, mediamarktResponse] = await Promise.all([
+        this.getProducts({
+          ...params,
+          retailer: 'saturn',
+          page_size: halfSize,
+        }),
+        this.getProducts({
+          ...params,
+          retailer: 'mediamarkt',
+          page_size: halfSize,
+        }),
+      ]);
+
+      // Mélanger les résultats de manière alternée
+      const mixedResults: Product[] = [];
+      const maxLength = Math.max(saturnResponse.results.length, mediamarktResponse.results.length);
+
+      for (let i = 0; i < maxLength; i++) {
+        if (i < saturnResponse.results.length) {
+          mixedResults.push(saturnResponse.results[i]);
+        }
+        if (i < mediamarktResponse.results.length) {
+          mixedResults.push(mediamarktResponse.results[i]);
+        }
+      }
+
+      return {
+        count: saturnResponse.count + mediamarktResponse.count,
+        next: null,
+        previous: null,
+        results: mixedResults,
+      };
+    } catch (error) {
+      console.error('Error loading products from both retailers:', error);
+      // Fallback : charger sans filtre retailer
+      return this.getProducts({ ...params, page_size: pageSize });
+    }
   }
 
   async getCategories(): Promise<{ results: string[] }> {
