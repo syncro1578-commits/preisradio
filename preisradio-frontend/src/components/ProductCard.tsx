@@ -17,7 +17,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     : 0;
 
   return (
-    <Link href={`/products/${product.id}`}>
+    <Link href={`/product/${product.id}`}>
       <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-6 transition-all hover:shadow-xl hover:border-blue-300 dark:bg-zinc-900 dark:border-zinc-800 dark:hover:border-blue-600">
         {/* Image du produit */}
         <div className="mb-4 flex h-48 items-center justify-center overflow-hidden rounded-lg bg-gray-50 dark:bg-zinc-800">
