@@ -51,44 +51,104 @@ export default function KategorienPage() {
 
   function getCategoryIcon(category: string): string {
     const icons: { [key: string]: string } = {
-      // Catégories en français (legacy)
-      'Smartphones': '📱',
-      'Ordinateurs portables': '💻',
-      'Audio': '🎧',
-      'Télévisions': '📺',
-      'Composants PC': '🖥️',
-      'Consoles': '🎮',
-      'Montres connectées': '⌚',
-      'Électroménager': '🏠',
-      'Photo': '📷',
-      'Moniteurs': '🖥️',
-
-      // Catégories allemandes communes
-      'Handys & Smartphones': '📱',
-      'Notebooks & Computer': '💻',
+      // Laptops & Computers
+      '15 Zoll Laptops': '💻',
       'Laptops': '💻',
-      'TV & Audio': '📺',
-      'Fernseher': '📺',
-      'Kopfhörer': '🎧',
-      'Lautsprecher': '🔊',
-      'Tablets': '📱',
-      'Smartwatches': '⌚',
-      'Wearables': '⌚',
-      'Gaming': '🎮',
-      'Spielekonsolen': '🎮',
-      'Kameras': '📷',
-      'Foto & Video': '📷',
-      'Smart Home': '🏠',
-      'Haushaltsgeräte': '🏠',
-      'Kühlschränke': '❄️',
-      'Waschmaschinen': '🧺',
-      'PC-Komponenten': '🖥️',
-      'Grafikkarten': '🎮',
-      'Prozessoren': '⚡',
-      'Monitore': '🖥️',
-      'Drucker': '🖨️',
-      'Zubehör': '🔌',
-      'Software': '💿',
+      'Notebooks & Computer': '💻',
+      'Gaming PCs AMD': '🎮',
+      'Gaming PCs Intel': '🎮',
+
+      // Handy & Smartphone
+      '360 Grad Handyhüllen': '📱',
+      'Apple Cases, Taschen und Cover': '📱',
+      'Bumper für Handys': '📱',
+      'Flip Cases': '📱',
+      'Handy Akkus': '🔋',
+      'Handy Cases': '📱',
+      'Handy Klapphüllen': '📱',
+      'Handy Schutzfolien': '🛡️',
+      'Handy Sleeves': '📱',
+      'Handyketten': '📱',
+      'Bildschirmschutz': '🛡️',
+      'Schutzfolien & Schutzgläser': '🛡️',
+
+      // Tablets
+      'Tablet Bookcover': '📱',
+      'Tablet-Halterungen': '📱',
+      'Tabletschutzfolien': '🛡️',
+
+      // Gaming
+      'Gaming Mousepads': '🎮',
+      'Nintendo Wii Spiele': '🎮',
+
+      // PC Komponenten
+      'PC Arbeitsspeicher DDR3': '⚡',
+      'PC Arbeitsspeicher DDR4': '⚡',
+      'Non Modulare Netzteile': '🔌',
+
+      // Storage
+      'Micro SD Karten': '💾',
+      'USB-Sticks': '💾',
+      'USB Hubs': '🔌',
+
+      // Laptop Zubehör
+      'Laptop Akku': '🔋',
+      'Laptop Rucksäcke': '🎒',
+
+      // Drucker & Toner
+      'Toner für HP': '🖨️',
+      'Toner für Samsung': '🖨️',
+
+      // Küche
+      'Küchenmaschinen': '🍳',
+      'Küchenwaagen': '⚖️',
+      'Geschirr': '🍽️',
+
+      // Haushalt
+      'Staubsaugerbeutel': '🧹',
+      'Dunstabzugshaube Zubehör': '🏠',
+
+      // Garten
+      'Garten-Sitzmöbel': '🪑',
+      'Gartenmöbel-Sets & Lounges': '🪴',
+      'Sonnenschutz & Überdachung': '☀️',
+      'Zubehör Gartenpflege': '🌱',
+
+      // Möbel
+      'Tische & Ergänzungen': '🪑',
+
+      // Fitness
+      'Laufbänder': '🏃',
+
+      // Beleuchtung
+      'Innenleuchten': '💡',
+      'Tischventilatoren': '💨',
+
+      // Entertainment
+      'Dance & Electro CDs': '💿',
+
+      // TV & Kabel
+      'TV-Kabel': '📺',
+
+      // Wearables
+      'Garmin Ersatzarmbänder': '⌚',
+      'Schutzfolien Smartwatch': '⌚',
+
+      // Navigation
+      'Navi-Taschen & -Schutzfolien': '🗺️',
+
+      // Batterien
+      'Akku-Ladegeräte': '🔋',
+      'weitere Knopfzellen': '🔋',
+
+      // Spielzeug
+      'Playmobil Puppenhaus': '🏠',
+
+      // Büro
+      'Schreibwaren': '✏️',
+
+      // Sonstiges
+      'home': '🏠',
     };
     return icons[category] || '📦';
   }

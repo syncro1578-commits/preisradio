@@ -11,6 +11,18 @@ export default function ProductCard({ product }: ProductCardProps) {
   const oldPrice = product.old_price;
   const hasDiscount = oldPrice && oldPrice > currentPrice;
 
+  // Déterminer le nom et les couleurs du retailer
+  const getRetailerInfo = (retailer?: string) => {
+    if (retailer === 'saturn') {
+      return { name: 'Saturn', bgColor: 'bg-red-600', textColor: 'text-white' };
+    } else if (retailer === 'mediamarkt') {
+      return { name: 'MediaMarkt', bgColor: 'bg-red-700', textColor: 'text-white' };
+    }
+    return { name: 'Händler', bgColor: 'bg-gray-600', textColor: 'text-white' };
+  };
+
+  const retailerInfo = getRetailerInfo(product.retailer);
+
   return (
     <Link href={`/product/${product.id}`}>
       <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-6 transition-all hover:shadow-xl hover:border-blue-300 dark:bg-zinc-900 dark:border-zinc-800 dark:hover:border-blue-600">
@@ -41,10 +53,13 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        {/* Catégorie */}
-        <div className="mb-2">
+        {/* Catégorie & Retailer */}
+        <div className="mb-2 flex flex-wrap gap-2">
           <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
             {product.category}
+          </span>
+          <span className={`inline-block rounded-full ${retailerInfo.bgColor} px-3 py-1 text-xs font-medium ${retailerInfo.textColor}`}>
+            {retailerInfo.name}
           </span>
         </div>
 
