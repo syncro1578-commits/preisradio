@@ -10,42 +10,77 @@ import Link from 'next/link';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-  // Charger les produits
+  // Charger les catégories au démarrage
   useEffect(() => {
-    loadProducts();
+    loadCategories();
+  }, []);
+
+  // Charger les produits quand la catégorie change
+  useEffect(() => {
+    setCurrentPage(1);
+    loadProducts(1);
   }, [selectedCategory]);
 
-  const loadProducts = async () => {
+  const loadCategories = async () => {
     try {
-      setLoading(true);
+      const response = await api.getCategories();
+      setCategories(response.results || []);
+    } catch (err) {
+      console.error('Error loading categories:', err);
+    }
+  };
+
+  const loadProducts = async (page: number = 1) => {
+    try {
+      if (page === 1) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
       setError(null);
 
       const response = await api.getProducts({
         search: searchQuery || undefined,
         category: selectedCategory || undefined,
+        page: page,
+        page_size: 50, // Charger 50 au lieu de 20
       });
 
-      setProducts(response?.results || []);
+      if (page === 1) {
+        setProducts(response.results);
+      } else {
+        setProducts(prev => [...prev, ...response.results]);
+      }
+
+      setHasMore(response.next !== null);
+      setCurrentPage(page);
     } catch (err) {
       setError('Fehler beim Laden der Produkte');
       console.error('Error loading products:', err);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    loadProducts();
+    setCurrentPage(1);
+    loadProducts(1);
   };
 
-  // Extraire les catégories uniques des produits
-  const categories = Array.from(new Set(products.map(p => p.category)));
+  const handleLoadMore = () => {
+    loadProducts(currentPage + 1);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
@@ -99,7 +134,7 @@ export default function Home() {
             >
               Alle Kategorien
             </button>
-            {categories.map((category) => (
+            {categories.slice(0, 8).map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
@@ -112,6 +147,14 @@ export default function Home() {
                 {category}
               </button>
             ))}
+            {categories.length > 8 && (
+              <Link
+                href="/kategorien"
+                className="rounded-full px-6 py-2 text-sm font-medium bg-white text-gray-700 hover:bg-gray-100 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-zinc-700 transition-colors"
+              >
+                +{categories.length - 8} mehr
+              </Link>
+            )}
           </div>
         )}
 
@@ -234,7 +277,7 @@ export default function Home() {
               {error}
             </h3>
             <button
-              onClick={loadProducts}
+              onClick={() => loadProducts(1)}
               className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
             >
               Erneut versuchen
@@ -277,6 +320,26 @@ export default function Home() {
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
+
+            {/* Load More Button */}
+            {hasMore && (
+              <div className="mt-12 flex justify-center">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={loadingMore}
+                  className="rounded-lg bg-blue-600 px-8 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-600"
+                >
+                  {loadingMore ? (
+                    <>
+                      <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2"></span>
+                      Laden...
+                    </>
+                  ) : (
+                    'Mehr Produkte laden'
+                  )}
+                </button>
+              </div>
+            )}
           </>
         )}
 
@@ -286,27 +349,32 @@ export default function Home() {
             Beliebte Kategorien
           </h2>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {[
-              { name: 'Smartphones', icon: '📱', count: products.filter(p => p.category === 'Smartphones').length },
-              { name: 'Laptops', icon: '💻', count: products.filter(p => p.category === 'Ordinateurs portables').length },
-              { name: 'Audio', icon: '🎧', count: products.filter(p => p.category === 'Audio').length },
-              { name: 'Fernseher', icon: '📺', count: products.filter(p => p.category === 'Télévisions').length },
-            ].map((cat) => (
-              <Link
-                key={cat.name}
-                href={`/kategorien`}
+            {categories.slice(0, 4).map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
                 className="group rounded-xl bg-white p-6 text-center shadow-lg transition-all hover:scale-105 hover:shadow-xl dark:bg-zinc-900"
               >
-                <div className="mb-3 text-4xl">{cat.icon}</div>
+                <div className="mb-3 text-4xl">📦</div>
                 <h3 className="mb-1 font-semibold text-gray-900 dark:text-white">
-                  {cat.name}
+                  {category}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {cat.count} Produkte
+                  {products.filter(p => p.category === category).length} Produkte
                 </p>
-              </Link>
+              </button>
             ))}
           </div>
+          {categories.length > 4 && (
+            <div className="mt-6 text-center">
+              <Link
+                href="/kategorien"
+                className="inline-block rounded-lg bg-blue-600 px-8 py-3 font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+              >
+                Alle Kategorien ansehen
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Features Section */}

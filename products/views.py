@@ -179,6 +179,16 @@ class ProductViewSet(viewsets.ViewSet):
             return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=['get'])
+    def categories(self, request):
+        """Get all unique categories from both retailers"""
+        saturn_categories = set(SaturnProduct.objects.distinct('category').scalar('category'))
+        mediamarkt_categories = set(MediaMarktProduct.objects.distinct('category').scalar('category'))
+
+        all_categories = sorted(list(saturn_categories | mediamarkt_categories))
+
+        return Response({'results': all_categories})
+
+    @action(detail=False, methods=['get'])
     def by_gtin(self, request):
         """Get products by GTIN (cross-retailer comparison)"""
         gtin = request.query_params.get('gtin', '')
