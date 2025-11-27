@@ -51,17 +51,23 @@ class ApiClient {
     search?: string;
     category?: string;
     page?: number;
+    page_size?: number;
   }): Promise<ApiResponse<Product>> {
     const queryParams = new URLSearchParams();
 
     if (params?.search) queryParams.append('search', params.search);
     if (params?.category) queryParams.append('category', params.category);
     if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.page_size) queryParams.append('page_size', params.page_size.toString());
 
     const query = queryParams.toString();
     const endpoint = query ? `/products/?${query}` : '/products/';
 
     return this.request<ApiResponse<Product>>(endpoint);
+  }
+
+  async getCategories(): Promise<{ results: string[] }> {
+    return this.request<{ results: string[] }>('/products/categories/');
   }
 
   async getProduct(id: string): Promise<Product> {
