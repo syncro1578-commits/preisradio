@@ -8,9 +8,6 @@ import api from '@/lib/api';
 import PriceComparison from '@/components/PriceComparison';
 import ProductSimilar from '@/components/ProductSimilar';
 
-// Cache configuration: Revalidate every 5 minutes (300 seconds)
-export const revalidate = 300;
-
 export default function ProductDetail() {
   const params = useParams();
   const router = useRouter();
