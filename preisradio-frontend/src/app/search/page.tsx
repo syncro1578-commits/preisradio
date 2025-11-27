@@ -31,13 +31,22 @@ function SearchContent() {
     loadProducts();
   }, [query, selectedCategory, selectedRetailer]);
 
-  // Update document title and JSON-LD
+  // Update document title, canonical URL and JSON-LD
   useEffect(() => {
     if (query) {
       document.title = `Suchergebnisse für "${query}" | PrixRadio`;
     } else {
       document.title = 'Suche | PrixRadio';
     }
+
+    // Update canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+    canonical.href = `${baseUrl}/search${query ? `?q=${encodeURIComponent(query)}` : ''}`;
 
     // Add JSON-LD for search results
     let script = document.querySelector('#search-jsonld') as HTMLScriptElement;

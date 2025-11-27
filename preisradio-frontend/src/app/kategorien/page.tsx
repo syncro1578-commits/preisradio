@@ -28,6 +28,15 @@ export default function KategorienPage() {
     // Update document title
     document.title = 'Alle Kategorien | PrixRadio';
 
+    // Update canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+    canonical.href = `${baseUrl}/kategorien`;
+
     // Add JSON-LD for categories
     let script = document.querySelector('#categories-jsonld') as HTMLScriptElement;
     if (!script) {

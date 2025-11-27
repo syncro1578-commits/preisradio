@@ -49,6 +49,15 @@ export default function ProductDetail() {
         metaDescription.setAttribute('content', `${product.title} - Preis: ${product.price.toFixed(2)} ${product.currency}. Vergleichen Sie Preise bei ${product.retailer === 'saturn' ? 'Saturn' : 'MediaMarkt'}.`);
       }
 
+      // Update canonical URL
+      let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.rel = 'canonical';
+        document.head.appendChild(canonical);
+      }
+      canonical.href = `${baseUrl}/product/${params.id}`;
+
       // Add or update JSON-LD script
       let script = document.querySelector('#product-jsonld') as HTMLScriptElement;
       if (!script) {
@@ -99,7 +108,7 @@ export default function ProductDetail() {
         script.remove();
       }
     };
-  }, [product]);
+  }, [product, params.id]);
 
   if (loading) {
     return (
