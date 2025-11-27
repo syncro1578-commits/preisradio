@@ -209,3 +209,139 @@ class ProductViewSet(viewsets.ViewSet):
             return Response({'detail': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
 
         return Response({'results': products})
+
+    @action(detail=True, methods=['get'])
+    def similar(self, request, pk=None):
+        """Get similar products based on category and brand"""
+        # Get the current product
+        product = None
+        retailer = None
+
+        try:
+            product = SaturnProduct.objects.get(id=pk)
+            retailer = 'saturn'
+        except SaturnProduct.DoesNotExist:
+            try:
+                product = MediaMarktProduct.objects.get(id=pk)
+                retailer = 'mediamarkt'
+            except MediaMarktProduct.DoesNotExist:
+                return Response({'detail': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if not product:
+            return Response({'detail': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Find similar products in same category
+        similar_products = []
+        limit = 6
+
+        if retailer == 'saturn':
+            # Search in Saturn for similar products
+            similar = SaturnProduct.objects.filter(
+                category=product.category,
+                id__ne=pk
+            ).order_by('-scraped_at').limit(limit)
+
+            for p in similar:
+                serializer = SaturnProductSerializer(p)
+                data = serializer.data
+                data['retailer'] = 'saturn'
+                similar_products.append(data)
+
+            # If not enough results, try to find in MediaMarkt as well
+            if len(similar_products) < limit:
+                remaining = limit - len(similar_products)
+                mediamarkt_similar = MediaMarktProduct.objects.filter(
+                    category=product.category
+                ).order_by('-scraped_at').limit(remaining)
+
+                for p in mediamarkt_similar:
+                    serializer = MediaMarktProductSerializer(p)
+                    data = serializer.data
+                    data['retailer'] = 'mediamarkt'
+                    similar_products.append(data)
+        else:
+            # Search in MediaMarkt for similar products
+            similar = MediaMarktProduct.objects.filter(
+                category=product.category,
+                id__ne=pk
+            ).order_by('-scraped_at').limit(limit)
+
+            for p in similar:
+                serializer = MediaMarktProductSerializer(p)
+                data = serializer.data
+                data['retailer'] = 'mediamarkt'
+                similar_products.append(data)
+
+            # If not enough results, try to find in Saturn as well
+            if len(similar_products) < limit:
+                remaining = limit - len(similar_products)
+                saturn_similar = SaturnProduct.objects.filter(
+                    category=product.category
+                ).order_by('-scraped_at').limit(remaining)
+
+                for p in saturn_similar:
+                    serializer = SaturnProductSerializer(p)
+                    data = serializer.data
+                    data['retailer'] = 'saturn'
+                    similar_products.append(data)
+
+        return Response({
+            'count': len(similar_products),
+            'results': similar_products
+        })
+
+    @action(detail=True, methods=['get'])
+    def price_history(self, request, pk=None):
+        """Get price history for a product (currently returns latest snapshot)
+
+        Note: This endpoint returns the current price snapshot.
+        For full historical tracking, implement periodic price scraping
+        and store price snapshots with timestamps in a separate collection.
+        """
+        # Get the current product
+        product = None
+        retailer = None
+
+        try:
+            product = SaturnProduct.objects.get(id=pk)
+            retailer = 'saturn'
+        except SaturnProduct.DoesNotExist:
+            try:
+                product = MediaMarktProduct.objects.get(id=pk)
+                retailer = 'mediamarkt'
+            except MediaMarktProduct.DoesNotExist:
+                return Response({'detail': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if not product:
+            return Response({'detail': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Return current price as latest history point
+        if retailer == 'saturn':
+            serializer = SaturnProductSerializer(product)
+        else:
+            serializer = MediaMarktProductSerializer(product)
+
+        data = serializer.data
+        data['retailer'] = retailer
+
+        # Structure for historical data (currently just latest)
+        history_data = {
+            'product_id': str(product.id),
+            'current_price': product.price,
+            'old_price': product.old_price,
+            'discount': product.discount,
+            'currency': product.currency,
+            'retailer': retailer,
+            'last_checked': product.scraped_at,
+            'history': [
+                {
+                    'date': product.scraped_at,
+                    'price': product.price,
+                    'old_price': product.old_price,
+                    'discount': product.discount
+                }
+            ],
+            'product_details': data
+        }
+
+        return Response(history_data)

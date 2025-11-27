@@ -30,7 +30,7 @@ export default function Home() {
         category: selectedCategory || undefined,
       });
 
-      setProducts(response.results);
+      setProducts(response?.results || []);
     } catch (err) {
       setError('Fehler beim Laden der Produkte');
       console.error('Error loading products:', err);
@@ -180,7 +180,7 @@ export default function Home() {
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Preise</p>
                 <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
-                  {products.reduce((acc, p) => acc + p.prices.length, 0)}
+                  {products.reduce((acc, p) => acc + (p.prices?.length || 0), 0)}
                 </p>
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
                   Aktuell verglichen
