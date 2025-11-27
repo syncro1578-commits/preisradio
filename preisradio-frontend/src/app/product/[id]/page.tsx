@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Product } from '@/lib/types';
 import api from '@/lib/api';
 import ProductSimilar from '@/components/ProductSimilar';
+import PriceComparison from '@/components/PriceComparison';
 
 export default function ProductDetail() {
   const params = useParams();
@@ -294,6 +295,9 @@ export default function ProductDetail() {
             </a>
           </div>
         </div>
+
+        {/* Price Comparison */}
+        <PriceComparison currentProduct={product} />
 
         {/* Similar Products */}
         <ProductSimilar productId={params.id as string} />

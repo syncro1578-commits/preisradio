@@ -130,6 +130,11 @@ class ApiClient {
     return this.request<Product>(`/products/${ean}/by_ean/`);
   }
 
+  // Chercher tous les produits avec le même GTIN (pour comparer les prix entre retailers)
+  async getProductsByGtin(gtin: string): Promise<ApiResponse<Product>> {
+    return this.getProducts({ search: gtin, page_size: 10 });
+  }
+
   // Retailers
   async getRetailers(): Promise<ApiResponse<Retailer>> {
     return this.request<ApiResponse<Retailer>>('/retailers/');

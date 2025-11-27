@@ -1,281 +1,215 @@
-import { Price } from '@/lib/types';
+'use client';
+
+import { Product } from '@/lib/types';
+import { useEffect, useState } from 'react';
+import api from '@/lib/api';
 
 interface PriceComparisonProps {
-  prices: Price[];
+  currentProduct: Product;
 }
 
-export default function PriceComparison({ prices }: PriceComparisonProps) {
-  // Trier les prix par ordre croissant
-  const sortedPrices = [...prices].sort((a, b) => a.price - b.price);
+export default function PriceComparison({ currentProduct }: PriceComparisonProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Trouver le prix le plus bas
-  const lowestPrice = sortedPrices[0]?.price;
-
-  const getStockStatusBadge = (status: string) => {
-    switch (status) {
-      case 'in_stock':
-        return (
-          <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-200">
-            <svg className="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            En stock
-          </span>
-        );
-      case 'out_of_stock':
-        return (
-          <span className="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-200">
-            <svg className="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Rupture de stock
-          </span>
-        );
-      case 'preorder':
-        return (
-          <span className="inline-flex items-center rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-            Précommande
-          </span>
-        );
-      case 'discontinued':
-        return (
-          <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-800 dark:bg-gray-800 dark:text-gray-200">
-            Discontinué
-          </span>
-        );
-      default:
-        return null;
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 60) {
-      return `Il y a ${diffMins} minute${diffMins > 1 ? 's' : ''}`;
-    } else if (diffHours < 24) {
-      return `Il y a ${diffHours} heure${diffHours > 1 ? 's' : ''}`;
-    } else if (diffDays < 7) {
-      return `Il y a ${diffDays} jour${diffDays > 1 ? 's' : ''}`;
+  useEffect(() => {
+    if (currentProduct.gtin) {
+      loadPriceComparison();
     } else {
-      return date.toLocaleDateString('fr-FR');
+      setLoading(false);
+    }
+  }, [currentProduct.gtin]);
+
+  const loadPriceComparison = async () => {
+    if (!currentProduct.gtin) return;
+
+    try {
+      setLoading(true);
+      const response = await api.getProductsByGtin(currentProduct.gtin);
+
+      // Filtrer pour avoir uniquement un produit par retailer
+      const uniqueRetailers = new Map<string, Product>();
+      response.results.forEach((product) => {
+        const retailer = product.retailer || 'unknown';
+        if (!uniqueRetailers.has(retailer) || uniqueRetailers.get(retailer)!.price > product.price) {
+          uniqueRetailers.set(retailer, product);
+        }
+      });
+
+      setProducts(Array.from(uniqueRetailers.values()));
+    } catch (error) {
+      console.error('Error loading price comparison:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (prices.length === 0) {
-    return (
-      <div className="rounded-lg bg-gray-50 p-8 text-center dark:bg-zinc-900">
-        <svg
-          className="mx-auto h-12 w-12 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
-          Aucun prix disponible
-        </h3>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Les prix pour ce produit ne sont pas encore disponibles.
-        </p>
-      </div>
-    );
+  if (loading) {
+    return null;
   }
 
+  // Ne rien afficher si on a moins de 2 produits (pas de comparaison possible)
+  if (products.length < 2) {
+    return null;
+  }
+
+  // Trouver le prix le plus bas
+  const sortedPrices = [...products].sort((a, b) => a.price - b.price);
+  const lowestPrice = sortedPrices[0]?.price;
+
+  const getRetailerInfo = (retailer?: string) => {
+    if (retailer === 'saturn') {
+      return {
+        name: 'Saturn',
+        color: 'bg-red-600',
+        borderColor: 'border-red-600',
+        textColor: 'text-red-600',
+        logo: '🪐'
+      };
+    } else if (retailer === 'mediamarkt') {
+      return {
+        name: 'MediaMarkt',
+        color: 'bg-red-700',
+        borderColor: 'border-red-700',
+        textColor: 'text-red-700',
+        logo: '📺'
+      };
+    }
+    return {
+      name: 'Händler',
+      color: 'bg-gray-600',
+      borderColor: 'border-gray-600',
+      textColor: 'text-gray-600',
+      logo: '🏪'
+    };
+  };
+
   return (
-    <div>
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Comparaison des prix ({prices.length} {prices.length > 1 ? 'vendeurs' : 'vendeur'})
-        </h3>
-        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-          Triés du prix le plus bas au plus élevé
-          {sortedPrices.length > 1 && (
-            <span className="ml-2 font-semibold text-green-600 dark:text-green-400">
-              Économisez {(sortedPrices[sortedPrices.length - 1].price - lowestPrice).toFixed(2)} €
-            </span>
-          )}
+    <div className="mb-8 rounded-xl bg-white p-8 shadow-lg dark:bg-zinc-900">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          💰 Comparaison des prix
+        </h2>
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          Comparez les prix du même produit chez différents retailers
         </p>
       </div>
 
-      {/* Table minimaliste style iDEALO */}
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-zinc-800">
-        <div className="hidden lg:block">
-          {/* Desktop: Tableau */}
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-200 bg-gray-50 dark:border-zinc-800 dark:bg-zinc-800">
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-gray-700 dark:text-gray-300">Vendeur</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-gray-700 dark:text-gray-300">Stock</th>
-                <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-gray-700 dark:text-gray-300">Prix</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold uppercase text-gray-700 dark:text-gray-300">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-zinc-800">
-              {sortedPrices.map((price, index) => (
-                <tr
-                  key={`${price.retailer.id}-${index}`}
-                  className={`transition-colors hover:bg-gray-50 dark:hover:bg-zinc-800 ${
-                    price.price === lowestPrice
-                      ? 'bg-green-50 dark:bg-green-950/20'
-                      : 'bg-white dark:bg-zinc-900'
-                  }`}
-                >
-                  {/* Vendeur */}
-                  <td className="px-4 py-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded bg-gray-100 dark:bg-zinc-800">
-                        {price.retailer.logo ? (
-                          <img
-                            src={price.retailer.logo}
-                            alt={price.retailer.name}
-                            className="h-8 w-8 object-contain"
-                          />
-                        ) : (
-                          <span className="text-xs font-bold text-gray-600 dark:text-gray-400">
-                            {price.retailer.name.substring(0, 2)}
-                          </span>
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">
-                          {price.retailer.name}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {formatDate(price.last_checked)}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
+      <div className="grid gap-6 md:grid-cols-2">
+        {sortedPrices.map((product) => {
+          const retailerInfo = getRetailerInfo(product.retailer);
+          const isBestPrice = product.price === lowestPrice;
+          const hasDiscount = product.old_price && product.old_price > product.price;
 
-                  {/* Stock */}
-                  <td className="px-4 py-3">{getStockStatusBadge(price.stock_status)}</td>
-
-                  {/* Prix */}
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex items-center justify-end space-x-2">
-                      <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {price.price.toFixed(2)} €
-                      </span>
-                      {price.price === lowestPrice && (
-                        <span className="rounded-full bg-green-500 px-2 py-1 text-xs font-semibold text-white">
-                          Meilleur
-                        </span>
-                      )}
-                    </div>
-                  </td>
-
-                  {/* Action */}
-                  <td className="px-4 py-3 text-center">
-                    {price.stock_status === 'in_stock' ? (
-                      <a
-                        href={price.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center rounded-lg bg-blue-600 px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-                      >
-                        Acheter
-                      </a>
-                    ) : (
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        Indisponible
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile: Cartes minimalistes */}
-        <div className="lg:hidden space-y-2">
-          {sortedPrices.map((price, index) => (
+          return (
             <div
-              key={`${price.retailer.id}-${index}`}
-              className={`border-b border-gray-200 p-4 last:border-b-0 dark:border-zinc-800 ${
-                price.price === lowestPrice ? 'bg-green-50 dark:bg-green-950/20' : 'bg-white dark:bg-zinc-900'
+              key={product.id}
+              className={`relative overflow-hidden rounded-xl border-2 p-6 transition-all ${
+                isBestPrice
+                  ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
+                  : 'border-gray-200 bg-gray-50 dark:border-zinc-800 dark:bg-zinc-800/50'
               }`}
             >
-              <div className="mb-3 flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded bg-gray-100 dark:bg-zinc-800">
-                    {price.retailer.logo ? (
-                      <img
-                        src={price.retailer.logo}
-                        alt={price.retailer.name}
-                        className="h-8 w-8 object-contain"
-                      />
-                    ) : (
-                      <span className="text-xs font-bold text-gray-600 dark:text-gray-400">
-                        {price.retailer.name.substring(0, 2)}
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      {price.retailer.name}
-                    </p>
-                  </div>
+              {/* Badge meilleur prix */}
+              {isBestPrice && (
+                <div className="absolute -right-12 top-4 rotate-45 bg-green-500 px-12 py-1 text-center text-xs font-bold text-white">
+                  MEILLEUR PRIX
                 </div>
-                <div className="text-right">
-                  <p className="text-xl font-bold text-gray-900 dark:text-white">
-                    {price.price.toFixed(2)} €
+              )}
+
+              {/* Logo et nom du retailer */}
+              <div className="mb-4 flex items-center gap-3">
+                <span className={`inline-flex items-center gap-2 rounded-full ${retailerInfo.color} px-4 py-2 text-sm font-bold text-white`}>
+                  <span className="text-lg">{retailerInfo.logo}</span>
+                  <span>{retailerInfo.name}</span>
+                </span>
+              </div>
+
+              {/* Prix */}
+              <div className="mb-4">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Prix actuel</p>
+                <div className="flex items-baseline gap-3">
+                  <p className={`text-4xl font-bold ${isBestPrice ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400'}`}>
+                    {product.price.toFixed(2)} {product.currency}
                   </p>
-                  {price.price === lowestPrice && (
-                    <span className="text-xs font-semibold text-green-600 dark:text-green-400">
-                      Meilleur prix
-                    </span>
+                  {hasDiscount && product.old_price && (
+                    <p className="text-lg text-gray-500 line-through dark:text-gray-400">
+                      {product.old_price.toFixed(2)} {product.currency}
+                    </p>
                   )}
                 </div>
-              </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  {getStockStatusBadge(price.stock_status)}
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {formatDate(price.last_checked)}
-                  </span>
-                </div>
-
-                {price.stock_status === 'in_stock' ? (
-                  <a
-                    href={price.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center rounded-lg bg-blue-600 px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-                  >
-                    Acheter
-                  </a>
-                ) : (
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Indisponible
-                  </span>
+                {/* Badge de réduction */}
+                {product.discount && (
+                  <p className="mt-2 inline-block rounded-full bg-red-500 px-3 py-1 text-sm font-semibold text-white">
+                    {product.discount}
+                  </p>
                 )}
               </div>
+
+              {/* Bouton d'achat */}
+              <a
+                href={product.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center justify-center gap-2 rounded-lg ${
+                  isBestPrice
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                } px-6 py-3 text-sm font-semibold text-white transition-all hover:shadow-lg`}
+              >
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
+                </svg>
+                Acheter chez {retailerInfo.name}
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </a>
+
+              {/* Informations supplémentaires */}
+              {product.scraped_at && (
+                <p className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
+                  Mis à jour: {new Date(product.scraped_at).toLocaleDateString('fr-FR')}
+                </p>
+              )}
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
+
+      {/* Économie potentielle */}
+      {products.length === 2 && (
+        <div className="mt-6 rounded-lg bg-blue-50 p-4 dark:bg-blue-950/20">
+          <p className="text-center text-sm font-medium text-blue-900 dark:text-blue-100">
+            💡 Économisez jusqu'à{' '}
+            <span className="font-bold">
+              {(Math.max(...products.map(p => p.price)) - lowestPrice).toFixed(2)} {products[0].currency}
+            </span>
+            {' '}en choisissant le meilleur prix !
+          </p>
+        </div>
+      )}
     </div>
   );
 }

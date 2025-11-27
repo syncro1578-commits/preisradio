@@ -207,7 +207,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Products Grid */}
+        {/* Loading, Error, Empty States */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
@@ -264,23 +264,7 @@ export default function Home() {
               Versuchen Sie, Ihre Suchkriterien anzupassen oder fügen Sie Produkte zur Datenbank hinzu.
             </p>
           </div>
-        ) : (
-          <>
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {selectedCategory ? `${selectedCategory}` : 'Alle Produkte'}
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {products.length} {products.length === 1 ? 'Produkt' : 'Produkte'}
-              </p>
-            </div>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </>
-        )}
+        ) : null}
 
         {/* Product Sections by Category */}
         <div className="mt-20 space-y-16">
