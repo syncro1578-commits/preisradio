@@ -280,33 +280,147 @@ export default function Home() {
           </>
         )}
 
-        {/* Popular Categories Section */}
-        <div className="mt-20">
-          <h2 className="mb-8 text-center text-3xl font-bold text-gray-900 dark:text-white">
-            Beliebte Kategorien
-          </h2>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {[
-              { name: 'Smartphones', icon: '📱', count: products.filter(p => p.category === 'Smartphones').length },
-              { name: 'Laptops', icon: '💻', count: products.filter(p => p.category === 'Ordinateurs portables').length },
-              { name: 'Audio', icon: '🎧', count: products.filter(p => p.category === 'Audio').length },
-              { name: 'Fernseher', icon: '📺', count: products.filter(p => p.category === 'Télévisions').length },
-            ].map((cat) => (
-              <Link
-                key={cat.name}
-                href={`/kategorien`}
-                className="group rounded-xl bg-white p-6 text-center shadow-lg transition-all hover:scale-105 hover:shadow-xl dark:bg-zinc-900"
-              >
-                <div className="mb-3 text-4xl">{cat.icon}</div>
-                <h3 className="mb-1 font-semibold text-gray-900 dark:text-white">
-                  {cat.name}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {cat.count} Produkte
-                </p>
-              </Link>
-            ))}
-          </div>
+        {/* Product Sections by Category */}
+        <div className="mt-20 space-y-16">
+          {/* Laptops Section */}
+          {products.filter(p => p.category.includes('Laptops') || p.category.includes('Zoll Laptops')).length > 0 && (
+            <section>
+              <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">💻</span>
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                    Laptops & Notebooks
+                  </h2>
+                </div>
+                <Link
+                  href="/kategorien"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                >
+                  Alle ansehen →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {products
+                  .filter(p => p.category.includes('Laptops') || p.category.includes('Zoll Laptops'))
+                  .slice(0, 4)
+                  .map(product => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+              </div>
+            </section>
+          )}
+
+          {/* Handy Cases Section */}
+          {products.filter(p => p.category.includes('Handy')).length > 0 && (
+            <section>
+              <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">📱</span>
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                    Handy & Smartphone Zubehör
+                  </h2>
+                </div>
+                <Link
+                  href="/kategorien"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                >
+                  Alle ansehen →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {products
+                  .filter(p => p.category.includes('Handy'))
+                  .slice(0, 4)
+                  .map(product => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+              </div>
+            </section>
+          )}
+
+          {/* Gaming Section */}
+          {products.filter(p => p.category.includes('Gaming')).length > 0 && (
+            <section>
+              <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">🎮</span>
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                    Gaming
+                  </h2>
+                </div>
+                <Link
+                  href="/kategorien"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                >
+                  Alle ansehen →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {products
+                  .filter(p => p.category.includes('Gaming'))
+                  .slice(0, 4)
+                  .map(product => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+              </div>
+            </section>
+          )}
+
+          {/* Küche & Haushalt Section */}
+          {products.filter(p => p.category.includes('Küchen') || p.category.includes('Geschirr')).length > 0 && (
+            <section>
+              <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">🍳</span>
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                    Küche & Haushalt
+                  </h2>
+                </div>
+                <Link
+                  href="/kategorien"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                >
+                  Alle ansehen →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {products
+                  .filter(p => p.category.includes('Küchen') || p.category.includes('Geschirr'))
+                  .slice(0, 4)
+                  .map(product => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+              </div>
+            </section>
+          )}
+
+          {/* PC Komponenten Section */}
+          {products.filter(p => p.category.includes('PC Arbeitsspeicher') || p.category.includes('Netzteile')).length > 0 && (
+            <section>
+              <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">⚡</span>
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                    PC Komponenten
+                  </h2>
+                </div>
+                <Link
+                  href="/kategorien"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                >
+                  Alle ansehen →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {products
+                  .filter(p => p.category.includes('PC Arbeitsspeicher') || p.category.includes('Netzteile'))
+                  .slice(0, 4)
+                  .map(product => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+              </div>
+            </section>
+          )}
         </div>
 
         {/* Features Section */}

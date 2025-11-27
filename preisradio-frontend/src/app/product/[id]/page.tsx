@@ -92,6 +92,18 @@ export default function ProductDetail() {
   const discountAmount = hasDiscount ? oldPrice - currentPrice : 0;
   const discountPercent = hasDiscount ? ((discountAmount / oldPrice) * 100) : 0;
 
+  // Déterminer le nom et la couleur du retailer
+  const getRetailerInfo = (retailer?: string) => {
+    if (retailer === 'saturn') {
+      return { name: 'Saturn', color: 'bg-red-600', logo: '🪐' };
+    } else if (retailer === 'mediamarkt') {
+      return { name: 'MediaMarkt', color: 'bg-red-700', logo: '📺' };
+    }
+    return { name: 'Händler', color: 'bg-gray-600', logo: '🏪' };
+  };
+
+  const retailerInfo = getRetailerInfo(product.retailer);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
       {/* Header */}
@@ -170,10 +182,14 @@ export default function ProductDetail() {
 
           {/* Details */}
           <div className="space-y-6">
-            {/* Category */}
-            <div>
+            {/* Category & Retailer */}
+            <div className="flex flex-wrap gap-3">
               <span className="inline-block rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                 {product.category}
+              </span>
+              <span className={`inline-flex items-center gap-2 rounded-full ${retailerInfo.color} px-4 py-2 text-sm font-medium text-white`}>
+                <span>{retailerInfo.logo}</span>
+                <span>{retailerInfo.name}</span>
               </span>
             </div>
 
