@@ -6,6 +6,10 @@ import Link from 'next/link';
 import { Product } from '@/lib/types';
 import api from '@/lib/api';
 import PriceComparison from '@/components/PriceComparison';
+import ProductSimilar from '@/components/ProductSimilar';
+
+// Cache configuration: Revalidate every 5 minutes (300 seconds)
+export const revalidate = 300;
 
 export default function ProductDetail() {
   const params = useParams();
@@ -260,6 +264,9 @@ export default function ProductDetail() {
         <div className="rounded-xl bg-white p-8 shadow-lg dark:bg-zinc-900">
           <PriceComparison prices={product.prices} />
         </div>
+
+        {/* Similar Products */}
+        <ProductSimilar productId={params.id as string} />
 
         {/* Product Metadata */}
         <div className="mt-8 rounded-xl bg-white p-6 shadow-lg dark:bg-zinc-900">
