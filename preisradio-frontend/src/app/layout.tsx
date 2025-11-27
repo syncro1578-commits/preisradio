@@ -2,11 +2,57 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Analytics from "@/components/Analytics";
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
+
 export const metadata: Metadata = {
-  title: "PrixRadio - Comparateur de Prix Allemand",
-  description: "Comparez les prix des produits allemands en temps réel. Trouvez les meilleures offres chez Amazon.de, MediaMarkt, Saturn et plus encore.",
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: 'PrixRadio - Preisvergleich Deutschland | Saturn & MediaMarkt',
+    template: '%s | PrixRadio'
+  },
+  description: 'Vergleichen Sie Preise von Saturn und MediaMarkt in Echtzeit. Finden Sie die besten Angebote für Elektronik, Laptops, Smartphones und mehr.',
+  keywords: ['Preisvergleich', 'Saturn', 'MediaMarkt', 'Elektronik', 'Preise vergleichen', 'Deutschland', 'Online Shopping', 'Laptops', 'Smartphones'],
+  authors: [{ name: 'PrixRadio' }],
+  creator: 'PrixRadio',
+  publisher: 'PrixRadio',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'de_DE',
+    url: baseUrl,
+    siteName: 'PrixRadio',
+    title: 'PrixRadio - Preisvergleich Deutschland',
+    description: 'Vergleichen Sie Preise von Saturn und MediaMarkt in Echtzeit. Finden Sie die besten Angebote für Elektronik.',
+    images: [
+      {
+        url: `${baseUrl}/og-image.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'PrixRadio Preisvergleich',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PrixRadio - Preisvergleich Deutschland',
+    description: 'Vergleichen Sie Preise von Saturn und MediaMarkt in Echtzeit.',
+    images: [`${baseUrl}/og-image.jpg`],
+  },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
+  alternates: {
+    canonical: baseUrl,
   },
 };
 
@@ -18,7 +64,38 @@ export default function RootLayout({
   const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 
   return (
-    <html lang="en">
+    <html lang="de">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'PrixRadio',
+              url: baseUrl,
+              description: 'Preisvergleich für Elektronikprodukte von Saturn und MediaMarkt',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: {
+                  '@type': 'EntryPoint',
+                  urlTemplate: `${baseUrl}/search?q={search_term_string}`
+                },
+                'query-input': 'required name=search_term_string'
+              },
+              publisher: {
+                '@type': 'Organization',
+                name: 'PrixRadio',
+                url: baseUrl,
+                logo: {
+                  '@type': 'ImageObject',
+                  url: `${baseUrl}/logo.png`
+                }
+              }
+            })
+          }}
+        />
+      </head>
       <body
         className="antialiased"
       >
