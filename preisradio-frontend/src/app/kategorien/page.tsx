@@ -7,6 +7,8 @@ import api from '@/lib/api';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
+
 interface CategoryData {
   name: string;
   count: number;
@@ -20,6 +22,54 @@ export default function KategorienPage() {
 
   useEffect(() => {
     loadProducts();
+  }, []);
+
+  useEffect(() => {
+    // Update document title
+    document.title = 'Alle Kategorien | PrixRadio';
+
+    // Add JSON-LD for categories
+    let script = document.querySelector('#categories-jsonld') as HTMLScriptElement;
+    if (!script) {
+      script = document.createElement('script');
+      script.id = 'categories-jsonld';
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Produktkategorien',
+      description: 'Alle Produktkategorien von Saturn und MediaMarkt',
+      url: `${baseUrl}/kategorien`,
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: baseUrl
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Kategorien',
+            item: `${baseUrl}/kategorien`
+          }
+        ]
+      }
+    };
+
+    script.textContent = JSON.stringify(jsonLd);
+
+    return () => {
+      const scriptEl = document.querySelector('#categories-jsonld');
+      if (scriptEl) {
+        scriptEl.remove();
+      }
+    };
   }, []);
 
   const loadProducts = async () => {

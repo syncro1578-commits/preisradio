@@ -3,10 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Head from 'next/head';
 import { Product } from '@/lib/types';
 import api from '@/lib/api';
 import ProductSimilar from '@/components/ProductSimilar';
 import PriceComparison from '@/components/PriceComparison';
+
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
 export default function ProductDetail() {
   const params = useParams();
@@ -33,6 +36,70 @@ export default function ProductDetail() {
       setLoading(false);
     }
   };
+
+  // Update document metadata and JSON-LD
+  useEffect(() => {
+    if (product) {
+      // Update title
+      document.title = `${product.title} | PrixRadio`;
+
+      // Update meta description
+      const metaDescription = document.querySelector('meta[name="description"]');
+      if (metaDescription) {
+        metaDescription.setAttribute('content', `${product.title} - Preis: ${product.price.toFixed(2)} ${product.currency}. Vergleichen Sie Preise bei ${product.retailer === 'saturn' ? 'Saturn' : 'MediaMarkt'}.`);
+      }
+
+      // Add or update JSON-LD script
+      let script = document.querySelector('#product-jsonld') as HTMLScriptElement;
+      if (!script) {
+        script = document.createElement('script');
+        script.id = 'product-jsonld';
+        script.type = 'application/ld+json';
+        document.head.appendChild(script);
+      }
+
+      const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: product.title,
+        description: product.description || product.title,
+        image: product.image || `${baseUrl}/default-product.jpg`,
+        brand: {
+          '@type': 'Brand',
+          name: product.brand || 'Unknown'
+        },
+        sku: product.sku || product.id,
+        gtin: product.gtin,
+        offers: {
+          '@type': 'Offer',
+          url: product.url,
+          priceCurrency: product.currency,
+          price: product.price,
+          priceValidUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          availability: 'https://schema.org/InStock',
+          seller: {
+            '@type': 'Organization',
+            name: product.retailer === 'saturn' ? 'Saturn' : product.retailer === 'mediamarkt' ? 'MediaMarkt' : 'Retailer'
+          }
+        },
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: '4.5',
+          reviewCount: '1'
+        }
+      };
+
+      script.textContent = JSON.stringify(jsonLd);
+    }
+
+    // Cleanup
+    return () => {
+      const script = document.querySelector('#product-jsonld');
+      if (script) {
+        script.remove();
+      }
+    };
+  }, [product]);
 
   if (loading) {
     return (

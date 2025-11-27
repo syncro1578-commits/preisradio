@@ -9,6 +9,8 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
+
 function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
@@ -28,6 +30,59 @@ function SearchContent() {
   useEffect(() => {
     loadProducts();
   }, [query, selectedCategory, selectedRetailer]);
+
+  // Update document title and JSON-LD
+  useEffect(() => {
+    if (query) {
+      document.title = `Suchergebnisse für "${query}" | PrixRadio`;
+    } else {
+      document.title = 'Suche | PrixRadio';
+    }
+
+    // Add JSON-LD for search results
+    let script = document.querySelector('#search-jsonld') as HTMLScriptElement;
+    if (!script) {
+      script = document.createElement('script');
+      script.id = 'search-jsonld';
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'SearchResultsPage',
+      name: query ? `Suchergebnisse für ${query}` : 'Produktsuche',
+      url: `${baseUrl}/search${query ? `?q=${encodeURIComponent(query)}` : ''}`,
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: products.length,
+        itemListElement: products.slice(0, 10).map((product, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          item: {
+            '@type': 'Product',
+            name: product.title,
+            url: `${baseUrl}/product/${product.id}`,
+            image: product.image,
+            offers: {
+              '@type': 'Offer',
+              price: product.price,
+              priceCurrency: product.currency
+            }
+          }
+        }))
+      }
+    };
+
+    script.textContent = JSON.stringify(jsonLd);
+
+    return () => {
+      const scriptEl = document.querySelector('#search-jsonld');
+      if (scriptEl) {
+        scriptEl.remove();
+      }
+    };
+  }, [query, products]);
 
   const loadProducts = async () => {
     try {
