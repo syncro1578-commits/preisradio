@@ -181,8 +181,8 @@ class ProductViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'])
     def categories(self, request):
         """Get all unique categories from both retailers"""
-        saturn_categories = set(SaturnProduct.objects.distinct('category').scalar('category'))
-        mediamarkt_categories = set(MediaMarktProduct.objects.distinct('category').scalar('category'))
+        saturn_categories = set(SaturnProduct.objects.distinct('category'))
+        mediamarkt_categories = set(MediaMarktProduct.objects.distinct('category'))
 
         all_categories = sorted(list(saturn_categories | mediamarkt_categories))
 
