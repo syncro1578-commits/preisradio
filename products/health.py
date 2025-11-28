@@ -22,20 +22,26 @@ def api_status(request):
     """
     Endpoint pour vérifier le statut de l'API et les dépendances
     """
-    from products.models import Product, Retailer
+    from products.models import SaturnProduct, MediaMarktProduct
 
     try:
         # Test MongoDB connection
-        product_count = Product.objects.count()
-        retailer_count = Retailer.objects.count()
+        saturn_count = SaturnProduct.objects.count()
+        mediamarkt_count = MediaMarktProduct.objects.count()
+        product_count = saturn_count + mediamarkt_count
 
         return Response({
             'status': 'operational',
             'version': '1.0.0',
             'api': {
-                'products': product_count,
-                'retailers': retailer_count,
-            },
+                'products': {
+                    'total': product_count,
+                    'saturn': saturn_count,
+                    'mediamarkt': mediamarkt_count,
+                },
+                'retailers': 2,  # Saturn et MediaMarkt
+            }
+
             'dependencies': {
                 'mongodb': 'connected',
             },
