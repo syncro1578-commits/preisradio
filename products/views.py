@@ -65,6 +65,7 @@ class ProductViewSet(viewsets.ViewSet):
         """List products from both retailers with filtering and search"""
         search = request.query_params.get('search', '')
         category = request.query_params.get('category', '')
+        brand = request.query_params.get('brand', '')
         retailer = request.query_params.get('retailer', 'all').lower()  # normalize to lowercase
         page = int(request.query_params.get('page', 1))
         page_size = int(request.query_params.get('page_size', 20))
@@ -78,11 +79,14 @@ class ProductViewSet(viewsets.ViewSet):
             saturn_query = SaturnProduct.objects()
             if category:
                 saturn_query = saturn_query.filter(category=category)
+            if brand:
+                saturn_query = saturn_query.filter(brand=brand)
             if search:
                 saturn_query = saturn_query.filter(
                     Q(title__icontains=search) |
                     Q(gtin__icontains=search) |
-                    Q(description__icontains=search)
+                    Q(description__icontains=search) |
+                    Q(brand__icontains=search)
                 )
 
             # Apply pagination at MongoDB level for single retailer
@@ -99,11 +103,14 @@ class ProductViewSet(viewsets.ViewSet):
             mediamarkt_query = MediaMarktProduct.objects()
             if category:
                 mediamarkt_query = mediamarkt_query.filter(category=category)
+            if brand:
+                mediamarkt_query = mediamarkt_query.filter(brand=brand)
             if search:
                 mediamarkt_query = mediamarkt_query.filter(
                     Q(title__icontains=search) |
                     Q(gtin__icontains=search) |
-                    Q(description__icontains=search)
+                    Q(description__icontains=search) |
+                    Q(brand__icontains=search)
                 )
 
             # Apply pagination at MongoDB level for single retailer

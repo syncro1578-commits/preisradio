@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Product } from '@/lib/types';
 import api from '@/lib/api';
-import ProductCard from '@/components/ProductCard';
+import ProductSection from '@/components/ProductSection';
 import Link from 'next/link';
 
 interface HomeContentProps {
@@ -263,167 +263,54 @@ export default function HomeContent({ initialCategories = [] }: HomeContentProps
         </div>
       </div>
 
-      {/* Section 1: Top Deals / Promotions */}
-      {topDeals.length > 0 && (
-        <section>
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                🔥 Top Angebote
-              </h2>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                Die besten Rabatte und Deals
-              </p>
-            </div>
-            <Link
-              href="/search?sort=discount"
-              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              Alle ansehen →
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {topDeals.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Product Sections with Horizontal Scroll on Mobile */}
+      <ProductSection
+        title="Top Angebote"
+        description="Die besten Rabatte und Deals"
+        products={topDeals}
+        viewAllLink="/search?sort=discount"
+        icon="🔥"
+      />
 
-      {/* Section 2: Smartphones */}
-      {smartphones.length > 0 && (
-        <section>
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                📱 Smartphones
-              </h2>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                Die neuesten Handys im Vergleich
-              </p>
-            </div>
-            <Link
-              href="/search?category=Smartphones"
-              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              Alle ansehen →
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {smartphones.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-      )}
+      <ProductSection
+        title="Smartphones"
+        description="Die neuesten Handys im Vergleich"
+        products={smartphones}
+        viewAllLink="/search?category=Smartphones"
+        icon="📱"
+      />
 
-      {/* Section 3: Laptops */}
-      {laptops.length > 0 && (
-        <section>
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                💻 Laptops & Notebooks
-              </h2>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                Leistungsstarke Notebooks für jeden Bedarf
-              </p>
-            </div>
-            <Link
-              href="/search?category=Laptops"
-              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              Alle ansehen →
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {laptops.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-      )}
+      <ProductSection
+        title="Laptops & Notebooks"
+        description="Leistungsstarke Notebooks für jeden Bedarf"
+        products={laptops}
+        viewAllLink="/search?category=Laptops"
+        icon="💻"
+      />
 
-      {/* Section 4: TVs */}
-      {tvs.length > 0 && (
-        <section>
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                📺 Fernseher & Smart TVs
-              </h2>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                Große Auswahl an Fernsehern
-              </p>
-            </div>
-            <Link
-              href="/search?category=Fernseher"
-              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              Alle ansehen →
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {tvs.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-      )}
+      <ProductSection
+        title="Fernseher & Smart TVs"
+        description="Große Auswahl an Fernsehern"
+        products={tvs}
+        viewAllLink="/search?category=Fernseher"
+        icon="📺"
+      />
 
-      {/* Section 5: Gaming */}
-      {gaming.length > 0 && (
-        <section>
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                🎮 Gaming
-              </h2>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                Konsolen, Spiele und Gaming-Zubehör
-              </p>
-            </div>
-            <Link
-              href="/search?category=Gaming"
-              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              Alle ansehen →
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {gaming.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-      )}
+      <ProductSection
+        title="Gaming"
+        description="Konsolen, Spiele und Gaming-Zubehör"
+        products={gaming}
+        viewAllLink="/search?category=Gaming"
+        icon="🎮"
+      />
 
-      {/* Section 6: Accessories */}
-      {accessories.length > 0 && (
-        <section>
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                🎧 Zubehör
-              </h2>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                Kopfhörer, Kabel, Hüllen und mehr
-              </p>
-            </div>
-            <Link
-              href="/search?category=Zubehör"
-              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              Alle ansehen →
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {accessories.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-      )}
+      <ProductSection
+        title="Zubehör"
+        description="Kopfhörer, Kabel, Hüllen und mehr"
+        products={accessories}
+        viewAllLink="/search?category=Zubehör"
+        icon="🎧"
+      />
 
       {/* Popular Categories Section */}
       <div>

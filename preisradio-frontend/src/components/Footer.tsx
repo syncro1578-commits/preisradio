@@ -24,6 +24,15 @@ export default function Footer() {
       ],
     },
     {
+      title: 'Marken',
+      links: [
+        { href: '/marken', label: 'Alle Marken' },
+        { href: '/search?brand=Samsung', label: 'Samsung' },
+        { href: '/search?brand=Apple', label: 'Apple' },
+        { href: '/search?brand=Sony', label: 'Sony' },
+      ],
+    },
+    {
       title: 'Händler',
       links: [
         { href: '/haendler', label: 'Alle Händler' },

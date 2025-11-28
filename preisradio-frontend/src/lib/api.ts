@@ -50,6 +50,7 @@ class ApiClient {
   async getProducts(params?: {
     search?: string;
     category?: string;
+    brand?: string;
     page?: number;
     page_size?: number;
     retailer?: string;
@@ -58,6 +59,7 @@ class ApiClient {
 
     if (params?.search) queryParams.append('search', params.search);
     if (params?.category) queryParams.append('category', params.category);
+    if (params?.brand) queryParams.append('brand', params.brand);
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.page_size) queryParams.append('page_size', params.page_size.toString());
     if (params?.retailer) queryParams.append('retailer', params.retailer);
@@ -72,6 +74,7 @@ class ApiClient {
   async getProductsFromBothRetailers(params?: {
     search?: string;
     category?: string;
+    brand?: string;
     page_size?: number;
   }): Promise<ApiResponse<Product>> {
     const pageSize = params?.page_size || 50;

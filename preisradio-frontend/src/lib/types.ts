@@ -61,3 +61,14 @@ export interface StatusResponse {
     collections: string[];
   };
 }
+
+export interface Brand {
+  name: string;
+  slug: string;
+  productsCount: number;
+  retailers: string[];
+  categories: string[];
+  averagePrice?: number;
+  minPrice?: number;
+  maxPrice?: number;
+}

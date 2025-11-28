@@ -22,6 +22,7 @@ export default function Navigation() {
   const navLinks = [
     { href: '/', label: 'Startseite', icon: '🏠' },
     { href: '/kategorien', label: 'Kategorien', icon: '📂' },
+    { href: '/marken', label: 'Marken', icon: '🏷️' },
     { href: '/haendler', label: 'Händler', icon: '🏪' },
     { href: '/kontakt', label: 'Kontakt', icon: '✉️' },
   ];
