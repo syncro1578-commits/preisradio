@@ -1,0 +1,21 @@
+#!/bin/sh
+# Désactive les interférences avec GIT_INDEX_FILE
+unset GIT_INDEX_FILE
+
+# -------------------------------
+# Chemins corrects à adapter
+# -------------------------------
+
+# Chemin du répertoire où ton site doit être mis à jour
+GIT_WORK_TREE="/usr/home/wael/domains/api.preisradio.de/public_python"
+
+# Chemin du dépôt bare sur le serveur
+GIT_DIR="/usr/home/wael/repo/git/pub/preisradio"
+
+# Branche à déployer
+BRANCH="master"
+
+# -------------------------------
+# Déploiement forcé
+# -------------------------------
+/usr/local/bin/git --work-tree="$GIT_WORK_TREE" --git-dir="$GIT_DIR" checkout -f $BRANCH
