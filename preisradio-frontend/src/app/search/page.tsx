@@ -35,7 +35,8 @@ function SearchContent() {
   const [pageSize] = useState(20);
 
   useEffect(() => {
-    loadProducts();
+    setCurrentPage(1);
+    loadProducts(1);
   }, [query, categoryParam, brandParam, retailerParam, selectedCategory, selectedBrand, selectedRetailer]);
 
   // Update document title, canonical URL and JSON-LD
@@ -154,11 +155,13 @@ function SearchContent() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    loadProducts();
+    setCurrentPage(1);
+    loadProducts(1);
   };
 
   const handleApplyFilters = () => {
-    loadProducts();
+    setCurrentPage(1);
+    loadProducts(1);
   };
 
   const handleResetFilters = () => {

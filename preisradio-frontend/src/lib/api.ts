@@ -85,13 +85,19 @@ class ApiClient {
       // Charger en parallèle depuis Saturn et MediaMarkt
       const [saturnResponse, mediamarktResponse] = await Promise.all([
         this.getProducts({
-          ...params,
+          search: params?.search,
+          category: params?.category,
+          brand: params?.brand,
           retailer: 'saturn',
+          page: page,
           page_size: pageSize,
         }),
         this.getProducts({
-          ...params,
+          search: params?.search,
+          category: params?.category,
+          brand: params?.brand,
           retailer: 'mediamarkt',
+          page: page,
           page_size: pageSize,
         }),
       ]);
@@ -109,9 +115,12 @@ class ApiClient {
         }
       }
 
+      // Check if there are more results on the next page
+      const hasNextPage = saturnResponse.next !== null || mediamarktResponse.next !== null;
+
       return {
         count: saturnResponse.count + mediamarktResponse.count,
-        next: saturnResponse.next || mediamarktResponse.next ? `?page=${page + 1}` : null,
+        next: hasNextPage ? `?page=${page + 1}` : null,
         previous: page > 1 ? `?page=${page - 1}` : null,
         results: mixedResults,
       };
