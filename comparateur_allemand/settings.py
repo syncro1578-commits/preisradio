@@ -130,10 +130,10 @@ try:
     mongoengine.connect(
         alias='default',
         host=SATURN_FULL_URI,
-        connectTimeoutMS=10000,
-        serverSelectionTimeoutMS=10000,
-        socketTimeoutMS=10000,
-        maxPoolSize=50,
+        connectTimeoutMS=30000,
+        serverSelectionTimeoutMS=30000,
+        socketTimeoutMS=30000,
+        maxPoolSize=100,
     )
     print("✓ Saturn database connected successfully")
 except Exception as e:
@@ -144,10 +144,10 @@ try:
     mongoengine.connect(
         alias='mediamarkt',
         host=MEDIAMARKT_FULL_URI,
-        connectTimeoutMS=10000,
-        serverSelectionTimeoutMS=10000,
-        socketTimeoutMS=10000,
-        maxPoolSize=50,
+        connectTimeoutMS=30000,
+        serverSelectionTimeoutMS=30000,
+        socketTimeoutMS=30000,
+        maxPoolSize=100,
     )
     print("✓ MediaMarkt database connected successfully")
 except Exception as e:
