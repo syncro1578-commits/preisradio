@@ -26,7 +26,7 @@ export default function KategorienPage() {
 
   useEffect(() => {
     // Update document title
-    document.title = 'Alle Kategorien | PrixRadio';
+    document.title = 'Alle Kategorien | Preisradio';
 
     // Update canonical URL
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
@@ -401,7 +401,7 @@ export default function KategorienPage() {
                 .map((category) => (
                   <Link
                     key={category.name}
-                    href={`/?category=${encodeURIComponent(category.name)}`}
+                    href={`/search?category=${encodeURIComponent(category.name)}`}
                     className="group relative overflow-hidden rounded-xl bg-white p-8 shadow-lg transition-all hover:scale-105 hover:shadow-2xl dark:bg-zinc-900"
                   >
                     <div className="absolute right-4 top-4 text-6xl opacity-10">

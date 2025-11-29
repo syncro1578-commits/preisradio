@@ -43,11 +43,11 @@ export default function Navigation() {
             className="flex items-center space-x-3"
             onClick={() => setMobileMenuOpen(false)}
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-xl font-bold text-white shadow-lg overflow-hidden">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-transparent text-xl font-bold text-white shadow-none overflow-hidden">
               <img
                 src="/favicon.ico"
                 alt="Preisradio Logo"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
               />
             </div>
             <div className="flex flex-col">

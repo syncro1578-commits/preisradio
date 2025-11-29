@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Analytics from "@/components/Analytics";
+import ConsentBanner from "@/components/ConsentBanner";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
@@ -115,6 +116,7 @@ export default function RootLayout({
           </noscript>
         )}
         <Analytics />
+        <ConsentBanner />
         {children}
       </body>
     </html>

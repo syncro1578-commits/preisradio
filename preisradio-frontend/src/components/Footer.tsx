@@ -5,7 +5,7 @@ export default function Footer() {
 
   const footerSections = [
     {
-      title: 'Über PrixRadio',
+      title: 'Über Preisradio',
       links: [
         { href: '/', label: 'Startseite' },
         { href: '/impressum', label: 'Impressum' },
@@ -49,12 +49,16 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <div className="mb-4 flex items-center space-x-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-xl font-bold text-white shadow-lg">
-                P
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-transparent text-xl font-bold text-white shadow-none overflow-hidden">
+                <img
+                  src="/favicon.ico"
+                  alt="Preisradio Logo"
+                  className="h-full w-full object-contain"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-bold text-gray-900 dark:text-white">
-                  PrixRadio
+                  Preisradio
                 </span>
                 <span className="text-xs text-gray-600 dark:text-gray-400">
                   Preisvergleich
