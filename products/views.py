@@ -559,7 +559,7 @@ Message:
             subject=f"Nouveau message: {subject}",
             message=admin_message,
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=['ghassengharbi191@gmail.com'],  # Admin email
+            recipient_list=[settings.CONTACT_EMAIL],
             fail_silently=False,
         )
 
