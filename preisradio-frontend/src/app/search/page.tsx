@@ -29,6 +29,7 @@ function SearchContent() {
     min: '',
     max: '',
   });
+  const [selectedDiscount, setSelectedDiscount] = useState<string>('');
   const [sortBy, setSortBy] = useState<'price_asc' | 'price_desc' | 'newest'>('newest');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -130,6 +131,16 @@ function SearchContent() {
         results = results.filter(p => p.price <= parseFloat(priceRange.max));
       }
 
+      // Filtrer par rabatt minimum
+      if (selectedDiscount) {
+        const minDiscount = parseFloat(selectedDiscount);
+        results = results.filter(p => {
+          if (!p.discount) return false;
+          const discountValue = parseFloat(p.discount.replace('%', ''));
+          return discountValue >= minDiscount;
+        });
+      }
+
       // Trier
       if (sortBy === 'price_asc') {
         results.sort((a, b) => a.price - b.price);
@@ -169,6 +180,7 @@ function SearchContent() {
     setSelectedBrand('');
     setSelectedRetailer('');
     setPriceRange({ min: '', max: '' });
+    setSelectedDiscount('');
     setSortBy('newest');
     setCurrentPage(1);
     loadProducts(1);
@@ -375,6 +387,26 @@ function SearchContent() {
                     className="w-1/2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                   />
                 </div>
+              </div>
+
+              {/* Discount Filter */}
+              <div className="mb-6">
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Rabatt mindestens
+                </label>
+                <select
+                  value={selectedDiscount}
+                  onChange={(e) => setSelectedDiscount(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                >
+                  <option value="">Alle Produkte</option>
+                  <option value="5">5% oder mehr</option>
+                  <option value="10">10% oder mehr</option>
+                  <option value="15">15% oder mehr</option>
+                  <option value="20">20% oder mehr</option>
+                  <option value="30">30% oder mehr</option>
+                  <option value="50">50% oder mehr</option>
+                </select>
               </div>
 
               <button
