@@ -1,9 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Disable Turbopack to avoid dependency tracking issues on serv00
-  turbo: {
-    disabled: true,
+  // Use webpack instead of Turbopack to avoid dependency tracking issues
+  experimental: {
+    turbo: false,
   },
 };
 
