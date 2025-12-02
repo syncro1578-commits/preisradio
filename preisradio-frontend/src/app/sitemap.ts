@@ -1,8 +1,9 @@
 import { MetadataRoute } from 'next';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://preisradio.de';
-const API_PATH = process.env.NEXT_PUBLIC_API_BASE || '/api';
-const API_URL = `${API_BASE_URL}${API_PATH}`;
+// Use absolute URL for API calls during sitemap generation
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+  ? `${process.env.NEXT_PUBLIC_API_URL}/api`
+  : 'https://api.preisradio.de/api';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://preisradio.de';
@@ -54,6 +55,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Charger les produits via endpoint sitemap optimisé
+  // Note: Sitemap products are loaded dynamically at build time and runtime
+  // If API is unreachable during build, static pages are returned as fallback
   try {
     const allProducts = [];
     let page = 1;
@@ -62,36 +65,60 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Paginer à travers tous les produits (optimisé pour sitemap)
     while (hasMore && page <= 5) { // Sécurité: max 5 pages
-      const response = await fetch(
-        `${API_URL}/products/sitemap/?page=${page}&page_size=${pageSize}`,
-        { next: { revalidate: 86400 } } // Cache 24h
-      );
+      try {
+        const response = await fetch(
+          `${API_URL}/products/sitemap/?page=${page}&page_size=${pageSize}`,
+          {
+            next: { revalidate: 86400 }, // Cache 24h
+            headers: {
+              'User-Agent': 'Preisradio-Sitemap-Generator/1.0',
+            },
+            signal: AbortSignal.timeout(30000), // 30s timeout
+          }
+        );
 
-      if (!response.ok) throw new Error('Sitemap API Error');
+        if (!response.ok) {
+          console.warn(`Sitemap API page ${page} returned status ${response.status}`);
+          hasMore = false;
+          break;
+        }
 
-      const data = await response.json();
-      const products = data.results || [];
+        const data = await response.json();
+        const products = data.results || [];
 
-      if (products.length === 0) {
+        if (products.length === 0) {
+          hasMore = false;
+          break;
+        }
+
+        allProducts.push(...products);
+        hasMore = data.has_next;
+        page++;
+      } catch (pageError) {
+        console.warn(`Error fetching sitemap page ${page}:`, pageError);
+        // If we got some products, use them; otherwise fallback to static
+        if (allProducts.length === 0) {
+          return staticPages;
+        }
         hasMore = false;
-        break;
       }
-
-      allProducts.push(...products);
-      hasMore = data.has_next;
-      page++;
     }
 
-    const productPages: MetadataRoute.Sitemap = allProducts.map((product: any) => ({
-      url: `${baseUrl}/product/${product.id}`,
-      lastModified: product.lastModified ? new Date(product.lastModified) : new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    }));
+    // Only add product pages if we successfully fetched some
+    if (allProducts.length > 0) {
+      const productPages: MetadataRoute.Sitemap = allProducts.map((product: any) => ({
+        url: `${baseUrl}/product/${product.id}`,
+        lastModified: product.lastModified ? new Date(product.lastModified) : new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.6,
+      }));
 
-    return [...staticPages, ...productPages];
+      return [...staticPages, ...productPages];
+    }
+
+    return staticPages;
   } catch (error) {
-    console.error('Error fetching products for sitemap:', error);
+    console.warn('Error fetching products for sitemap, using static pages:', error);
     // Fallback to static pages only if API fails
     return staticPages;
   }
