@@ -58,18 +58,11 @@ export default function ProductSection({
         </div>
       ) : (
         <>
-          {/* Desktop Grid */}
-          <div className="hidden sm:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-
-          {/* Mobile Horizontal Scroll */}
-          <div className="sm:hidden">
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+          {/* Desktop Horizontal Scroll - consistent across all screen sizes */}
+          <div className="w-full">
+            <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
               {products.map((product) => (
-                <div key={product.id} className="flex-none w-[280px] snap-start">
+                <div key={product.id} className="flex-none w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] snap-start">
                   <ProductCard product={product} />
                 </div>
               ))}

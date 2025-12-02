@@ -280,7 +280,7 @@ class ProductViewSet(viewsets.ViewSet):
 
         # Find similar products in same category
         similar_products = []
-        limit = 6
+        limit = 3
 
         if retailer == 'saturn':
             # Search in Saturn for similar products
