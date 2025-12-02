@@ -55,13 +55,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Charger les produits pour ajouter leurs pages au sitemap
   try {
-    const response = await fetch(`${API_URL}/products/?page_size=1000`);
-    if (!response.ok) throw new Error('API Error');
+    const allProducts = [];
+    let page = 1;
+    let hasMore = true;
+    const pageSize = 500;
 
-    const data = await response.json();
-    const products = data.results || [];
+    // Paginer à travers tous les produits
+    while (hasMore) {
+      const response = await fetch(`${API_URL}/products/?page=${page}&page_size=${pageSize}`, {
+        next: { revalidate: 86400 } // Cache 24h
+      });
 
-    const productPages: MetadataRoute.Sitemap = products.map((product: any) => ({
+      if (!response.ok) throw new Error('API Error');
+
+      const data = await response.json();
+      const products = data.results || [];
+
+      if (products.length === 0) {
+        hasMore = false;
+        break;
+      }
+
+      allProducts.push(...products);
+
+      // Vérifier s'il y a une page suivante
+      if (!data.next) {
+        hasMore = false;
+      } else {
+        page++;
+      }
+    }
+
+    const productPages: MetadataRoute.Sitemap = allProducts.map((product: any) => ({
       url: `${baseUrl}/product/${product.id}`,
       lastModified: product.scraped_at ? new Date(product.scraped_at) : new Date(),
       changeFrequency: 'weekly' as const,

@@ -56,6 +56,7 @@ export const metadata: Metadata = {
     canonical: baseUrl,
     languages: {
       'de-DE': `${baseUrl}/`,
+      'x-default': baseUrl,
     },
   },
 };
