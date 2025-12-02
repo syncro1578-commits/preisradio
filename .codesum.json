@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "ignore": [
+    "node_modules",
+    ".next",
+    "dist",
+    "build",
+    ".git",
+    ".env",
+    ".env.local",
+    ".env.*.local",
+    "*.log",
+    ".DS_Store",
+    "venv",
+    "__pycache__",
+    "*.pyc",
+    ".pytest_cache",
+    ".venv",
+    "coverage",
+    ".vscode",
+    ".idea",
+    "*.swp",
+    "*.swo"
+  ],
+  "include": [
+    "preisradio-frontend/src",
+    "products",
+    "manage.py",
+    "requirements.txt",
+    "README.md"
+  ],
+  "maxTokens": 200000,
+  "summaryDepth": 3
+}
