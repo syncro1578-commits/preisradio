@@ -58,37 +58,41 @@ export default function ProductSection({
         </div>
       ) : (
         <>
-          {/* Desktop Horizontal Scroll - consistent across all screen sizes */}
-          <div className="w-full">
-            <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+          {/* Horizontal Scroll Container */}
+          <div className="overflow-x-auto pb-4 scrollbar-hide">
+            <div className="inline-flex gap-6">
               {products.map((product) => (
-                <div key={product.id} className="flex-none w-full sm:w-1/2 md:w-1/3 lg:w-1/4 snap-start">
+                <div
+                  key={product.id}
+                  className="flex-shrink-0"
+                  style={{ minWidth: '100%' }}
+                >
                   <ProductCard product={product} />
                 </div>
               ))}
             </div>
-            {/* Mobile "View All" Button */}
-            <div className="mt-4 text-center">
-              <Link
-                href={viewAllLink}
-                className="inline-flex items-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          </div>
+          {/* Mobile "View All" Button */}
+          <div className="mt-4 text-center sm:hidden">
+            <Link
+              href={viewAllLink}
+              className="inline-flex items-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+            >
+              Alle {title} ansehen
+              <svg
+                className="ml-2 h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                Alle {title} ansehen
-                <svg
-                  className="ml-2 h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </Link>
-            </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </Link>
           </div>
         </>
       )}
