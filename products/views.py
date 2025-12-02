@@ -526,8 +526,7 @@ class ProductViewSet(viewsets.ViewSet):
 
 @api_view(['POST'])
 def contact_message(request):
-    """Handle contact form submission"""
-    from .models import ContactMessage
+    """Handle contact form submission - send emails only"""
     from django.core.mail import send_mail
     from django.conf import settings
 
@@ -544,15 +543,6 @@ def contact_message(request):
                 {'error': 'All fields are required'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-        # Save to database
-        contact = ContactMessage(
-            name=name,
-            email=email,
-            subject=subject,
-            message=message
-        )
-        contact.save()
 
         # Send email to admin
         admin_message = f"""
@@ -588,7 +578,7 @@ L'équipe Preisradio""",
         )
 
         return Response(
-            {'message': 'Message envoyé avec succès', 'id': str(contact.id)},
+            {'message': 'Message envoyé avec succès'},
             status=status.HTTP_201_CREATED
         )
 
