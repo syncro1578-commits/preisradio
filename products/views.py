@@ -522,3 +522,79 @@ class ProductViewSet(viewsets.ViewSet):
                 {'error': str(e), 'detail': 'Failed to fetch sitemap data'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+@api_view(['POST'])
+def contact_message(request):
+    """Handle contact form submission"""
+    from .models import ContactMessage
+    from django.core.mail import send_mail
+    from django.conf import settings
+
+    try:
+        # Get data from request
+        name = request.data.get('name', '').strip()
+        email = request.data.get('email', '').strip()
+        subject = request.data.get('subject', '').strip()
+        message = request.data.get('message', '').strip()
+
+        # Validate
+        if not all([name, email, subject, message]):
+            return Response(
+                {'error': 'All fields are required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Save to database
+        contact = ContactMessage(
+            name=name,
+            email=email,
+            subject=subject,
+            message=message
+        )
+        contact.save()
+
+        # Send email to admin
+        admin_message = f"""
+Nouveau message de contact:
+
+Nom: {name}
+Email: {email}
+Sujet: {subject}
+
+Message:
+{message}
+"""
+        send_mail(
+            subject=f"Nouveau message: {subject}",
+            message=admin_message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=['ghassengharbi191@gmail.com'],  # Admin email
+            fail_silently=False,
+        )
+
+        # Send confirmation email to user
+        send_mail(
+            subject="Confirmation - Votre message a été reçu",
+            message=f"""Bonjour {name},
+
+Merci d'avoir nous contacté. Nous avons reçu votre message et nous vous répondrons dans les plus brefs délais.
+
+Cordialement,
+L'équipe Preisradio""",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False,
+        )
+
+        return Response(
+            {'message': 'Message envoyé avec succès', 'id': str(contact.id)},
+            status=status.HTTP_201_CREATED
+        )
+
+    except Exception as e:
+        print(f"Contact error: {str(e)}")
+        return Response(
+            {'error': f'Erreur lors de l\'envoi: {str(e)}'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

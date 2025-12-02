@@ -67,3 +67,24 @@ class MediaMarktProduct(Document):
 
     def __str__(self):
         return self.title
+
+
+class ContactMessage(Document):
+    """Contact form messages"""
+    name = StringField(max_length=255, required=True)
+    email = StringField(max_length=255, required=True)
+    subject = StringField(max_length=255, required=True)
+    message = StringField(required=True)
+    created_at = DateTimeField(default=datetime.utcnow)
+    is_read = IntField(default=0)  # 0 = not read, 1 = read
+
+    meta = {
+        'collection': 'ContactMessages',
+        'indexes': [
+            'created_at',
+            'email',
+        ]
+    }
+
+    def __str__(self):
+        return f"{self.name} - {self.subject}"
