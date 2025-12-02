@@ -20,12 +20,27 @@ export default function MarkenPage() {
     try {
       setLoading(true);
 
-      // Récupérer tous les produits
-      const response = await api.getProductsFromBothRetailers({
-        page_size: 10000, // Get all products to analyze brands
-      });
+      // Récupérer tous les produits en utilisant la pagination
+      let allProducts: Product[] = [];
+      let page = 1;
+      let hasMore = true;
+      const pageSize = 500; // Load 500 products per request
 
-      const products = response?.results || [];
+      while (hasMore) {
+        const response = await api.getProductsFromBothRetailers({
+          page: page,
+          page_size: pageSize,
+        });
+
+        const products = response?.results || [];
+        allProducts = allProducts.concat(products);
+
+        // Check if there are more pages
+        hasMore = response?.next !== null && products.length === pageSize;
+        page++;
+      }
+
+      const products = allProducts;
 
       // Grouper les produits par marque
       const brandMap = new Map<string, Product[]>();

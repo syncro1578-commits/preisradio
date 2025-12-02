@@ -28,12 +28,25 @@ export default function BrandDetailPage() {
     try {
       setLoading(true);
 
-      // Récupérer tous les produits
-      const response = await api.getProductsFromBothRetailers({
-        page_size: 10000,
-      });
+      // Récupérer tous les produits en utilisant la pagination
+      let allProducts: Product[] = [];
+      let page = 1;
+      let hasMore = true;
+      const pageSize = 500; // Load 500 products per request
 
-      const allProducts = response?.results || [];
+      while (hasMore) {
+        const response = await api.getProductsFromBothRetailers({
+          page: page,
+          page_size: pageSize,
+        });
+
+        const products = response?.results || [];
+        allProducts = allProducts.concat(products);
+
+        // Check if there are more pages
+        hasMore = response?.next !== null && products.length === pageSize;
+        page++;
+      }
 
       // Filtrer par marque (convertir le slug en nom de marque)
       const brandProducts = allProducts.filter((product) => {
