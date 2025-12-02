@@ -139,6 +139,10 @@ class ApiClient {
     return this.request<Product>(`/products/${id}/`);
   }
 
+  async getSimilarProducts(id: string): Promise<ApiResponse<Product>> {
+    return this.request<ApiResponse<Product>>(`/products/${id}/similar/`);
+  }
+
   async getProductByEan(ean: string): Promise<Product> {
     return this.request<Product>(`/products/${ean}/by_ean/`);
   }

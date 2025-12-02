@@ -23,16 +23,8 @@ export default function ProductSimilar({ productId }: ProductSimilarProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_API_BASE}/products/${productId}/similar/`
-      );
-
-      if (!response.ok) {
-        throw new Error('Erreur lors du chargement des produits similaires');
-      }
-
-      const data = await response.json();
-      setSimilar(data.results || []);
+      const response = await api.getSimilarProducts(productId);
+      setSimilar(response.results || []);
     } catch (err) {
       console.error('Error loading similar products:', err);
       setError('Impossible de charger les produits similaires');
