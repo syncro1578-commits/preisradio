@@ -561,6 +561,7 @@ Sujet: {subject}
 Message:
 {message}
 """
+        # Send email to admin (must succeed)
         send_mail(
             subject=f"Nouveau message: {subject}",
             message=admin_message,
@@ -569,19 +570,23 @@ Message:
             fail_silently=False,
         )
 
-        # Send confirmation email to user
-        send_mail(
-            subject="Confirmation - Votre message a été reçu",
-            message=f"""Bonjour {name},
+        # Send confirmation email to user (optional - ignore if fails)
+        try:
+            send_mail(
+                subject="Confirmation - Votre message a été reçu",
+                message=f"""Bonjour {name},
 
 Merci d'avoir nous contacté. Nous avons reçu votre message et nous vous répondrons dans les plus brefs délais.
 
 Cordialement,
 L'équipe Preisradio""",
-            from_email=from_email,
-            recipient_list=[email],
-            fail_silently=False,
-        )
+                from_email=from_email,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+        except Exception as confirmation_error:
+            # Log but don't fail - admin email is what matters
+            print(f"Confirmation email failed for {email}: {str(confirmation_error)}")
 
         return Response(
             {'message': 'Message envoyé avec succès'},
