@@ -65,12 +65,12 @@ export default function HomeContent({ initialCategories = [] }: HomeContentProps
         accessoriesRes,
         gamingRes
       ] = await Promise.all([
-        api.getProducts({ page_size: 100 }),
-        api.getProducts({ category: 'Smartphones', page_size: 8 }),
-        api.getProducts({ category: 'Creator Laptop', page_size: 8 }),
-        api.getProducts({ category: '4K Fernseher', page_size: 8 }),
-        api.getProducts({ category: 'Aktenvernichter + Zubehör', page_size: 8 }),
-        api.getProducts({ category: 'Gaming-Laptops', page_size: 8 })
+        api.getProducts({ page_size: 200 }), // Augmenter pour trouver plus de produits avec discount
+        api.getProducts({ category: 'Smartphones', page_size: 20 }),
+        api.getProducts({ category: 'Creator Laptop', page_size: 20 }),
+        api.getProducts({ category: '4K Fernseher', page_size: 20 }),
+        api.getProducts({ category: 'Aktenvernichter + Zubehör', page_size: 20 }),
+        api.getProducts({ category: 'Gaming-Laptops', page_size: 20 })
       ]);
 
       // Trier par discount pour top deals (tous les produits avec un discount)
@@ -85,7 +85,7 @@ export default function HomeContent({ initialCategories = [] }: HomeContentProps
         return discountB - discountA;
       });
 
-      setTopDeals(sortedByDiscount.slice(0, 8));
+      setTopDeals(sortedByDiscount.slice(0, 20));
       setSmartphones(smartphonesRes.results);
       setLaptops(creatorsRes.results);
       setTvs(tvsRes.results);

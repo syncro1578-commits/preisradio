@@ -74,23 +74,11 @@ export default function KategorienPage() {
 
   const loadProducts = async () => {
     try {
-      // Charger toutes les catégories depuis l'endpoint dédié
-      const response = await api.getCategories();
-
-      // Créer des produits "virtuels" pour chaque catégorie pour le rendering
-      // On charge juste les catégories, pas les produits complets
-      const categories = response.results || [];
-      const virtualProducts: Product[] = categories.map((category: string, index: number) => ({
-        id: `cat-${index}`,
-        title: category,
-        category: category,
-        price: 0,
-        currency: 'EUR',
-        url: '',
-        retailer: 'saturn',
-      } as Product));
-
-      setProducts(virtualProducts);
+      // Charger les produits des deux retailers pour avoir toutes les catégories
+      const response = await api.getProductsFromBothRetailers({
+        page_size: 500, // Augmenté pour avoir plus de catégories
+      });
+      setProducts(response.results);
     } catch (err) {
       console.error('Error loading products:', err);
     } finally {
