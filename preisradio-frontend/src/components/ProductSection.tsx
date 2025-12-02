@@ -62,7 +62,7 @@ export default function ProductSection({
           <div className="w-full">
             <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
               {products.map((product) => (
-                <div key={product.id} className="flex-none w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] snap-start">
+                <div key={product.id} className="flex-none w-full sm:w-1/2 md:w-1/3 lg:w-1/4 snap-start">
                   <ProductCard product={product} />
                 </div>
               ))}
