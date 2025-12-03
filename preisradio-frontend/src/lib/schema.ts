@@ -135,26 +135,34 @@ export function generateFAQSchema(baseUrl: string): FAQPage {
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'Quel est le meilleur endroit pour comparer les prix?',
+        name: 'Wo kann ich Preise vergleichen?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Preisradio vous permet de comparer les prix des produits électroniques chez les principaux détaillants allemands en temps réel.',
+          text: 'Preisradio ermöglicht es Ihnen, Preise für elektronische Produkte bei den wichtigsten deutschen Einzelhändlern wie Saturn und MediaMarkt in Echtzeit zu vergleichen.',
         },
       },
       {
         '@type': 'Question',
-        name: 'Comment puis-je trouver les meilleures offres?',
+        name: 'Wie finde ich die besten Angebote?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Utilisez notre fonction de recherche pour trouver des produits et comparer les prix en temps réel chez Saturn et MediaMarkt.',
+          text: 'Nutzen Sie unsere Suchfunktion, um Produkte zu finden und Preise in Echtzeit bei Saturn und MediaMarkt zu vergleichen. Sie können auch nach Kategorien filtern.',
         },
       },
       {
         '@type': 'Question',
-        name: 'Les prix sont-ils à jour?',
+        name: 'Sind die Preise aktuell?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Oui, nos prix sont mis à jour régulièrement pour vous offrir les informations les plus précises et actuelles.',
+          text: 'Ja, unsere Preise werden regelmäßig aktualisiert, um Ihnen die genauesten und aktuellsten Informationen zu bieten.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Welche Händler werden verglichen?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Preisradio vergleicht Preise von Saturn und MediaMarkt, den größten Elektronik-Einzelhändlern in Deutschland.',
         },
       },
     ],
@@ -174,7 +182,7 @@ export function generateOrganizationSchema(baseUrl: string): Organization {
     name: 'Preisradio',
     url: baseUrl,
     logo: `${baseUrl}/logo.png`,
-    description: 'Comparateur de prix en ligne pour les produits électroniques en Allemagne. Comparez les prix de Saturn et MediaMarkt.',
+    description: 'Online-Preisvergleich für Elektronikprodukte in Deutschland. Vergleichen Sie Preise von Saturn und MediaMarkt in Echtzeit und finden Sie die besten Angebote.',
     sameAs: [
       'https://www.facebook.com/preisradio',
       'https://www.twitter.com/preisradio',

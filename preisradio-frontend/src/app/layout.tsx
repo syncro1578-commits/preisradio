@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Analytics from "@/components/Analytics";
 import ConsentBanner from "@/components/ConsentBanner";
+import { generateOrganizationSchema, generateFAQSchema } from "@/lib/schema";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
@@ -67,6 +68,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
+  const organizationSchema = generateOrganizationSchema(baseUrl);
+  const faqSchema = generateFAQSchema(baseUrl);
 
   return (
     <html lang="de">
@@ -99,6 +102,18 @@ export default function RootLayout({
                 }
               }
             })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqSchema),
           }}
         />
       </head>
