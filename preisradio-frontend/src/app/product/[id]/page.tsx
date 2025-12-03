@@ -10,7 +10,6 @@ import ProductSimilar from '@/components/ProductSimilar';
 import PriceComparison from '@/components/PriceComparison';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
@@ -174,29 +173,8 @@ export default function ProductDetail() {
 
   const retailerInfo = getRetailerInfo(product.retailer);
 
-  // Générer les schémas pour injection directe dans le DOM
-  const productSchema = product ? generateProductSchema(product, baseUrl) : null;
-  const breadcrumbSchema = product ? generateBreadcrumbSchema(product, baseUrl) : null;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
-      {/* Injection directe des schémas JSON-LD pour Google Rich Snippets */}
-      {productSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(productSchema),
-          }}
-        />
-      )}
-      {breadcrumbSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(breadcrumbSchema),
-          }}
-        />
-      )}
       <Navigation />
 
       <main className="container mx-auto px-4 py-6 md:py-8">
