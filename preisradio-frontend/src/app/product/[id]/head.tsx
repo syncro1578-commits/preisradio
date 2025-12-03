@@ -11,7 +11,6 @@ export default async function Head({ params }: { params: Promise<{ id: string }>
 
     // Récupérer les données du produit
     const response = await fetch(`${apiUrl}/api/products/${id}/`, {
-      cache: 'revalidate',
       next: { revalidate: 3600 },
     });
 
