@@ -1,10 +1,17 @@
 import { Product } from './types';
+import type { Product as SchemaProduct, BreadcrumbList, Organization, FAQPage } from 'schema-dts';
 
 /**
  * Génère le schéma JSON-LD pour un produit
- * Conforme aux directives Google Rich Snippets pour e-commerce
+ * Utilise schema-dts pour un typage correct et compatible avec Google Rich Snippets
+ * @param product - Les données du produit
+ * @param baseUrl - L'URL de base du site
+ * @returns Le schéma Product conforme à schema.org
  */
-export function generateProductSchema(product: Product, baseUrl: string) {
+export function generateProductSchema(
+  product: Product,
+  baseUrl: string
+): SchemaProduct {
   // Déterminer le vendeur
   const retailerName =
     product.retailer === 'saturn'
@@ -20,42 +27,44 @@ export function generateProductSchema(product: Product, baseUrl: string) {
         ? 'https://www.mediamarkt.de'
         : undefined;
 
-  // Construire l'objet seller sans propriétés undefined
-  const seller: any = {
+  // Construire le seller - conforme schema-dts
+  const seller: Organization = {
     '@type': 'Organization',
     name: retailerName,
+    ...(retailerUrl && { url: retailerUrl }),
   };
 
-  if (retailerUrl) {
-    seller.url = retailerUrl;
-  }
+  // Date d'expiration du prix
+  const priceValidUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0];
 
-  // Construire l'offre
-  const offer: any = {
-    '@type': 'Offer',
+  // Construire l'offre - conforme Google Product Schema
+  const offer = {
+    '@type': 'Offer' as const,
     url: product.url,
     priceCurrency: product.currency || 'EUR',
     price: product.price.toString(),
     availability: 'https://schema.org/InStock',
     seller: seller,
+    priceValidUntil: priceValidUntil,
   };
 
-  // Ajouter la date d'expiration du prix si applicable
-  const priceValidUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split('T')[0];
-  if (priceValidUntil) {
-    offer.priceValidUntil = priceValidUntil;
-  }
-
-  // Construire le schéma produit (sans propriétés undefined)
-  const schema: any = {
+  // Construire le schéma produit - conforme schema-dts et Google
+  const schema: SchemaProduct = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.title,
     description: product.description || product.title,
     image: product.image || `${baseUrl}/default-product.jpg`,
     offers: offer,
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: 4.2,
+      ratingCount: 128,
+      bestRating: 5,
+      worstRating: 1,
+    },
   };
 
   // Ajouter les propriétés optionnelles uniquement si elles existent
@@ -74,22 +83,19 @@ export function generateProductSchema(product: Product, baseUrl: string) {
     schema.gtin = product.gtin;
   }
 
-  // Ajouter les avis si disponibles
-  schema.aggregateRating = {
-    '@type': 'AggregateRating',
-    ratingValue: '4.2',
-    ratingCount: '128',
-    bestRating: '5',
-    worstRating: '1',
-  };
-
   return schema;
 }
 
 /**
  * Génère le schéma BreadcrumbList pour le SEO
+ * @param product - Les données du produit
+ * @param baseUrl - L'URL de base du site
+ * @returns Le schéma BreadcrumbList conforme à schema.org
  */
-export function generateBreadcrumbSchema(product: Product, baseUrl: string) {
+export function generateBreadcrumbSchema(
+  product: Product,
+  baseUrl: string
+): BreadcrumbList {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -118,8 +124,11 @@ export function generateBreadcrumbSchema(product: Product, baseUrl: string) {
 
 /**
  * Génère le schéma FAQPage pour les questions fréquentes
+ * Améliore la présence dans les featured snippets Google
+ * @param baseUrl - L'URL de base du site
+ * @returns Le schéma FAQPage conforme à schema.org
  */
-export function generateFAQSchema(baseUrl: string) {
+export function generateFAQSchema(baseUrl: string): FAQPage {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -129,7 +138,7 @@ export function generateFAQSchema(baseUrl: string) {
         name: 'Quel est le meilleur endroit pour comparer les prix?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Preisradio vous permet de comparer les prix des produits électroniques chez les principaux détaillants allemands.',
+          text: 'Preisradio vous permet de comparer les prix des produits électroniques chez les principaux détaillants allemands en temps réel.',
         },
       },
       {
@@ -137,7 +146,7 @@ export function generateFAQSchema(baseUrl: string) {
         name: 'Comment puis-je trouver les meilleures offres?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Utilisez notre fonction de recherche pour trouver des produits et comparer les prix en temps réel.',
+          text: 'Utilisez notre fonction de recherche pour trouver des produits et comparer les prix en temps réel chez Saturn et MediaMarkt.',
         },
       },
       {
@@ -145,7 +154,7 @@ export function generateFAQSchema(baseUrl: string) {
         name: 'Les prix sont-ils à jour?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Nos prix sont mis à jour régulièrement pour vous offrir les informations les plus précises.',
+          text: 'Oui, nos prix sont mis à jour régulièrement pour vous offrir les informations les plus précises et actuelles.',
         },
       },
     ],
@@ -154,15 +163,18 @@ export function generateFAQSchema(baseUrl: string) {
 
 /**
  * Génère le schéma Organization pour le site
+ * Améliore la reconnaissance de la marque par Google
+ * @param baseUrl - L'URL de base du site
+ * @returns Le schéma Organization conforme à schema.org
  */
-export function generateOrganizationSchema(baseUrl: string) {
+export function generateOrganizationSchema(baseUrl: string): Organization {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Preisradio',
     url: baseUrl,
     logo: `${baseUrl}/logo.png`,
-    description: 'Comparateur de prix en ligne pour les électroniques en Allemagne',
+    description: 'Comparateur de prix en ligne pour les produits électroniques en Allemagne. Comparez les prix de Saturn et MediaMarkt.',
     sameAs: [
       'https://www.facebook.com/preisradio',
       'https://www.twitter.com/preisradio',
