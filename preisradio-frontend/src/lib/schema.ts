@@ -51,7 +51,7 @@ export function generateProductSchema(
   };
 
   // Construire le schéma produit - conforme schema-dts et Google
-  const schema: SchemaProduct = {
+  const schema: any = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.title,
@@ -83,7 +83,7 @@ export function generateProductSchema(
     schema.gtin = product.gtin;
   }
 
-  return schema;
+  return schema as SchemaProduct;
 }
 
 /**
