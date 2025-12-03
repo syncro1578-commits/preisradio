@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Analytics from "@/components/Analytics";
 import ConsentBanner from "@/components/ConsentBanner";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
@@ -119,6 +120,7 @@ export default function RootLayout({
         <Analytics />
         <ConsentBanner />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
