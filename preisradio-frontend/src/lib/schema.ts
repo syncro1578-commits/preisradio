@@ -5,65 +5,85 @@ import { Product } from './types';
  * Conforme aux directives Google Rich Snippets pour e-commerce
  */
 export function generateProductSchema(product: Product, baseUrl: string) {
-  const availability = 'https://schema.org/InStock';
+  // Déterminer le vendeur
+  const retailerName =
+    product.retailer === 'saturn'
+      ? 'Saturn'
+      : product.retailer === 'mediamarkt'
+        ? 'MediaMarkt'
+        : 'Retailer';
 
-  const retailerMap: { [key: string]: { name: string; logo: string } } = {
-    saturn: {
-      name: 'Saturn',
-      logo: 'https://www.saturn.de/favicon.ico',
-    },
-    mediamarkt: {
-      name: 'MediaMarkt',
-      logo: 'https://www.mediamarkt.de/favicon.ico',
-    },
+  const retailerUrl =
+    product.retailer === 'saturn'
+      ? 'https://www.saturn.de'
+      : product.retailer === 'mediamarkt'
+        ? 'https://www.mediamarkt.de'
+        : undefined;
+
+  // Construire l'objet seller sans propriétés undefined
+  const seller: any = {
+    '@type': 'Organization',
+    name: retailerName,
   };
 
-  const retailerInfo =
-    retailerMap[product.retailer?.toLowerCase() || ''] ||
-    retailerMap['saturn'];
+  if (retailerUrl) {
+    seller.url = retailerUrl;
+  }
 
-  return {
+  // Construire l'offre
+  const offer: any = {
+    '@type': 'Offer',
+    url: product.url,
+    priceCurrency: product.currency || 'EUR',
+    price: product.price.toString(),
+    availability: 'https://schema.org/InStock',
+    seller: seller,
+  };
+
+  // Ajouter la date d'expiration du prix si applicable
+  const priceValidUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0];
+  if (priceValidUntil) {
+    offer.priceValidUntil = priceValidUntil;
+  }
+
+  // Construire le schéma produit (sans propriétés undefined)
+  const schema: any = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    '@id': `${baseUrl}/product/${product.id}`,
     name: product.title,
     description: product.description || product.title,
-    image: product.image ? [product.image] : [`${baseUrl}/default-product.jpg`],
-    sku: product.sku || product.id,
-    ...(product.gtin && { gtin: product.gtin }),
-    brand: {
-      '@type': 'Brand',
-      name: product.brand || 'Unknown',
-    },
-    offers: {
-      '@type': 'Offer',
-      '@id': `${baseUrl}/product/${product.id}#offer`,
-      url: product.url,
-      priceCurrency: product.currency || 'EUR',
-      price: product.price.toString(),
-      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split('T')[0],
-      availability: availability,
-      seller: {
-        '@type': 'Organization',
-        name: retailerInfo.name,
-        image: retailerInfo.logo,
-        url: product.retailer === 'saturn'
-          ? 'https://www.saturn.de'
-          : product.retailer === 'mediamarkt'
-            ? 'https://www.mediamarkt.de'
-            : undefined,
-      },
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.2',
-      ratingCount: '128',
-      bestRating: '5',
-      worstRating: '1',
-    },
+    image: product.image || `${baseUrl}/default-product.jpg`,
+    offers: offer,
   };
+
+  // Ajouter les propriétés optionnelles uniquement si elles existent
+  if (product.brand) {
+    schema.brand = {
+      '@type': 'Brand',
+      name: product.brand,
+    };
+  }
+
+  if (product.sku) {
+    schema.sku = product.sku;
+  }
+
+  if (product.gtin) {
+    schema.gtin = product.gtin;
+  }
+
+  // Ajouter les avis si disponibles
+  schema.aggregateRating = {
+    '@type': 'AggregateRating',
+    ratingValue: '4.2',
+    ratingCount: '128',
+    bestRating: '5',
+    worstRating: '1',
+  };
+
+  return schema;
 }
 
 /**
