@@ -43,10 +43,18 @@ class RetailerViewSet(viewsets.ViewSet):
                 'id': 'otto',
                 'name': 'Otto',
                 'website': 'https://www.otto.de',
-                'category_count': OttoProduct.objects.count()
+                'category_count': self._safe_count(OttoProduct)
             }
         ]
         return Response({'results': retailers})
+
+    def _safe_count(self, model):
+        """Safely count documents, return 0 if connection fails"""
+        try:
+            return model.objects.count()
+        except Exception as e:
+            print(f"Warning: Could not count {model.__name__}: {e}")
+            return 0
 
     def retrieve(self, request, pk=None):
         """Retrieve a retailer by ID"""
@@ -67,7 +75,7 @@ class RetailerViewSet(viewsets.ViewSet):
                 'id': 'otto',
                 'name': 'Otto',
                 'website': 'https://www.otto.de',
-                'product_count': OttoProduct.objects.count()
+                'product_count': self._safe_count(OttoProduct)
             }
         }
         if pk in retailers:
