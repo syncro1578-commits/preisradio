@@ -6,10 +6,11 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.http import condition
 from django.utils.decorators import method_decorator
 from mongoengine.queryset.visitor import Q
-from .models import SaturnProduct, MediaMarktProduct
+from .models import SaturnProduct, MediaMarktProduct, OttoProduct
 from .serializers import (
     SaturnProductSerializer,
     MediaMarktProductSerializer,
+    OttoProductSerializer,
 )
 from datetime import datetime
 
@@ -21,7 +22,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 
 class RetailerViewSet(viewsets.ViewSet):
-    """ViewSet for retailers (Saturn and MediaMarkt)"""
+    """ViewSet for retailers (Saturn, MediaMarkt, and Otto)"""
 
     def list(self, request):
         """List all retailers"""
@@ -37,6 +38,12 @@ class RetailerViewSet(viewsets.ViewSet):
                 'name': 'MediaMarkt',
                 'website': 'https://www.mediamarkt.de',
                 'category_count': MediaMarktProduct.objects.count()
+            },
+            {
+                'id': 'otto',
+                'name': 'Otto',
+                'website': 'https://www.otto.de',
+                'category_count': OttoProduct.objects.count()
             }
         ]
         return Response({'results': retailers})
@@ -55,6 +62,12 @@ class RetailerViewSet(viewsets.ViewSet):
                 'name': 'MediaMarkt',
                 'website': 'https://www.mediamarkt.de',
                 'product_count': MediaMarktProduct.objects.count()
+            },
+            'otto': {
+                'id': 'otto',
+                'name': 'Otto',
+                'website': 'https://www.otto.de',
+                'product_count': OttoProduct.objects.count()
             }
         }
         if pk in retailers:
@@ -63,7 +76,7 @@ class RetailerViewSet(viewsets.ViewSet):
 
 
 class ProductViewSet(viewsets.ViewSet):
-    """ViewSet for products from both retailers"""
+    """ViewSet for products from all retailers (Saturn, MediaMarkt, and Otto)"""
 
     def _calculate_search_relevance(self, product, search_term):
         """Calculate relevance score for a product based on search term match.
@@ -126,6 +139,7 @@ class ProductViewSet(viewsets.ViewSet):
         # Build queries with filters
         saturn_query = None
         mediamarkt_query = None
+        otto_query = None
 
         if retailer in ['all', 'saturn']:
             saturn_query = SaturnProduct.objects()
@@ -149,6 +163,20 @@ class ProductViewSet(viewsets.ViewSet):
                 mediamarkt_query = mediamarkt_query.filter(brand=brand)
             if search:
                 mediamarkt_query = mediamarkt_query.filter(
+                    Q(title__icontains=search) |
+                    Q(gtin__icontains=search) |
+                    Q(description__icontains=search) |
+                    Q(brand__icontains=search)
+                )
+
+        if retailer in ['all', 'otto']:
+            otto_query = OttoProduct.objects()
+            if category:
+                otto_query = otto_query.filter(category=category)
+            if brand:
+                otto_query = otto_query.filter(brand=brand)
+            if search:
+                otto_query = otto_query.filter(
                     Q(title__icontains=search) |
                     Q(gtin__icontains=search) |
                     Q(description__icontains=search) |
@@ -186,21 +214,39 @@ class ProductViewSet(viewsets.ViewSet):
             page_products = mediamarkt_with_scores[start:end]
             page_products = [(p, source) for p, source, _ in page_products]
 
+        elif retailer == 'otto':
+            # Single retailer pagination with relevance scoring
+            otto_results = list(otto_query.order_by('-scraped_at').limit(1000)) if otto_query else []
+            total_count = otto_query.count() if otto_query else 0
+
+            # Add relevance scores and sort by score (descending), then by date
+            otto_with_scores = [(p, 'otto', self._calculate_search_relevance(p, search)) for p in otto_results]
+            otto_with_scores.sort(key=lambda x: (-x[2], -(x[0].scraped_at.timestamp() if x[0].scraped_at else 0)))
+
+            # Apply pagination after sorting
+            end = start + page_size
+            page_products = otto_with_scores[start:end]
+            page_products = [(p, source) for p, source, _ in page_products]
+
         else:
             # For 'all' retailers - load from both and merge with relevance scoring
             saturn_count = saturn_query.count() if saturn_query else 0
             mediamarkt_count = mediamarkt_query.count() if mediamarkt_query else 0
             total_count = saturn_count + mediamarkt_count
+            otto_count = otto_query.count() if otto_query else 0
+            total_count = saturn_count + mediamarkt_count + otto_count
 
             # Load enough results to ensure good page results after sorting
             load_size = max(page_size * 5, 250)
 
             saturn_results = list(saturn_query.order_by('-scraped_at').limit(load_size)) if saturn_query else []
             mediamarkt_results = list(mediamarkt_query.order_by('-scraped_at').limit(load_size)) if mediamarkt_query else []
+            otto_results = list(otto_query.order_by('-scraped_at').limit(load_size)) if otto_query else []
 
             # Combine products with relevance scores
             products = [(p, 'saturn', self._calculate_search_relevance(p, search)) for p in saturn_results]
             products += [(p, 'mediamarkt', self._calculate_search_relevance(p, search)) for p in mediamarkt_results]
+            products += [(p, 'otto', self._calculate_search_relevance(p, search)) for p in otto_results]
 
             # Sort by relevance score (descending), then by date (most recent first)
             products.sort(key=lambda x: (-x[2], -(x[0].scraped_at.timestamp() if x[0].scraped_at else 0)))
@@ -215,8 +261,12 @@ class ProductViewSet(viewsets.ViewSet):
         for product, source in page_products:
             if source == 'saturn':
                 serializer = SaturnProductSerializer(product)
-            else:
+            elif source == 'mediamarkt':
                 serializer = MediaMarktProductSerializer(product)
+            elif source == 'otto':
+                serializer = OttoProductSerializer(product)
+            else:
+                continue  # Unknown retailer
             data = serializer.data
             data['retailer'] = source
             results.append(data)
@@ -251,6 +301,16 @@ class ProductViewSet(viewsets.ViewSet):
             data['retailer'] = 'mediamarkt'
             return Response(data)
         except MediaMarktProduct.DoesNotExist:
+            pass
+
+        # Try Otto
+        try:
+            product = OttoProduct.objects.get(id=pk)
+            serializer = OttoProductSerializer(product)
+            data = serializer.data
+            data['retailer'] = 'otto'
+            return Response(data)
+        except OttoProduct.DoesNotExist:
             return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=['get'])
@@ -258,8 +318,9 @@ class ProductViewSet(viewsets.ViewSet):
         """Get all unique categories with pagination and search"""
         saturn_categories = set(SaturnProduct.objects.distinct('category'))
         mediamarkt_categories = set(MediaMarktProduct.objects.distinct('category'))
+        otto_categories = set(OttoProduct.objects.distinct('category'))
 
-        all_categories = sorted(list(saturn_categories | mediamarkt_categories))
+        all_categories = sorted(list(saturn_categories | mediamarkt_categories | otto_categories))
 
         # Filter by search query
         search = request.query_params.get('search', '').lower()
@@ -315,6 +376,15 @@ class ProductViewSet(viewsets.ViewSet):
             data['retailer'] = 'mediamarkt'
             products.append(data)
         except MediaMarktProduct.DoesNotExist:
+            pass
+
+        try:
+            otto_product = OttoProduct.objects.get(gtin=gtin)
+            serializer = OttoProductSerializer(otto_product)
+            data = serializer.data
+            data['retailer'] = 'otto'
+            products.append(data)
+        except OttoProduct.DoesNotExist:
             pass
 
         if not products:
@@ -485,6 +555,12 @@ class ProductViewSet(viewsets.ViewSet):
                 .limit(limit)
             )
 
+            otto_products = list(
+                OttoProduct.objects.only('id', 'scraped_at')
+                .order_by('-scraped_at')
+                .limit(limit)
+            )
+
             # Combine and format for sitemap
             all_products = []
 
@@ -500,13 +576,20 @@ class ProductViewSet(viewsets.ViewSet):
                     'lastModified': p.scraped_at.isoformat() if p.scraped_at else datetime.now().isoformat()
                 })
 
+            for p in otto_products:
+                all_products.append({
+                    'id': str(p.id),
+                    'lastModified': p.scraped_at.isoformat() if p.scraped_at else datetime.now().isoformat()
+                })
+
             # Sort by date descending
             all_products.sort(key=lambda x: x['lastModified'], reverse=True)
 
             # Get total counts
             total_saturn = SaturnProduct.objects.count()
             total_mediamarkt = MediaMarktProduct.objects.count()
-            total_count = total_saturn + total_mediamarkt
+            total_otto = OttoProduct.objects.count()
+            total_count = total_saturn + total_mediamarkt + total_otto
 
             return Response({
                 'count': total_count,

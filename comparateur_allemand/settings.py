@@ -105,14 +105,21 @@ MEDIAMARKT_URI = os.getenv('MONGODB_MEDIAMARKT_URI', 'mongodb+srv://stronglimitl
 MEDIAMARKT_DB = os.getenv('MONGODB_MEDIAMARKT_DB', 'Mediamarkt')
 MEDIAMARKT_COLLECTION = os.getenv('MONGODB_MEDIAMARKT_COLLECTION', 'Db')
 
+# Otto Database Configuration
+OTTO_URI = os.getenv('MONGODB_OTTO_URI', 'mongodb+srv://stronglimitless76_db_user:ThiKAzVAqh0fmbtS@otto.sx1z58n.mongodb.net/')
+OTTO_DB = os.getenv('MONGODB_OTTO_DB', 'Otto')
+OTTO_COLLECTION = os.getenv('MONGODB_OTTO_COLLECTION', 'Db')
+
 # Build full URIs with database names
 SATURN_FULL_URI = f"{SATURN_URI}{SATURN_DB}?retryWrites=true&w=majority"
 MEDIAMARKT_FULL_URI = f"{MEDIAMARKT_URI}{MEDIAMARKT_DB}?retryWrites=true&w=majority"
+OTTO_FULL_URI = f"{OTTO_URI}{OTTO_DB}?retryWrites=true&w=majority"
 
 # Print configuration for debugging
 print(f"📊 MongoDB Configuration:")
 print(f"   Saturn DB: {SATURN_DB}, Collection: {SATURN_COLLECTION}")
 print(f"   MediaMarkt DB: {MEDIAMARKT_DB}, Collection: {MEDIAMARKT_COLLECTION}")
+print(f"   Otto DB: {OTTO_DB}, Collection: {OTTO_COLLECTION}")
 
 # Initialize MongoDB connections
 # Disconnect existing connections to avoid duplicate registration errors
@@ -123,6 +130,11 @@ except:
 
 try:
     mongoengine.disconnect(alias='mediamarkt')
+except:
+    pass
+
+try:
+    mongoengine.disconnect(alias='otto')
 except:
     pass
 
@@ -153,6 +165,20 @@ try:
     print("✓ MediaMarkt database connected successfully")
 except Exception as e:
     print(f"✗ MediaMarkt database connection failed: {e}")
+
+# Connect to Otto database
+try:
+    mongoengine.connect(
+        alias='otto',
+        host=OTTO_FULL_URI,
+        connectTimeoutMS=30000,
+        serverSelectionTimeoutMS=30000,
+        socketTimeoutMS=30000,
+        maxPoolSize=100,
+    )
+    print("✓ Otto database connected successfully")
+except Exception as e:
+    print(f"✗ Otto database connection failed: {e}")
 
 
 # Password validation
