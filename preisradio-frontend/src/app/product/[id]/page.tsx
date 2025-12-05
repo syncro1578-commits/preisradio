@@ -166,6 +166,8 @@ export default function ProductDetail() {
       return { name: 'Saturn', color: 'bg-red-600', logo: '🪐' };
     } else if (retailer === 'mediamarkt') {
       return { name: 'MediaMarkt', color: 'bg-red-700', logo: '📺' };
+    } else if (retailer === 'otto') {
+      return { name: 'Otto', color: 'bg-blue-600', logo: '🛒' };
     }
     return { name: 'Händler', color: 'bg-gray-600', logo: '🏪' };
   };
