@@ -35,6 +35,8 @@ export default function HaendlerPage() {
   // Calculer les stats pour chaque détaillant
   const retailersWithStats = retailers.map((retailer) => {
     // Filtrer les produits de ce retailer
+    // Note: retailer.id from API is 'saturn', 'mediamarkt', or 'otto'
+    // product.retailer also contains the same values
     const retailerProducts = products.filter((product) =>
       product.retailer === retailer.id
     );

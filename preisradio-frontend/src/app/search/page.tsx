@@ -363,6 +363,17 @@ function SearchContent() {
                     />
                     <span className="text-sm text-gray-700 dark:text-gray-300">MediaMarkt</span>
                   </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="retailer"
+                      value="otto"
+                      checked={selectedRetailer === 'otto'}
+                      onChange={(e) => setSelectedRetailer(e.target.value)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Otto</span>
+                  </label>
                 </div>
               </div>
 
