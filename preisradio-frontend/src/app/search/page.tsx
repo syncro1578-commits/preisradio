@@ -112,18 +112,14 @@ function SearchContent() {
         search: searchQuery || query || undefined,
         category: selectedCategory || categoryParam || undefined,
         brand: selectedBrand || brandParam || undefined,
+        retailer: selectedRetailer || retailerParam || undefined, // Pass retailer to API
         page: page,
         page_size: pageSize,
       });
 
       let results = response?.results || [];
 
-      // Filtrer par retailer si selectionne
-      if (selectedRetailer || retailerParam) {
-        results = results.filter(p => p.retailer === (selectedRetailer || retailerParam));
-      }
-
-      // Filtrer par plage de prix
+      // Filtrer par plage de prix (client-side)
       if (priceRange.min) {
         results = results.filter(p => p.price >= parseFloat(priceRange.min));
       }
@@ -131,7 +127,7 @@ function SearchContent() {
         results = results.filter(p => p.price <= parseFloat(priceRange.max));
       }
 
-      // Filtrer par rabatt minimum
+      // Filtrer par rabatt minimum (client-side)
       if (selectedDiscount) {
         const minDiscount = parseFloat(selectedDiscount);
         results = results.filter(p => {
