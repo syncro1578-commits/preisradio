@@ -181,8 +181,8 @@ export function generateOrganizationSchema(baseUrl: string): Organization {
     '@type': 'Organization',
     name: 'Preisradio',
     url: baseUrl,
-    logo: `${baseUrl}/logo.png`,
-    description: 'Online-Preisvergleich für Elektronikprodukte in Deutschland. Vergleichen Sie Preise von Saturn und MediaMarkt in Echtzeit und finden Sie die besten Angebote.',
+    logo: `${baseUrl}/favicon.ico`,
+    description: 'Online-Preisvergleich für Elektronikprodukte in Deutschland. Vergleichen Sie Preise von Saturn, MediaMarkt und Otto in Echtzeit und finden Sie die besten Angebote.',
     sameAs: [
       'https://www.facebook.com/preisradio',
       'https://www.twitter.com/preisradio',

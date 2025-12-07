@@ -42,18 +42,18 @@ export const metadata: Metadata = {
     description: 'Vergleichen Sie Preise von Saturn und MediaMarkt in Echtzeit. Finden Sie die besten Angebote für Elektronik.',
     images: [
       {
-        url: `${baseUrl}/og-image.jpg`,
-        width: 1200,
-        height: 630,
+        url: `${baseUrl}/favicon.ico`,
+        width: 512,
+        height: 512,
         alt: 'Preisradio Preisvergleich',
       },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
+    card: 'summary',
     title: 'Preisradio - Preisvergleich Deutschland',
     description: 'Vergleichen Sie Preise von Saturn und MediaMarkt in Echtzeit.',
-    images: [`${baseUrl}/og-image.jpg`],
+    images: [`${baseUrl}/favicon.ico`],
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
@@ -103,7 +103,7 @@ export default function RootLayout({
                 url: baseUrl,
                 logo: {
                   '@type': 'ImageObject',
-                  url: `${baseUrl}/logo.png`
+                  url: `${baseUrl}/favicon.ico`
                 }
               }
             })
