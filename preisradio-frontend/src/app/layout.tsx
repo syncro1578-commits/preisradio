@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   authors: [{ name: 'Preisradio' }],
   creator: 'Preisradio',
   publisher: 'Preisradio',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
   robots: {
     index: true,
     follow: true,
