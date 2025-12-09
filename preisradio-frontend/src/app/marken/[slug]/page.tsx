@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
 import { Product } from '@/lib/types';
 import api from '@/lib/api';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function BrandDetailPage() {
   const params = useParams();
@@ -28,28 +28,21 @@ export default function BrandDetailPage() {
     try {
       setLoading(true);
 
-      // Récupérer tous les produits en utilisant la pagination
-      let allProducts: Product[] = [];
-      let page = 1;
-      let hasMore = true;
-      const pageSize = 500; // Load 500 products per request
+      // Convertir le slug en nom de marque approximatif pour la requête
+      const brandQuery = slug.split('-').map(word =>
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join(' ');
 
-      while (hasMore) {
-        const response = await api.getProductsFromBothRetailers({
-          page: page,
-          page_size: pageSize,
-        });
+      // Charger les produits de tous les retailers avec le filtre de marque
+      const response = await api.getProductsFromBothRetailers({
+        brand: brandQuery,
+        page_size: 1000, // Charger jusqu'à 1000 produits de cette marque
+      });
 
-        const products = response?.results || [];
-        allProducts = allProducts.concat(products);
+      const products = response?.results || [];
 
-        // Check if there are more pages
-        hasMore = response?.next !== null && products.length === pageSize;
-        page++;
-      }
-
-      // Filtrer par marque (convertir le slug en nom de marque)
-      const brandProducts = allProducts.filter((product) => {
+      // Filtrer pour être sûr que le slug correspond exactement
+      const brandProducts = products.filter((product) => {
         if (!product.brand) return false;
         const productSlug = product.brand.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         return productSlug === slug;
@@ -106,34 +99,24 @@ export default function BrandDetailPage() {
       <Navigation />
 
       <main className="container mx-auto px-4 py-8 md:py-12">
-        {/* Header with Back Button */}
-        <div className="mb-8 md:mb-12">
-          <Link
-            href="/marken"
-            className="mb-4 inline-flex items-center text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
-          >
-            <svg
-              className="mr-2 h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            Zurück zu allen Marken
-          </Link>
+        {/* Breadcrumbs */}
+        {brandName && (
+          <Breadcrumbs
+            items={[
+              { label: 'Marken', href: '/marken' },
+              { label: brandName }
+            ]}
+          />
+        )}
 
+        {/* Header */}
+        <div className="mb-8 md:mb-12">
           <div className="text-center">
             <h1 className="mb-3 text-3xl md:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
               {brandName || 'Marke'}
             </h1>
             <p className="mx-auto max-w-2xl text-base md:text-lg text-gray-600 dark:text-gray-400">
-              Alle Produkte von {brandName} bei verschiedenen Händlern
+              Alle Produkte von {brandName} bei Saturn, MediaMarkt und Otto
             </p>
           </div>
         </div>
@@ -305,21 +288,29 @@ export default function BrandDetailPage() {
                             Alle
                           </span>
                         </label>
-                        {retailers.map((retailer) => (
-                          <label key={retailer} className="flex items-center">
-                            <input
-                              type="radio"
-                              name="retailer"
-                              value={retailer}
-                              checked={selectedRetailer === retailer}
-                              onChange={(e) => setSelectedRetailer(e.target.value)}
-                              className="mr-2"
-                            />
-                            <span className="text-sm text-gray-700 dark:text-gray-300 capitalize">
-                              {retailer}
-                            </span>
-                          </label>
-                        ))}
+                        {retailers.map((retailer) => {
+                          const retailerNames: Record<string, string> = {
+                            'saturn': 'Saturn',
+                            'mediamarkt': 'MediaMarkt',
+                            'otto': 'Otto'
+                          };
+                          const displayName = retailer ? (retailerNames[retailer] || retailer) : retailer;
+                          return (
+                            <label key={retailer} className="flex items-center">
+                              <input
+                                type="radio"
+                                name="retailer"
+                                value={retailer}
+                                checked={selectedRetailer === retailer}
+                                onChange={(e) => setSelectedRetailer(e.target.value)}
+                                className="mr-2"
+                              />
+                              <span className="text-sm text-gray-700 dark:text-gray-300">
+                                {displayName}
+                              </span>
+                            </label>
+                          );
+                        })}
                       </div>
                     </div>
                   )}

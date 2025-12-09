@@ -38,6 +38,7 @@ export default function Footer() {
         { href: '/haendler', label: 'Alle Händler' },
         { href: '/search?retailer=saturn', label: 'Saturn' },
         { href: '/search?retailer=mediamarkt', label: 'MediaMarkt' },
+        { href: '/search?retailer=otto', label: 'Otto' },
       ],
     },
   ];
