@@ -1,7 +1,20 @@
 import { Suspense } from 'react';
+import { Metadata } from 'next';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import HomeContent from '@/components/HomeContent';
+
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: baseUrl,
+    languages: {
+      'de-DE': baseUrl,
+      'x-default': baseUrl,
+    },
+  },
+};
 
 function HomeLoadingFallback() {
   return (
