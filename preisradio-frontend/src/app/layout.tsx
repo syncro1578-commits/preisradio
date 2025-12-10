@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from 'next/script';
 import "./globals.css";
 import Analytics from "@/components/Analytics";
 import ConsentBanner from "@/components/ConsentBanner";
@@ -80,20 +81,29 @@ export default function RootLayout({
 
   return (
     <html lang="de-DE">
-      <head>
-        {/* Google Tag Manager */}
+      <body className="antialiased">
+        {/* Google Tag Manager - Next.js will move to <head> automatically */}
         {GTM_ID && (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          <>
+            <Script id="google-tag-manager" strategy="afterInteractive">
+              {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${GTM_ID}');`,
-            }}
-          />
+})(window,document,'script','dataLayer','${GTM_ID}');`}
+            </Script>
+            <noscript>
+              <iframe
+                src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+                height="0"
+                width="0"
+                style={{ display: 'none', visibility: 'hidden' }}
+              />
+            </noscript>
+          </>
         )}
 
+        {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -102,7 +112,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               '@type': 'WebSite',
               name: 'Preisradio',
               url: baseUrl,
-              description: 'Preisvergleich für Elektronikprodukte von Saturn und MediaMarkt',
+              description: 'Preisvergleich für Elektronikprodukte von Saturn, MediaMarkt und Otto',
               inLanguage: 'de-DE',
               potentialAction: {
                 '@type': 'SearchAction',
@@ -136,21 +146,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             __html: JSON.stringify(faqSchema),
           }}
         />
-      </head>
-      <body
-        className="antialiased"
-      >
-        {/* Google Tag Manager (noscript) */}
-        {GTM_ID && (
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-              height="0"
-              width="0"
-              style={{ display: 'none', visibility: 'hidden' }}
-            />
-          </noscript>
-        )}
+
         <Analytics />
         <ConsentBanner />
         {children}
