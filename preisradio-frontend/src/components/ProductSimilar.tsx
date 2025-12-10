@@ -58,12 +58,12 @@ export default function ProductSimilar({ productId }: ProductSimilarProps) {
             <Link key={product.id} href={`/product/${product.id}`}>
               <div className="group relative overflow-hidden rounded-lg border border-gray-200 bg-white transition-all hover:shadow-lg hover:border-blue-300 dark:bg-zinc-900 dark:border-zinc-800 dark:hover:border-blue-600 flex flex-col">
                 {/* Image */}
-                <div className="flex flex-1 h-32 sm:h-40 items-center justify-center overflow-hidden bg-gray-50 dark:bg-zinc-800">
+                <div className="relative h-48 w-full overflow-hidden bg-gray-50 dark:bg-zinc-800">
                   {product.image ? (
                     <img
                       src={product.image}
                       alt={product.title}
-                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                      className="h-full w-full object-contain transition-transform group-hover:scale-105"
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-gray-400">

@@ -182,7 +182,7 @@ class ApiClient {
 
     return {
       ...response,
-      results: filteredResults.slice(0, 6), // Return only 6 similar products
+      results: filteredResults.slice(0, 3), // Return only 3 similar products
     };
   }
 
