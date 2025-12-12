@@ -7,6 +7,7 @@ import HomeContent from '@/components/HomeContent';
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
 export const metadata: Metadata = {
+  description: 'Vergleichen Sie Preise von Saturn und MediaMarkt in Echtzeit. Finden Sie die besten Angebote für Elektronik, Laptops, Smartphones und mehr.',
   alternates: {
     canonical: baseUrl,
     languages: {

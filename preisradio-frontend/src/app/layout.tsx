@@ -12,10 +12,9 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Preisradio - Preisvergleich Deutschland | Saturn & MediaMarkt',
+    default: 'Preisvergleich Deutschland | Saturn & MediaMarkt',
     template: '%s | Preisradio'
   },
-  description: 'Vergleichen Sie Preise von Saturn und MediaMarkt in Echtzeit. Finden Sie die besten Angebote für Elektronik, Laptops, Smartphones und mehr.',
   keywords: ['Preisvergleich', 'Saturn', 'MediaMarkt', 'Elektronik', 'Preise vergleichen', 'Deutschland', 'Online Shopping', 'Laptops', 'Smartphones'],
   authors: [{ name: 'Preisradio' }],
   creator: 'Preisradio',

@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const product = await api.getProduct(resolvedParams.id);
 
     return {
-      title: `${product.title} | Preisradio`,
+      title: product.title,
       description: `${product.title} - Preis: ${product.price.toFixed(2)} ${product.currency}. Vergleichen Sie Preise bei ${product.retailer === 'saturn' ? 'Saturn' : product.retailer === 'mediamarkt' ? 'MediaMarkt' : 'Otto'}.`,
       openGraph: {
         title: `${product.title} | Preisradio`,
