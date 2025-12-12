@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import Script from 'next/script';
 import ProductDetailClient from './ProductDetailClient';
 import api from '@/lib/api';
 import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/schema';
@@ -60,10 +59,9 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
 
   return (
     <>
-      {/* JSON-LD Product Schema */}
+      {/* JSON-LD Product Schema - Must use <script> not <Script> for SSR */}
       {productSchema && (
-        <Script
-          id="product-schema"
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(productSchema),
@@ -73,8 +71,7 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
 
       {/* JSON-LD Breadcrumb Schema */}
       {breadcrumbSchema && (
-        <Script
-          id="breadcrumb-schema"
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(breadcrumbSchema),
