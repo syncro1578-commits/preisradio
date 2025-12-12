@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import Script from 'next/script';
 import ProductDetailClient from './ProductDetailClient';
 import api from '@/lib/api';
 import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/schema';
@@ -60,22 +59,18 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
 
   return (
     <>
-      {/* JSON-LD injected via Next.js Script with beforeInteractive strategy */}
+      {/* JSON-LD schemas - Server-side rendered (like in root layout) */}
       {productSchema && (
-        <Script
-          id="product-jsonld"
+        <script
           type="application/ld+json"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(productSchema),
           }}
         />
       )}
       {breadcrumbSchema && (
-        <Script
-          id="breadcrumb-jsonld"
+        <script
           type="application/ld+json"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(breadcrumbSchema),
           }}
