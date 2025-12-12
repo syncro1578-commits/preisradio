@@ -10,6 +10,7 @@ import ProductSimilar from '@/components/ProductSimilar';
 import PriceComparison from '@/components/PriceComparison';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import ProductJsonLdHead from '@/components/ProductJsonLdHead';
 
 export default function ProductDetailClient({ productId }: { productId: string }) {
   const router = useRouter();
@@ -109,6 +110,9 @@ export default function ProductDetailClient({ productId }: { productId: string }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
+      {/* Inject JSON-LD into head */}
+      <ProductJsonLdHead product={product} />
+
       <Navigation />
 
       <main className="container mx-auto px-4 py-6 md:py-8">
