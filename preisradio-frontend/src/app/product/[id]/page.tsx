@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import ProductDetailClient from './ProductDetailClient';
 import api from '@/lib/api';
-import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
@@ -44,42 +43,5 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
-
-  // Fetch product data for JSON-LD
-  let productSchema = null;
-  let breadcrumbSchema = null;
-
-  try {
-    const product = await api.getProduct(resolvedParams.id);
-    productSchema = generateProductSchema(product, baseUrl);
-    breadcrumbSchema = generateBreadcrumbSchema(product, baseUrl);
-  } catch (error) {
-    console.error('Error generating schemas:', error);
-  }
-
-  return (
-    <>
-      {/* JSON-LD Product Schema - Must use <script> not <Script> for SSR */}
-      {productSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(productSchema),
-          }}
-        />
-      )}
-
-      {/* JSON-LD Breadcrumb Schema */}
-      {breadcrumbSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(breadcrumbSchema),
-          }}
-        />
-      )}
-
-      <ProductDetailClient productId={resolvedParams.id} />
-    </>
-  );
+  return <ProductDetailClient productId={resolvedParams.id} />;
 }
