@@ -3,8 +3,8 @@ import { Metadata } from 'next';
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
 export const metadata: Metadata = {
-  title: 'Händler | Preisradio',
-  description: 'Alle Partner-Händler und Shops - Saturn und MediaMarkt Preisvergleich',
+  title: 'Partner-Händler: Saturn, MediaMarkt & Otto Shops',
+  description: 'Entdecken Sie alle Partner-Händler bei Preisradio. Vergleichen Sie Preise von Saturn, MediaMarkt und Otto. Finden Sie zuverlässige Online-Shops für Elektronik.',
   alternates: {
     canonical: `${baseUrl}/haendler`,
     languages: {
