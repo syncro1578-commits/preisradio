@@ -18,7 +18,7 @@ from datetime import datetime
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 20
     page_size_query_param = 'page_size'
-    max_page_size = 100
+    max_page_size = 10000  # Allow up to 10000 items for sitemap generation
 
 
 class RetailerViewSet(viewsets.ViewSet):
@@ -196,7 +196,9 @@ class ProductViewSet(viewsets.ViewSet):
 
         if retailer == 'saturn':
             # Single retailer pagination with relevance scoring
-            saturn_results = list(saturn_query.order_by('-scraped_at').limit(1000)) if saturn_query else []
+            # Limit to max of 10000 to respect MAX_PAGE_SIZE setting
+            query_limit = min(page_size * 2, 10000)
+            saturn_results = list(saturn_query.order_by('-scraped_at').limit(query_limit)) if saturn_query else []
             total_count = saturn_query.count() if saturn_query else 0
 
             # Add relevance scores and sort by score (descending), then by date
@@ -210,7 +212,9 @@ class ProductViewSet(viewsets.ViewSet):
 
         elif retailer == 'mediamarkt':
             # Single retailer pagination with relevance scoring
-            mediamarkt_results = list(mediamarkt_query.order_by('-scraped_at').limit(1000)) if mediamarkt_query else []
+            # Limit to max of 10000 to respect MAX_PAGE_SIZE setting
+            query_limit = min(page_size * 2, 10000)
+            mediamarkt_results = list(mediamarkt_query.order_by('-scraped_at').limit(query_limit)) if mediamarkt_query else []
             total_count = mediamarkt_query.count() if mediamarkt_query else 0
 
             # Add relevance scores and sort by score (descending), then by date
@@ -224,7 +228,9 @@ class ProductViewSet(viewsets.ViewSet):
 
         elif retailer == 'otto':
             # Single retailer pagination with relevance scoring
-            otto_results = list(otto_query.order_by('-scraped_at').limit(1000)) if otto_query else []
+            # Limit to max of 10000 to respect MAX_PAGE_SIZE setting
+            query_limit = min(page_size * 2, 10000)
+            otto_results = list(otto_query.order_by('-scraped_at').limit(query_limit)) if otto_query else []
             total_count = otto_query.count() if otto_query else 0
 
             # Add relevance scores and sort by score (descending), then by date
@@ -245,7 +251,8 @@ class ProductViewSet(viewsets.ViewSet):
             total_count = saturn_count + mediamarkt_count + otto_count
 
             # Load enough results to ensure good page results after sorting
-            load_size = max(page_size * 5, 250)
+            # Cap at 10000 to respect MAX_PAGE_SIZE setting
+            load_size = min(max(page_size * 5, 250), 10000)
 
             saturn_results = list(saturn_query.order_by('-scraped_at').limit(load_size)) if saturn_query else []
             mediamarkt_results = list(mediamarkt_query.order_by('-scraped_at').limit(load_size)) if mediamarkt_query else []
