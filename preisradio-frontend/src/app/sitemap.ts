@@ -54,26 +54,47 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    // Fetch products for sitemap (use full products endpoint to get brand and category)
-    const productsResponse = await fetch(
-      `${API_URL}/products/?page_size=10000`,
-      {
+    // Fetch 10000 products from each retailer in parallel (30000 total)
+    const [saturnResponse, mediamarktResponse, ottoResponse] = await Promise.all([
+      fetch(`${API_URL}/products/?page_size=10000&retailer=saturn`, {
         next: { revalidate: 86400 },
         headers: { 'User-Agent': 'Preisradio-SitemapGenerator/1.0' },
-      }
-    );
+      }),
+      fetch(`${API_URL}/products/?page_size=10000&retailer=mediamarkt`, {
+        next: { revalidate: 86400 },
+        headers: { 'User-Agent': 'Preisradio-SitemapGenerator/1.0' },
+      }),
+      fetch(`${API_URL}/products/?page_size=10000&retailer=otto`, {
+        next: { revalidate: 86400 },
+        headers: { 'User-Agent': 'Preisradio-SitemapGenerator/1.0' },
+      }),
+    ]);
 
     let productPages: MetadataRoute.Sitemap = [];
     let brandPages: MetadataRoute.Sitemap = [];
     let categoryPages: MetadataRoute.Sitemap = [];
 
-    if (productsResponse.ok) {
-      const data = await productsResponse.json();
-      const products = data.results || [];
+    // Combine products from all retailers
+    const allProducts: any[] = [];
 
-      if (products.length > 0) {
-        // Use all fetched products (max 10000 from API)
-        const limitedProducts = products;
+    if (saturnResponse.ok) {
+      const data = await saturnResponse.json();
+      allProducts.push(...(data.results || []));
+    }
+    if (mediamarktResponse.ok) {
+      const data = await mediamarktResponse.json();
+      allProducts.push(...(data.results || []));
+    }
+    if (ottoResponse.ok) {
+      const data = await ottoResponse.json();
+      allProducts.push(...(data.results || []));
+    }
+
+    if (allProducts.length > 0) {
+      const products = allProducts;
+
+      // Use all fetched products (max 30000 from 3 retailers)
+      const limitedProducts = products;
 
         // Generate product pages
         productPages = limitedProducts.map((product: any) => ({
@@ -126,7 +147,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           changeFrequency: 'daily' as const,
           priority: 0.8,
         }));
-      }
     }
 
     // Combine all URLs and respect 50000 URL limit
