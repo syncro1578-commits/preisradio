@@ -11,15 +11,29 @@ import PriceComparison from '@/components/PriceComparison';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
-export default function ProductDetailClient({ productId }: { productId: string }) {
-  const router = useRouter();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface ProductDetailClientProps {
+  productId: string;
+  initialProduct: Product | null;
+  initialError: string | null;
+}
 
+export default function ProductDetailClient({
+  productId,
+  initialProduct,
+  initialError
+}: ProductDetailClientProps) {
+  const router = useRouter();
+  // Use server-provided data as initial state
+  const [product, setProduct] = useState<Product | null>(initialProduct);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(initialError);
+
+  // Only fetch client-side if initial data is missing
   useEffect(() => {
-    loadProduct();
-  }, [productId]);
+    if (!initialProduct && !initialError) {
+      loadProduct();
+    }
+  }, [productId, initialProduct, initialError]);
 
   const loadProduct = async () => {
     try {

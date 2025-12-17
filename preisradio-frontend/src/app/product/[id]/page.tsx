@@ -45,21 +45,24 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
 
-  // Fetch product for JSON-LD (server-side)
+  // Fetch product server-side for SSR and JSON-LD
+  let product = null;
   let productSchema = null;
   let breadcrumbSchema = null;
+  let error = null;
 
   try {
-    const product = await api.getProduct(resolvedParams.id);
+    product = await api.getProduct(resolvedParams.id);
     productSchema = generateProductSchema(product, baseUrl);
     breadcrumbSchema = generateBreadcrumbSchema(product, baseUrl);
-  } catch (error) {
-    console.error('Error generating JSON-LD:', error);
+  } catch (err) {
+    console.error('Error fetching product:', err);
+    error = 'Fehler beim Laden des Produkts';
   }
 
   return (
     <>
-      {/* JSON-LD schemas - Server-side rendered (like in root layout) */}
+      {/* JSON-LD schemas - Server-side rendered */}
       {productSchema && (
         <script
           type="application/ld+json"
@@ -76,7 +79,12 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
           }}
         />
       )}
-      <ProductDetailClient productId={resolvedParams.id} />
+      {/* Pass server-fetched data to client component */}
+      <ProductDetailClient
+        productId={resolvedParams.id}
+        initialProduct={product}
+        initialError={error}
+      />
     </>
   );
 }
