@@ -56,7 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     // Fetch products for sitemap (use full products endpoint to get brand and category)
     const productsResponse = await fetch(
-      `${API_URL}/products/?page_size=50000`,
+      `${API_URL}/products/?page_size=10000`,
       {
         next: { revalidate: 86400 },
         headers: { 'User-Agent': 'Preisradio-SitemapGenerator/1.0' },
@@ -72,8 +72,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const products = data.results || [];
 
       if (products.length > 0) {
-        // Limit to max 50000 product URLs (Google sitemap limit)
-        const limitedProducts = products.slice(0, 50000);
+        // Use all fetched products (max 10000 from API)
+        const limitedProducts = products;
 
         // Generate product pages
         productPages = limitedProducts.map((product: any) => ({
