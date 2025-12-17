@@ -341,12 +341,15 @@ export default function KategorienPage() {
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {paginatedCategories
                 .sort((a, b) => b.count - a.count)
-                .map((category) => (
-                  <Link
-                    key={category.name}
-                    href={`/search?category=${encodeURIComponent(category.name)}`}
-                    className="group relative overflow-hidden rounded-xl bg-white p-8 shadow-lg transition-all hover:scale-105 hover:shadow-2xl dark:bg-zinc-900"
-                  >
+                .map((category) => {
+                  // Create slug from category name
+                  const slug = category.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                  return (
+                    <Link
+                      key={category.name}
+                      href={`/kategorien/${encodeURIComponent(slug)}`}
+                      className="group relative overflow-hidden rounded-xl bg-white p-8 shadow-lg transition-all hover:scale-105 hover:shadow-2xl dark:bg-zinc-900"
+                    >
                     <div className="absolute right-4 top-4 text-6xl opacity-10">
                       {category.icon}
                     </div>
@@ -381,7 +384,8 @@ export default function KategorienPage() {
                       </div>
                     </div>
                   </Link>
-                ))}
+                  );
+                })}
             </div>
 
             {/* Pagination */}
