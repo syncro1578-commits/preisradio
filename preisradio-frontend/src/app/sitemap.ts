@@ -8,7 +8,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL
 export async function generateSitemaps() {
   return [
     { id: 'static' },
-    { id: 'list-products-1' },
+    { id: 'list-products' },
     { id: 'brands' },
     { id: 'categories' },
   ];
@@ -106,7 +106,7 @@ export default async function sitemap({
   }
 
   // Products sitemap - load products only for this sitemap
-  if (sitemapId === 'list-products-1') {
+  if (sitemapId === 'list-products') {
     try {
       const allProducts = await fetchAllProducts();
       const productPages = allProducts.map((product: any) => ({
