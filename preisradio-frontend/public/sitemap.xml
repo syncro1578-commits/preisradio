@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://preisradio.de/sitemap/static.xml</loc>
+    <lastmod>2025-12-18T00:00:00.000Z</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://preisradio.de/sitemap/products.xml</loc>
+    <lastmod>2025-12-18T00:00:00.000Z</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://preisradio.de/sitemap/brands.xml</loc>
+    <lastmod>2025-12-18T00:00:00.000Z</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://preisradio.de/sitemap/categories.xml</loc>
+    <lastmod>2025-12-18T00:00:00.000Z</lastmod>
+  </sitemap>
+</sitemapindex>
