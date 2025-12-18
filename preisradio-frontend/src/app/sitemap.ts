@@ -14,6 +14,41 @@ export async function generateSitemaps() {
   ];
 }
 
+// Helper function to fetch all products from all retailers
+async function fetchAllProducts() {
+  const [saturnResponse, mediamarktResponse, ottoResponse] = await Promise.all([
+    fetch(`${API_URL}/products/?page_size=10000&retailer=saturn`, {
+      next: { revalidate: 86400 }, // Cache for 24 hours
+      headers: { 'User-Agent': 'Preisradio-SitemapGenerator/1.0' },
+    }),
+    fetch(`${API_URL}/products/?page_size=10000&retailer=mediamarkt`, {
+      next: { revalidate: 86400 }, // Cache for 24 hours
+      headers: { 'User-Agent': 'Preisradio-SitemapGenerator/1.0' },
+    }),
+    fetch(`${API_URL}/products/?page_size=10000&retailer=otto`, {
+      next: { revalidate: 86400 }, // Cache for 24 hours
+      headers: { 'User-Agent': 'Preisradio-SitemapGenerator/1.0' },
+    }),
+  ]);
+
+  const allProducts: any[] = [];
+
+  if (saturnResponse.ok) {
+    const data = await saturnResponse.json();
+    allProducts.push(...(data.results || []));
+  }
+  if (mediamarktResponse.ok) {
+    const data = await mediamarktResponse.json();
+    allProducts.push(...(data.results || []));
+  }
+  if (ottoResponse.ok) {
+    const data = await ottoResponse.json();
+    allProducts.push(...(data.results || []));
+  }
+
+  return allProducts;
+}
+
 export default async function sitemap({
   id,
 }: {
@@ -70,41 +105,10 @@ export default async function sitemap({
     ];
   }
 
-  // Fetch products from all retailers
-  try {
-    const [saturnResponse, mediamarktResponse, ottoResponse] = await Promise.all([
-      fetch(`${API_URL}/products/?page_size=10000&retailer=saturn`, {
-        next: { revalidate: 86400 }, // Cache for 24 hours
-        headers: { 'User-Agent': 'Preisradio-SitemapGenerator/1.0' },
-      }),
-      fetch(`${API_URL}/products/?page_size=10000&retailer=mediamarkt`, {
-        next: { revalidate: 86400 }, // Cache for 24 hours
-        headers: { 'User-Agent': 'Preisradio-SitemapGenerator/1.0' },
-      }),
-      fetch(`${API_URL}/products/?page_size=10000&retailer=otto`, {
-        next: { revalidate: 86400 }, // Cache for 24 hours
-        headers: { 'User-Agent': 'Preisradio-SitemapGenerator/1.0' },
-      }),
-    ]);
-
-    // Combine products from all retailers
-    const allProducts: any[] = [];
-
-    if (saturnResponse.ok) {
-      const data = await saturnResponse.json();
-      allProducts.push(...(data.results || []));
-    }
-    if (mediamarktResponse.ok) {
-      const data = await mediamarktResponse.json();
-      allProducts.push(...(data.results || []));
-    }
-    if (ottoResponse.ok) {
-      const data = await ottoResponse.json();
-      allProducts.push(...(data.results || []));
-    }
-
-    // Products sitemap
-    if (sitemapId === 'list-products-1') {
+  // Products sitemap - load products only for this sitemap
+  if (sitemapId === 'list-products-1') {
+    try {
+      const allProducts = await fetchAllProducts();
       const productPages = allProducts.map((product: any) => ({
         url: `${baseUrl}/product/${product.id}`,
         lastModified: product.scraped_at ? new Date(product.scraped_at) : new Date(),
@@ -114,11 +118,18 @@ export default async function sitemap({
 
       console.log(`✓ Generated products sitemap with ${productPages.length} URLs`);
       return productPages;
+    } catch (error) {
+      console.error(`Error generating products sitemap:`, error);
+      return [];
     }
+  }
 
-    // Brands sitemap
-    if (sitemapId === 'brands') {
+  // Brands sitemap - load products only for this sitemap
+  if (sitemapId === 'brands') {
+    try {
+      const allProducts = await fetchAllProducts();
       const uniqueBrands = new Map<string, any>();
+
       allProducts.forEach((product: any) => {
         if (product.brand) {
           const slug = product.brand.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -141,11 +152,18 @@ export default async function sitemap({
 
       console.log(`✓ Generated brands sitemap with ${brandPages.length} URLs`);
       return brandPages;
+    } catch (error) {
+      console.error(`Error generating brands sitemap:`, error);
+      return [];
     }
+  }
 
-    // Categories sitemap
-    if (sitemapId === 'categories') {
+  // Categories sitemap - load products only for this sitemap
+  if (sitemapId === 'categories') {
+    try {
+      const allProducts = await fetchAllProducts();
       const uniqueCategories = new Map<string, any>();
+
       allProducts.forEach((product: any) => {
         if (product.category) {
           const slug = product.category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -168,9 +186,10 @@ export default async function sitemap({
 
       console.log(`✓ Generated categories sitemap with ${categoryPages.length} URLs`);
       return categoryPages;
+    } catch (error) {
+      console.error(`Error generating categories sitemap:`, error);
+      return [];
     }
-  } catch (error) {
-    console.error(`Error generating sitemap for ${sitemapId}:`, error);
   }
 
   return [];
