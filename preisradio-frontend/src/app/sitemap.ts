@@ -4,6 +4,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL
   ? `${process.env.NEXT_PUBLIC_API_URL}/api`
   : 'https://api.preisradio.de/api';
 
+// Revalidate sitemap every 24 hours (86400 seconds)
+export const revalidate = 86400;
+
 // Generate multiple sitemaps: static, products, brands, categories
 export async function generateSitemaps() {
   return [
