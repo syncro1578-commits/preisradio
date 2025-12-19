@@ -4,7 +4,7 @@
     <loc>https://preisradio.de/sitemap/static.xml</loc>
   </sitemap>
   <sitemap>
-    <loc>https://preisradio.de/sitemap/list-products.xml</loc>
+    <loc>https://preisradio.de/sitemap/products-index.xml</loc>
   </sitemap>
   <sitemap>
     <loc>https://preisradio.de/sitemap/brands.xml</loc>

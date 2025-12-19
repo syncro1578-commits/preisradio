@@ -11,7 +11,7 @@ export const revalidate = 86400;
 export async function generateSitemaps() {
   return [
     { id: 'static' },
-    { id: 'list-products' },
+    { id: 'products-index' },
     { id: 'brands' },
     { id: 'categories' },
   ];
@@ -109,7 +109,7 @@ export default async function sitemap({
   }
 
   // Products sitemap - load products only for this sitemap
-  if (sitemapId === 'list-products') {
+  if (sitemapId === 'products-index') {
     try {
       const allProducts = await fetchAllProducts();
       const productPages = allProducts.map((product: any) => ({
