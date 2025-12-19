@@ -19,7 +19,7 @@ const nextConfig: NextConfig = {
         source: '/sitemap/:slug.xml',
         headers: [
           {
-            key: 'Cache-Control',
+            key: 'Vercel-CDN-Cache-Control',
             value: 's-maxage=86400, stale-while-revalidate=43200'
           }
         ],
