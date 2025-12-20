@@ -80,6 +80,14 @@ export default function RootLayout({
   return (
     <html lang="de-DE">
       <body className="antialiased">
+        {/* Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8451378376537532"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
         {/* Google Tag Manager - Next.js will move to <head> automatically */}
         {GTM_ID && (
           <>
