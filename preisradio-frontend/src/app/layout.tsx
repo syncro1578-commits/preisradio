@@ -68,6 +68,9 @@ export const metadata: Metadata = {
       'x-default': baseUrl,
     },
   },
+  other: {
+    'google-adsense-account': 'ca-pub-8451378376537532',
+  },
 };
 
 export default function RootLayout({
@@ -80,13 +83,6 @@ export default function RootLayout({
   return (
     <html lang="de-DE">
       <body className="antialiased">
-        {/* Google AdSense */}
-        <Script
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8451378376537532"
-          strategy="lazyOnload"
-          crossOrigin="anonymous"
-        />
-
         {/* Google Tag Manager - Next.js will move to <head> automatically */}
         {GTM_ID && (
           <>
