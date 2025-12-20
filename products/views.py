@@ -5,6 +5,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import condition
 from django.utils.decorators import method_decorator
+from django.http import HttpResponse
 from mongoengine.queryset.visitor import Q
 from .models import SaturnProduct, MediaMarktProduct, OttoProduct
 from .serializers import (
@@ -13,6 +14,8 @@ from .serializers import (
     OttoProductSerializer,
 )
 from datetime import datetime
+from xml.etree.ElementTree import Element, SubElement, tostring
+from xml.dom import minidom
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -619,4 +622,102 @@ class ProductViewSet(viewsets.ViewSet):
             return Response(
                 {'error': str(e), 'detail': 'Failed to fetch sitemap data'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    @action(detail=False, methods=['get'])
+    def google_merchant_feed(self, request):
+        """
+        Generate Google Merchant Center XML feed.
+
+        Returns all products in Google Merchant Center RSS 2.0 format.
+        Compatible with Google Shopping and other shopping platforms.
+
+        Usage: GET /api/products/google_merchant_feed/
+        """
+        try:
+            # Fetch all products
+            saturn_products = list(SaturnProduct.objects.order_by('-scraped_at'))
+            mediamarkt_products = list(MediaMarktProduct.objects.order_by('-scraped_at'))
+            otto_products = list(OttoProduct.objects.order_by('-scraped_at'))
+
+            # Create RSS XML structure
+            rss = Element('rss', {
+                'version': '2.0',
+                'xmlns:g': 'http://base.google.com/ns/1.0'
+            })
+
+            channel = SubElement(rss, 'channel')
+            SubElement(channel, 'title').text = 'Preisradio - Vergleichen Sie Preise'
+            SubElement(channel, 'link').text = 'https://preisradio.de'
+            SubElement(channel, 'description').text = 'Finden Sie die besten Angebote von Saturn, MediaMarkt und Otto'
+
+            # Helper function to add product to feed
+            def add_product_to_feed(product, retailer):
+                item = SubElement(channel, 'item')
+
+                # Required fields
+                SubElement(item, 'g:id').text = str(product.id)
+                SubElement(item, 'title').text = product.name[:150] if product.name else 'Produkt'
+                SubElement(item, 'description').text = (product.description[:5000] if hasattr(product, 'description') and product.description else product.name[:5000]) if product.name else 'Keine Beschreibung'
+                SubElement(item, 'link').text = f'https://preisradio.de/product/{product.id}'
+
+                # Image
+                if hasattr(product, 'image_url') and product.image_url:
+                    SubElement(item, 'g:image_link').text = product.image_url
+
+                # Price - format as "99.99 EUR"
+                if hasattr(product, 'price') and product.price:
+                    SubElement(item, 'g:price').text = f'{product.price:.2f} EUR'
+
+                # Availability
+                SubElement(item, 'g:availability').text = 'in stock'
+
+                # Condition
+                SubElement(item, 'g:condition').text = 'new'
+
+                # Brand
+                if hasattr(product, 'brand') and product.brand:
+                    SubElement(item, 'g:brand').text = product.brand[:70]
+
+                # GTIN (if available)
+                if hasattr(product, 'ean') and product.ean:
+                    SubElement(item, 'g:gtin').text = str(product.ean)
+
+                # Additional fields
+                if hasattr(product, 'category') and product.category:
+                    SubElement(item, 'g:product_type').text = product.category
+
+                # Retailer-specific identifier
+                SubElement(item, 'g:retailer').text = retailer
+
+                # Product URL at retailer
+                if hasattr(product, 'product_url') and product.product_url:
+                    SubElement(item, 'g:product_url').text = product.product_url
+
+            # Add all products to feed
+            for product in saturn_products:
+                add_product_to_feed(product, 'Saturn')
+
+            for product in mediamarkt_products:
+                add_product_to_feed(product, 'MediaMarkt')
+
+            for product in otto_products:
+                add_product_to_feed(product, 'Otto')
+
+            # Convert to pretty XML string
+            xml_string = minidom.parseString(tostring(rss, encoding='utf-8')).toprettyxml(indent='  ', encoding='utf-8')
+
+            # Return XML response with cache headers
+            response = HttpResponse(xml_string, content_type='application/xml; charset=utf-8')
+            response['Cache-Control'] = 'public, s-maxage=86400, stale-while-revalidate=43200'
+
+            return response
+
+        except Exception as e:
+            import traceback
+            print(f"Google Merchant Feed error: {traceback.format_exc()}")
+            return HttpResponse(
+                f'<?xml version="1.0"?><error>{str(e)}</error>',
+                content_type='application/xml',
+                status=500
             )
