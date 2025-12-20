@@ -10,6 +10,12 @@ env
 .DS_Store
 *.log
 
+# Google Cloud Service Account credentials
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+
 # Frontend
 node_modules/
 frontend/.next/

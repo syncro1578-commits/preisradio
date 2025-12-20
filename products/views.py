@@ -13,6 +13,7 @@ from .serializers import (
     MediaMarktProductSerializer,
     OttoProductSerializer,
 )
+from .google_merchant import get_merchant_service
 from datetime import datetime
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom import minidom
@@ -720,4 +721,129 @@ class ProductViewSet(viewsets.ViewSet):
                 f'<?xml version="1.0"?><error>{str(e)}</error>',
                 content_type='application/xml',
                 status=500
+            )
+
+    @action(detail=False, methods=['post'])
+    def sync_to_google_merchant(self, request):
+        """
+        Sync products to Google Merchant Center via API.
+
+        Query parameters:
+        - limit (int): Number of products to sync (default: 100, max: 10000)
+        - retailer (str): Filter by retailer (saturn, mediamarkt, otto, or all)
+
+        Returns:
+            JSON response with sync statistics
+        """
+        try:
+            # Get query parameters
+            limit = int(request.query_params.get('limit', 100))
+            limit = min(limit, 10000)  # Cap at 10000
+            retailer = request.query_params.get('retailer', 'all').lower()
+
+            # Initialize Google Merchant service
+            try:
+                merchant_service = get_merchant_service()
+            except Exception as e:
+                return Response(
+                    {
+                        'error': 'Failed to initialize Google Merchant service',
+                        'detail': str(e)
+                    },
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+            # Fetch products based on retailer filter
+            all_products = []
+
+            if retailer in ['saturn', 'all']:
+                saturn_products = list(
+                    SaturnProduct.objects.order_by('-scraped_at').limit(limit)
+                )
+                all_products.extend([
+                    {
+                        'id': str(p.id),
+                        'title': p.title,
+                        'description': p.description,
+                        'price': p.price,
+                        'image': p.image,
+                        'brand': p.brand,
+                        'gtin': p.gtin,
+                        'category': p.category,
+                    }
+                    for p in saturn_products
+                ])
+
+            if retailer in ['mediamarkt', 'all']:
+                mediamarkt_products = list(
+                    MediaMarktProduct.objects.order_by('-scraped_at').limit(limit)
+                )
+                all_products.extend([
+                    {
+                        'id': str(p.id),
+                        'title': p.title,
+                        'description': p.description,
+                        'price': p.price,
+                        'image': p.image,
+                        'brand': p.brand,
+                        'gtin': p.gtin,
+                        'category': p.category,
+                    }
+                    for p in mediamarkt_products
+                ])
+
+            if retailer in ['otto', 'all']:
+                otto_products = list(
+                    OttoProduct.objects.order_by('-scraped_at').limit(limit)
+                )
+                all_products.extend([
+                    {
+                        'id': str(p.id),
+                        'title': p.title,
+                        'description': p.description,
+                        'price': p.price,
+                        'image': p.image,
+                        'brand': p.brand,
+                        'gtin': p.gtin,
+                        'category': p.category,
+                    }
+                    for p in otto_products
+                ])
+
+            # Limit total products if needed
+            all_products = all_products[:limit]
+
+            if not all_products:
+                return Response(
+                    {
+                        'message': 'No products found to sync',
+                        'stats': {
+                            'total': 0,
+                            'success': 0,
+                            'failed': 0
+                        }
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+            # Batch upload products to Google Merchant Center
+            sync_stats = merchant_service.batch_insert_products(all_products)
+
+            return Response(
+                {
+                    'message': f'Successfully synced products to Google Merchant Center',
+                    'stats': sync_stats
+                },
+                status=status.HTTP_200_OK
+            )
+
+        except Exception as e:
+            import traceback
+            print(f"Google Merchant sync error: {traceback.format_exc()}")
+            return Response(
+                {
+                    'error': 'Failed to sync products to Google Merchant Center',
+                    'detail': str(e)
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

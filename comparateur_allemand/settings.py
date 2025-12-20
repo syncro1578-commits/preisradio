@@ -183,6 +183,11 @@ except Exception as e:
     print(f"✗ Otto database connection failed: {e}")
 
 
+# Google Merchant Center Configuration
+GOOGLE_MERCHANT_ID = config('GOOGLE_MERCHANT_ID', default='')
+GOOGLE_SERVICE_ACCOUNT_KEY = os.path.join(BASE_DIR.parent, 'astute-pride-262723-7f9bd77e07a5.json')
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
