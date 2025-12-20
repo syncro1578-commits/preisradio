@@ -184,7 +184,7 @@ except Exception as e:
 
 
 # Google Merchant Center Configuration
-GOOGLE_MERCHANT_ID = config('GOOGLE_MERCHANT_ID', default='')
+GOOGLE_MERCHANT_ID = config('GOOGLE_MERCHANT_ID', default='5698148813')
 GOOGLE_SERVICE_ACCOUNT_KEY = os.path.join(BASE_DIR.parent, 'astute-pride-262723-7f9bd77e07a5.json')
 
 
