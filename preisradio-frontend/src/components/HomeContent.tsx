@@ -45,7 +45,8 @@ export default function HomeContent({ initialCategories = [] }: HomeContentProps
   const loadCategories = async () => {
     try {
       const response = await api.getCategories();
-      setCategories(response.results || []);
+      // Extract just the category names from the Category objects
+      setCategories(response.results?.map(cat => cat.name) || []);
     } catch (err) {
       console.error('Error loading categories:', err);
     }
