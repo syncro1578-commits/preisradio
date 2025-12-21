@@ -37,8 +37,8 @@ export default function HomeContent() {
 
   const loadTopCategories = async () => {
     try {
-      // Load top 5 categories by product count
-      const response = await api.getCategories({ page_size: 5 });
+      // Load top 10 categories by product count
+      const response = await api.getCategories({ page_size: 10 });
       setTopCategories(response.results || []);
       return response.results || [];
     } catch (err) {
