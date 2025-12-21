@@ -50,35 +50,27 @@ export default async function CategoryDetailPage({ params }: { params: Promise<{
   try {
     const decodedSlug = decodeURIComponent(slug);
 
-    // Convert slug to category name (reverse of slugify)
-    const possibleCategoryNames = [
-      decodedSlug.replace(/-/g, ' '),
-      decodedSlug.replace(/-/g, ' ').split(' ').map(word =>
-        word.charAt(0).toUpperCase() + word.slice(1)
-      ).join(' '),
-    ];
+    // First, get all categories to find the exact category name
+    const categoriesResponse = await api.getCategories({ page_size: 1000 });
+    const allCategories = categoriesResponse.results || [];
 
-    // Try to fetch products for this category
-    const response = await api.getProductsFromBothRetailers({
-      page_size: 100,
-    });
-
-    const allProducts = response?.results || [];
-
-    // Filter products by category (match slug)
-    const categoryProducts = allProducts.filter((product) => {
-      if (!product.category) return false;
-
-      const productCategorySlug = product.category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    // Find the matching category by slug
+    const matchingCategory = allCategories.find(cat => {
+      const catSlug = cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       const normalizedSlug = slug.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-      return productCategorySlug === normalizedSlug;
+      return catSlug === normalizedSlug;
     });
 
-    products = categoryProducts;
+    if (matchingCategory) {
+      categoryName = matchingCategory.name;
 
-    if (categoryProducts.length > 0) {
-      categoryName = categoryProducts[0].category || '';
+      // Fetch products using the exact category name
+      const response = await api.getProductsFromBothRetailers({
+        category: categoryName,
+        page_size: 100,
+      });
+
+      products = response?.results || [];
     } else {
       // Fallback to formatted slug
       categoryName = decodedSlug.replace(/-/g, ' ').split(' ').map(word =>
