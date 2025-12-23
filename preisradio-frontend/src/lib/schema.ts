@@ -57,7 +57,7 @@ export function generateProductSchema(
   const random = rng / 233280;
 
   // Rating entre 3.5 et 4.9 (produits généralement bien notés)
-  const ratingValue = (3.5 + random * 1.4).toFixed(1);
+  const ratingValue = parseFloat((3.5 + random * 1.4).toFixed(1));
 
   // Nombre de reviews entre 15 et 500
   const ratingCount = Math.floor(15 + random * 485);

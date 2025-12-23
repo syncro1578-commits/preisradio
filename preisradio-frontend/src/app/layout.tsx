@@ -12,11 +12,11 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Preisvergleich Saturn & MediaMarkt | Preisradio',
+    default: 'Preisradio | Bester Preisvergleicher in Deutschland',
     template: '%s | Preisradio'
   },
-  description: 'Vergleichen Sie Elektronik-Preise von Saturn, MediaMarkt und Otto in Echtzeit. Finden Sie täglich die besten Angebote und sparen Sie beim Online-Shopping.',
-  keywords: ['Preisvergleich', 'Saturn', 'MediaMarkt', 'Elektronik', 'Preise vergleichen', 'Deutschland', 'Online Shopping', 'Laptops', 'Smartphones'],
+  description: 'Vergleichen Sie Elektronik-Preise von Saturn, MediaMarkt und Otto in Echtzeit. Finden Sie täglich die besten Angebote und sparen Sie beim Shopping.',
+  keywords: ['Preisvergleich preisradio', 'toppreise preisradio', 'guenstiger preisradio'],
   authors: [{ name: 'Preisradio' }],
   creator: 'Preisradio',
   publisher: 'Preisradio',
@@ -41,8 +41,8 @@ export const metadata: Metadata = {
     locale: 'de_DE',
     url: baseUrl,
     siteName: 'Preisradio',
-    title: 'Preisradio - Preisvergleich Deutschland',
-    description: 'Vergleichen Sie Preise von Saturn und MediaMarkt in Echtzeit. Finden Sie die besten Angebote für Elektronik.',
+    title: 'Preisvergleich Saturn MediaMarkt Otto',
+    description: 'Vergleichen Sie Elektronik-Preise von Saturn, MediaMarkt und Otto in Echtzeit. Finden Sie täglich die besten Angebote und sparen Sie beim Shopping.',
     images: [
       {
         url: `${baseUrl}/favicon.ico`,
@@ -54,8 +54,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'Preisradio - Preisvergleich Deutschland',
-    description: 'Vergleichen Sie Preise von Saturn und MediaMarkt in Echtzeit.',
+    title: 'Preisvergleich Saturn MediaMarkt Otto',
+    description: 'Vergleichen Sie Elektronik-Preise von Saturn, MediaMarkt und Otto in Echtzeit. Finden Sie täglich die besten Angebote und sparen Sie beim Shopping.',
     images: [`${baseUrl}/favicon.ico`],
   },
   verification: {

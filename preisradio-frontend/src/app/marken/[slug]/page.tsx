@@ -11,9 +11,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const decodedSlug = decodeURIComponent(resolvedParams.slug);
     const brandName = decodedSlug.charAt(0).toUpperCase() + decodedSlug.slice(1);
 
+    // Optimize title to 50-60 chars: "{brandName} Produkte günstig kaufen | Preisradio"
+    const title = `${brandName} Produkte günstig kaufen | Preisradio`;
+
+    // Optimize description to 150-160 chars
+    const description = `${brandName} Preisvergleich: Saturn, MediaMarkt & Otto. Finden Sie die besten Angebote für ${brandName} Elektronik und sparen Sie beim Online-Kauf.`;
+
     return {
-      title: `${brandName} Produkte | Preisradio`,
-      description: `Alle ${brandName} Produkte im Preisvergleich. Finden Sie die besten Angebote für ${brandName} Elektronik bei Saturn, MediaMarkt und Otto.`,
+      title,
+      description: description.length > 160 ? description.substring(0, 157) + '...' : description,
+      keywords: ['Preisvergleich', brandName, 'heise preisvergleich preisradio'],
       openGraph: {
         title: `${brandName} Produkte | Preisradio`,
         description: `Alle ${brandName} Produkte im Preisvergleich`,

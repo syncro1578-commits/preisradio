@@ -14,9 +14,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
 
+    // Optimize title to 50-60 chars: "{categoryName} günstig kaufen – Reduzierte Angebote"
+    const title = `${categoryName} günstig kaufen – Reduzierte Angebote`;
+
     return {
-      title: `${categoryName} | Preisradio`,
-      description: `Alle ${categoryName} Produkte im Preisvergleich. Finden Sie die besten Angebote bei Saturn, MediaMarkt und Otto.`,
+      title,
+      description: `${categoryName} Preisvergleich: Saturn, MediaMarkt & Otto. Finden Sie die besten Angebote für ${categoryName} und sparen Sie beim Online-Kauf.`,
+      keywords: ['Preisvergleich', categoryName, 'heise preisvergleich preisradio'],
       openGraph: {
         title: `${categoryName} | Preisradio`,
         description: `Alle ${categoryName} Produkte im Preisvergleich`,

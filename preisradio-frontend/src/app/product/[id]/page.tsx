@@ -10,9 +10,29 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const resolvedParams = await params;
     const product = await api.getProduct(resolvedParams.id);
 
+    // Get brand name for keywords
+    const brandName = product.brand || product.category || 'Produkt';
+
+    // Optimize title to 50-60 chars - Use product title directly
+    const title = product.title.length > 50
+      ? `${product.title.substring(0, 47)}...`
+      : product.title;
+
+    // Optimize description to 150-160 chars
+    const retailerName = product.retailer === 'saturn' ? 'Saturn' : product.retailer === 'mediamarkt' ? 'MediaMarkt' : 'Otto';
+    const description = `${product.title.substring(0, 80)} bei ${retailerName}. Preis: ${product.price.toFixed(2)} ${product.currency}. Jetzt Preise vergleichen!`;
+
+    // Keywords: ['Preisvergleich brandName', 'brandName Produkt', 'toppreise brandName Produkt']
+    const keywords = [
+      `Preisvergleich ${brandName}`,
+      `${brandName} Produkt`,
+      `toppreise ${brandName} Produkt`
+    ];
+
     return {
-      title: product.title,
-      description: `${product.title} - Preis: ${product.price.toFixed(2)} ${product.currency}. Vergleichen Sie Preise bei ${product.retailer === 'saturn' ? 'Saturn' : product.retailer === 'mediamarkt' ? 'MediaMarkt' : 'Otto'}.`,
+      title,
+      description: description.length > 160 ? description.substring(0, 157) + '...' : description,
+      keywords,
       openGraph: {
         title: `${product.title} | Preisradio`,
         description: `${product.title} - Preis: ${product.price.toFixed(2)} ${product.currency}`,
