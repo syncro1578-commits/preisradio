@@ -78,15 +78,15 @@ export default function Navigation() {
             ))}
           </nav>
 
-          {/* Search Bar Desktop */}
-          <div className="hidden lg:flex items-center">
-            <form onSubmit={handleSearch} className="relative">
+          {/* Search Bar - Responsive */}
+          <div className="hidden md:flex items-center flex-1 max-w-md mx-4">
+            <form onSubmit={handleSearch} className="relative w-full">
               <input
                 type="search"
                 placeholder="Produkt suchen..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-64 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 pl-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:placeholder-gray-400"
+                className="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 pl-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:placeholder-gray-400"
               />
               <button
                 type="submit"
@@ -147,37 +147,6 @@ export default function Navigation() {
           </button>
         </div>
 
-        {/* Search Bar Mobile - Always visible on mobile */}
-        <div className="pb-4 lg:hidden">
-          <form onSubmit={handleSearch} className="relative">
-            <input
-              type="search"
-              placeholder="Produkt suchen..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 pl-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:placeholder-gray-400"
-            />
-            <button
-              type="submit"
-              className="absolute left-3 top-2.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-            >
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </button>
-          </form>
-        </div>
-
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
           <nav className="md:hidden border-t border-gray-200 dark:border-zinc-800 py-4 animate-fadeIn">
@@ -200,26 +169,6 @@ export default function Navigation() {
             </div>
           </nav>
         )}
-
-        {/* Desktop Horizontal Navigation (for very small desktop screens) */}
-        <nav className="hidden md:flex lg:hidden overflow-x-auto pb-4 scrollbar-hide">
-          <div className="flex space-x-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center space-x-2 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  isActive(link.href)
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400'
-                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-zinc-800'
-                }`}
-              >
-                <span>{link.icon}</span>
-                <span>{link.label}</span>
-              </Link>
-            ))}
-          </div>
-        </nav>
       </div>
     </header>
   );
