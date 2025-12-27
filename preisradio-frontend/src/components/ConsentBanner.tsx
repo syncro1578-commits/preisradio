@@ -61,113 +61,164 @@ export default function ConsentBanner() {
     setConsent((prev: { analytics?: boolean; marketing?: boolean }) => ({ ...prev, marketing: !prev.marketing }));
   };
 
+  const [isExpanded, setIsExpanded] = useState(false);
+
   if (!showConsent) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/20 backdrop-blur-sm p-4">
-      <div className="w-full max-w-2xl rounded-2xl bg-white dark:bg-zinc-900 shadow-2xl animate-slideUp">
-        <div className="p-6 md:p-8">
-          {/* Header */}
-          <div className="mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              🍪 Datenschutz & Cookies
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Wir nutzen Cookies und andere Technologien, um Ihre Erfahrung zu verbessern und unsere Dienste zu optimieren.
-            </p>
-          </div>
-
-          {/* Content */}
-          <div className="space-y-4 mb-6">
-            <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 p-4 border border-blue-200 dark:border-blue-800">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                Erforderliche Cookies
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Diese Cookies sind notwendig für die grundlegende Funktionalität unserer Website.
-              </p>
-            </div>
-
-            {/* Analytics */}
-            <div className="rounded-lg bg-gray-50 dark:bg-zinc-800 p-4 border border-gray-200 dark:border-zinc-700">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  📊 Analyse & Leistung
-                </h3>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    checked={consent.analytics || false}
-                    onChange={toggleAnalytics}
-                  />
-                  <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                </label>
+    <div className="fixed bottom-0 left-0 right-0 z-50 p-3 md:p-4">
+      <div className="container mx-auto max-w-6xl">
+        <div className="rounded-xl bg-white dark:bg-zinc-900 shadow-2xl border border-gray-200 dark:border-zinc-800 animate-slideUp">
+          {!isExpanded ? (
+            // Minimized view
+            <div className="p-4 md:p-5">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex-1">
+                  <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white mb-1">
+                    🍪 Wir nutzen Cookies
+                  </h3>
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
+                    Wir verwenden Cookies, um Ihre Erfahrung zu verbessern.{' '}
+                    <button
+                      onClick={() => setIsExpanded(true)}
+                      className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                    >
+                      Einstellungen anpassen
+                    </button>
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                  <button
+                    onClick={handleRejectAll}
+                    className="flex-1 sm:flex-none rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-xs md:text-sm font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+                  >
+                    Ablehnen
+                  </button>
+                  <button
+                    onClick={handleAcceptAll}
+                    className="flex-1 sm:flex-none rounded-lg bg-blue-600 px-4 py-2 text-xs md:text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+                  >
+                    Akzeptieren
+                  </button>
+                </div>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Helfen Sie uns, unsere Website zu verbessern, indem Sie uns erlauben, anonyme Nutzungsdaten zu erfassen.
-              </p>
             </div>
-
-            {/* Marketing */}
-            <div className="rounded-lg bg-gray-50 dark:bg-zinc-800 p-4 border border-gray-200 dark:border-zinc-700">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  📢 Marketing & Personalisierung
-                </h3>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    checked={consent.marketing || false}
-                    onChange={toggleMarketing}
-                  />
-                  <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                </label>
+          ) : (
+            // Expanded view
+            <div className="p-5 md:p-6 max-h-[80vh] overflow-y-auto">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-1">
+                    🍪 Datenschutz & Cookies
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Wir nutzen Cookies und andere Technologien, um Ihre Erfahrung zu verbessern.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsExpanded(false)}
+                  className="ml-4 rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+                  aria-label="Schließen"
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Mit Ihrem Einverständnis zeigen wir Ihnen relevante Werbung basierend auf Ihren Interessen.
-              </p>
+
+              {/* Content */}
+              <div className="space-y-3 mb-5">
+                <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 p-3 border border-blue-200 dark:border-blue-800">
+                  <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                    Erforderliche Cookies
+                  </h3>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Diese Cookies sind notwendig für die grundlegende Funktionalität unserer Website.
+                  </p>
+                </div>
+
+                {/* Analytics */}
+                <div className="rounded-lg bg-gray-50 dark:bg-zinc-800 p-3 border border-gray-200 dark:border-zinc-700">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-semibold text-sm text-gray-900 dark:text-white">
+                      📊 Analyse & Leistung
+                    </h3>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={consent.analytics || false}
+                        onChange={toggleAnalytics}
+                      />
+                      <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Helfen Sie uns, unsere Website zu verbessern, indem Sie uns erlauben, anonyme Nutzungsdaten zu erfassen.
+                  </p>
+                </div>
+
+                {/* Marketing */}
+                <div className="rounded-lg bg-gray-50 dark:bg-zinc-800 p-3 border border-gray-200 dark:border-zinc-700">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-semibold text-sm text-gray-900 dark:text-white">
+                      📢 Marketing & Personalisierung
+                    </h3>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={consent.marketing || false}
+                        onChange={toggleMarketing}
+                      />
+                      <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Mit Ihrem Einverständnis zeigen wir Ihnen relevante Werbung basierend auf Ihren Interessen.
+                  </p>
+                </div>
+              </div>
+
+              {/* Info Links */}
+              <div className="mb-4 flex flex-wrap gap-3 text-xs">
+                <Link
+                  href="/datenschutz"
+                  className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline"
+                >
+                  Datenschutzerklärung
+                </Link>
+                <Link
+                  href="/impressum"
+                  className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline"
+                >
+                  Impressum
+                </Link>
+              </div>
+
+              {/* Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button
+                  onClick={handleRejectAll}
+                  className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+                >
+                  Alles ablehnen
+                </button>
+                <button
+                  onClick={handleSavePreferences}
+                  className="rounded-lg border border-blue-600 bg-blue-50 dark:bg-blue-950/30 px-4 py-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-950/50 transition-colors"
+                >
+                  Einstellungen speichern
+                </button>
+                <button
+                  onClick={handleAcceptAll}
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+                >
+                  Alles akzeptieren
+                </button>
+              </div>
             </div>
-          </div>
-
-          {/* Info Links */}
-          <div className="mb-6 flex flex-wrap gap-4 text-sm">
-            <Link
-              href="/datenschutz"
-              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline"
-            >
-              Datenschutzerklärung
-            </Link>
-            <Link
-              href="/impressum"
-              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline"
-            >
-              Impressum
-            </Link>
-          </div>
-
-          {/* Buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <button
-              onClick={handleRejectAll}
-              className="rounded-lg border border-gray-300 dark:border-gray-600 px-6 py-3 text-sm font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
-            >
-              Alles ablehnen
-            </button>
-            <button
-              onClick={handleSavePreferences}
-              className="rounded-lg border border-blue-600 bg-blue-50 dark:bg-blue-950/30 px-6 py-3 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-950/50 transition-colors"
-            >
-              Einstellungen speichern
-            </button>
-            <button
-              onClick={handleAcceptAll}
-              className="rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
-            >
-              Alles akzeptieren
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </div>

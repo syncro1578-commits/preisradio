@@ -1,0 +1,434 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Product } from '@/lib/types';
+import api from '@/lib/api';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
+
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
+
+interface CategoryData {
+  name: string;
+  count: number;
+  icon: string;
+  description: string;
+}
+
+export default function KategorienPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 50;
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  useEffect(() => {
+    // Add JSON-LD for categories
+    let script = document.querySelector('#categories-jsonld') as HTMLScriptElement;
+    if (!script) {
+      script = document.createElement('script');
+      script.id = 'categories-jsonld';
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Produktkategorien',
+      description: 'Alle Produktkategorien von Saturn und MediaMarkt',
+      url: `${baseUrl}/kategorien`,
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: baseUrl
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Kategorien',
+            item: `${baseUrl}/kategorien`
+          }
+        ]
+      }
+    };
+
+    script.textContent = JSON.stringify(jsonLd);
+
+    return () => {
+      const scriptEl = document.querySelector('#categories-jsonld');
+      if (scriptEl) {
+        scriptEl.remove();
+      }
+    };
+  }, []);
+
+  const loadProducts = async () => {
+    try {
+      // Charger les produits des deux retailers pour avoir toutes les catégories
+      const response = await api.getProductsFromBothRetailers({
+        page_size: 500, // Augmenté pour avoir plus de catégories
+      });
+      setProducts(response.results);
+    } catch (err) {
+      console.error('Error loading products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Extraire les catégories avec comptage
+  const allCategories = products.reduce((acc, product) => {
+    const existing = acc.find(c => c.name === product.category);
+    if (existing) {
+      existing.count++;
+    } else {
+      acc.push({
+        name: product.category,
+        count: 1,
+        icon: getCategoryIcon(product.category),
+        description: getCategoryDescription(product.category),
+      });
+    }
+    return acc;
+  }, [] as CategoryData[]);
+
+  // Filtrer par recherche
+  const filteredCategories = allCategories.filter(category =>
+    category.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Paginer les catégories
+  const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedCategories = filteredCategories.slice(startIndex, endIndex);
+
+  // Réinitialiser à la première page lors d'une recherche
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  const categories = filteredCategories;
+
+  function getCategoryIcon(category: string): string {
+    const icons: { [key: string]: string } = {
+      // Laptops & Computers
+      '15 Zoll Laptops': '💻',
+      'Laptops': '💻',
+      'Notebooks & Computer': '💻',
+      'Gaming PCs AMD': '🎮',
+      'Gaming PCs Intel': '🎮',
+
+      // Handy & Smartphone
+      '360 Grad Handyhüllen': '📱',
+      'Apple Cases, Taschen und Cover': '📱',
+      'Bumper für Handys': '📱',
+      'Flip Cases': '📱',
+      'Handy Akkus': '🔋',
+      'Handy Cases': '📱',
+      'Handy Klapphüllen': '📱',
+      'Handy Schutzfolien': '🛡️',
+      'Handy Sleeves': '📱',
+      'Handyketten': '📱',
+      'Bildschirmschutz': '🛡️',
+      'Schutzfolien & Schutzgläser': '🛡️',
+
+      // Tablets
+      'Tablet Bookcover': '📱',
+      'Tablet-Halterungen': '📱',
+      'Tabletschutzfolien': '🛡️',
+
+      // Gaming
+      'Gaming Mousepads': '🎮',
+      'Nintendo Wii Spiele': '🎮',
+
+      // PC Komponenten
+      'PC Arbeitsspeicher DDR3': '⚡',
+      'PC Arbeitsspeicher DDR4': '⚡',
+      'Non Modulare Netzteile': '🔌',
+
+      // Storage
+      'Micro SD Karten': '💾',
+      'USB-Sticks': '💾',
+      'USB Hubs': '🔌',
+
+      // Laptop Zubehör
+      'Laptop Akku': '🔋',
+      'Laptop Rucksäcke': '🎒',
+
+      // Drucker & Toner
+      'Toner für HP': '🖨️',
+      'Toner für Samsung': '🖨️',
+
+      // Küche
+      'Küchenmaschinen': '🍳',
+      'Küchenwaagen': '⚖️',
+      'Geschirr': '🍽️',
+
+      // Haushalt
+      'Staubsaugerbeutel': '🧹',
+      'Dunstabzugshaube Zubehör': '🏠',
+
+      // Garten
+      'Garten-Sitzmöbel': '🪑',
+      'Gartenmöbel-Sets & Lounges': '🪴',
+      'Sonnenschutz & Überdachung': '☀️',
+      'Zubehör Gartenpflege': '🌱',
+
+      // Möbel
+      'Tische & Ergänzungen': '🪑',
+
+      // Fitness
+      'Laufbänder': '🏃',
+
+      // Beleuchtung
+      'Innenleuchten': '💡',
+      'Tischventilatoren': '💨',
+
+      // Entertainment
+      'Dance & Electro CDs': '💿',
+
+      // TV & Kabel
+      'TV-Kabel': '📺',
+
+      // Wearables
+      'Garmin Ersatzarmbänder': '⌚',
+      'Schutzfolien Smartwatch': '⌚',
+
+      // Navigation
+      'Navi-Taschen & -Schutzfolien': '🗺️',
+
+      // Batterien
+      'Akku-Ladegeräte': '🔋',
+      'weitere Knopfzellen': '🔋',
+
+      // Spielzeug
+      'Playmobil Puppenhaus': '🏠',
+
+      // Büro
+      'Schreibwaren': '✏️',
+
+      // Sonstiges
+      'home': '🏠',
+    };
+    return icons[category] || '📦';
+  }
+
+  function getCategoryDescription(category: string): string {
+    const descriptions: { [key: string]: string } = {
+      // Catégories en français (legacy)
+      'Smartphones': 'Die neuesten Smartphones von Samsung, Apple, Xiaomi und mehr',
+      'Ordinateurs portables': 'Laptops für jeden Bedarf - Gaming, Business, Multimedia',
+      'Audio': 'Kopfhörer, Lautsprecher und Audio-Zubehör',
+      'Télévisions': 'Smart-TVs, OLED, QLED und mehr in allen Größen',
+      'Composants PC': 'Grafikkarten, Prozessoren, RAM und mehr',
+      'Consoles': 'PlayStation, Xbox, Nintendo Switch und Zubehör',
+      'Montres connectées': 'Smartwatches von Apple, Samsung, Garmin',
+      'Électroménager': 'Haushaltsgeräte für Küche und Haushalt',
+      'Photo': 'Kameras, Objektive und Foto-Zubehör',
+      'Moniteurs': 'Monitore für Gaming, Office und kreative Arbeit',
+
+      // Catégories allemandes communes
+      'Handys & Smartphones': 'Die neuesten Smartphones von Samsung, Apple, Xiaomi und mehr',
+      'Notebooks & Computer': 'Laptops und Computer für jeden Bedarf',
+      'Laptops': 'Laptops für Gaming, Business und Multimedia',
+      'TV & Audio': 'Fernseher, Soundbars und Audio-Systeme',
+      'Fernseher': 'Smart-TVs, OLED, QLED in allen Größen',
+      'Kopfhörer': 'Kabellose und kabelgebundene Kopfhörer',
+      'Lautsprecher': 'Bluetooth-Lautsprecher und Soundsysteme',
+      'Tablets': 'Tablets für Entertainment und Produktivität',
+      'Smartwatches': 'Smartwatches und Fitness-Tracker',
+      'Wearables': 'Smartwatches, Fitness-Tracker und mehr',
+      'Gaming': 'Gaming-Zubehör und Peripheriegeräte',
+      'Spielekonsolen': 'PlayStation, Xbox, Nintendo Switch',
+      'Kameras': 'Digitalkameras und Objektive',
+      'Foto & Video': 'Kameras, Objektive und Foto-Zubehör',
+      'Smart Home': 'Intelligente Geräte für Ihr Zuhause',
+      'Haushaltsgeräte': 'Geräte für Küche und Haushalt',
+      'Kühlschränke': 'Kühl- und Gefrierschränke',
+      'Waschmaschinen': 'Waschmaschinen und Trockner',
+      'PC-Komponenten': 'Hardware-Komponenten für Ihren PC',
+      'Grafikkarten': 'Grafikkarten für Gaming und Rendering',
+      'Prozessoren': 'CPUs von Intel, AMD und mehr',
+      'Monitore': 'Monitore für Gaming, Office und Design',
+      'Drucker': 'Drucker und Multifunktionsgeräte',
+      'Zubehör': 'Diverses Zubehör für Elektronik',
+      'Software': 'Software und digitale Downloads',
+    };
+    return descriptions[category] || 'Entdecken Sie unsere Produkte in dieser Kategorie';
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
+      <Navigation />
+
+      <main className="container mx-auto px-4 py-12">
+        {/* Header */}
+        <div className="mb-12 text-center">
+          <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
+            Alle Kategorien
+          </h1>
+          <p className="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-400">
+            Durchsuchen Sie unsere Produktkategorien und finden Sie die besten Angebote
+          </p>
+
+          {/* Search Bar */}
+          <div className="mx-auto mt-8 max-w-2xl">
+            <div className="relative">
+              <svg className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Kategorien durchsuchen..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 bg-white pl-12 pr-4 py-3 text-gray-900 placeholder-gray-500 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:placeholder-gray-400"
+              />
+            </div>
+            {searchQuery && (
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                {filteredCategories.length} {filteredCategories.length === 1 ? 'Kategorie' : 'Kategorien'} gefunden
+              </p>
+            )}
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">
+                Kategorien werden geladen...
+              </p>
+            </div>
+          </div>
+        ) : categories.length === 0 ? (
+          <div className="rounded-xl bg-gray-50 p-12 text-center dark:bg-zinc-900">
+            <svg
+              className="mx-auto h-16 w-16 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+              />
+            </svg>
+            <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">
+              Keine Kategorien gefunden
+            </h3>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              Fügen Sie Produkte hinzu, um Kategorien zu sehen
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Categories Grid */}
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {paginatedCategories
+                .sort((a, b) => b.count - a.count)
+                .map((category) => {
+                  // Create slug from category name
+                  const slug = category.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                  return (
+                    <Link
+                      key={category.name}
+                      href={`/kategorien/${encodeURIComponent(slug)}`}
+                      className="group relative overflow-hidden rounded-xl bg-white p-8 shadow-lg transition-all hover:scale-105 hover:shadow-2xl dark:bg-zinc-900"
+                    >
+                    <div className="absolute right-4 top-4 text-6xl opacity-10">
+                      {category.icon}
+                    </div>
+
+                    <div className="relative">
+                      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 text-3xl shadow-lg">
+                        {category.icon}
+                      </div>
+
+                      <h3 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
+                        {category.name}
+                      </h3>
+
+                      <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                        {category.description}
+                      </p>
+
+                      <div className="flex items-center justify-end">
+                        <svg
+                          className="h-6 w-6 text-gray-400 transition-transform group-hover:translate-x-1"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </Link>
+                  );
+                })}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-12 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-800"
+                >
+                  ← Zurück
+                </button>
+
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`rounded-lg px-3 py-2 font-medium transition-colors ${
+                        currentPage === page
+                          ? 'bg-blue-600 text-white dark:bg-blue-500'
+                          : 'border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-800'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-800"
+                >
+                  Weiter →
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
