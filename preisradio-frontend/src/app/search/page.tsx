@@ -26,7 +26,6 @@ function SearchContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState(query);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [pageSize] = useState(20);
@@ -107,7 +106,7 @@ function SearchContent() {
       setCurrentPage(page);
 
       const response = await api.getProductsFromBothRetailers({
-        search: searchQuery || query || undefined,
+        search: query || undefined,
         category: categoryParam || undefined,
         brand: brandParam || undefined,
         retailer: retailerParam || undefined,
@@ -172,13 +171,6 @@ function SearchContent() {
     router.push(`/search?${newParams.toString()}`, { scroll: false });
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      updateURL({ q: searchQuery });
-    }
-  };
-
   const handleFilterChange = (filterName: string, value: string) => {
     updateURL({ [filterName]: value });
   };
@@ -230,27 +222,6 @@ function SearchContent() {
               Suche nach: <span className="font-semibold">{query}</span>
             </p>
           )}
-        </div>
-
-        {/* Search Bar */}
-        <div className="mb-8">
-          <form onSubmit={handleSearch}>
-            <div className="flex gap-4">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Produkt suchen..."
-                className="flex-1 rounded-lg border border-gray-300 bg-white px-6 py-3 text-gray-900 placeholder-gray-500 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:placeholder-gray-400"
-              />
-              <button
-                type="submit"
-                className="rounded-lg bg-blue-600 px-8 py-3 font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-              >
-                Suchen
-              </button>
-            </div>
-          </form>
         </div>
 
         {/* Mobile Filters Button - Fixed at bottom */}
