@@ -398,7 +398,11 @@ class ProductViewSet(viewsets.ViewSet):
             data = serializer.data
             data['retailer'] = 'kaufland'
             return Response(data)
-        except (KauflandProduct.DoesNotExist, Exception) as e:
+        except KauflandProduct.DoesNotExist:
+            pass
+        except Exception as e:
+            # Log Kaufland-specific errors for debugging
+            print(f"Kaufland product retrieve error for ID {pk}: {type(e).__name__}: {e}")
             pass
 
         return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
