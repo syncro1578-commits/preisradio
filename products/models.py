@@ -1,6 +1,6 @@
 from mongoengine import (
     Document, StringField, URLField, DateTimeField,
-    FloatField, IntField
+    FloatField, IntField, ListField
 )
 from datetime import datetime
 
@@ -111,9 +111,11 @@ class KauflandProduct(Document):
     discount = StringField(max_length=10, null=True, blank=True)
     gtin = StringField(max_length=14, null=True, blank=True)
     image = URLField(null=True, blank=True)
+    images_all = ListField(URLField(), null=True, blank=True)
     old_price = FloatField(null=True, blank=True)
     price = FloatField(required=True)
     scraped_at = DateTimeField(null=True, blank=True)
+    source = StringField(max_length=255, null=True, blank=True)
     title = StringField(max_length=500, required=True)
     url = URLField(required=True)
 
