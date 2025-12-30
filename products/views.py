@@ -295,7 +295,13 @@ class ProductViewSet(viewsets.ViewSet):
             saturn_count = saturn_query.count() if saturn_query else 0
             mediamarkt_count = mediamarkt_query.count() if mediamarkt_query else 0
             otto_count = otto_query.count() if otto_query else 0
-            kaufland_count = kaufland_query.count() if kaufland_query else 0
+
+            try:
+                kaufland_count = kaufland_query.count() if kaufland_query else 0
+            except Exception as e:
+                print(f"Warning: Could not count Kaufland products: {e}")
+                kaufland_count = 0
+
             total_count = saturn_count + mediamarkt_count + otto_count + kaufland_count
 
             # Load enough results to ensure good page results after sorting
@@ -305,7 +311,12 @@ class ProductViewSet(viewsets.ViewSet):
             saturn_results = list(saturn_query.order_by('-scraped_at').limit(load_size)) if saturn_query else []
             mediamarkt_results = list(mediamarkt_query.order_by('-scraped_at').limit(load_size)) if mediamarkt_query else []
             otto_results = list(otto_query.order_by('-scraped_at').limit(load_size)) if otto_query else []
-            kaufland_results = list(kaufland_query.order_by('-scraped_at').limit(load_size)) if kaufland_query else []
+
+            try:
+                kaufland_results = list(kaufland_query.order_by('-scraped_at').limit(load_size)) if kaufland_query else []
+            except Exception as e:
+                print(f"Warning: Could not load Kaufland products: {e}")
+                kaufland_results = []
 
             # Combine products with relevance scores
             products = [(p, 'saturn', self._calculate_search_relevance(p, search)) for p in saturn_results]
@@ -406,7 +417,12 @@ class ProductViewSet(viewsets.ViewSet):
         saturn_categories = list(SaturnProduct.objects.distinct('category'))
         mediamarkt_categories = list(MediaMarktProduct.objects.distinct('category'))
         otto_categories = list(OttoProduct.objects.distinct('category'))
-        kaufland_categories = list(KauflandProduct.objects.distinct('category'))
+
+        try:
+            kaufland_categories = list(KauflandProduct.objects.distinct('category'))
+        except Exception as e:
+            print(f"Warning: Could not get Kaufland categories: {e}")
+            kaufland_categories = []
 
         # Combine all categories
         all_categories_set = set(saturn_categories + mediamarkt_categories + otto_categories + kaufland_categories)
@@ -417,7 +433,12 @@ class ProductViewSet(viewsets.ViewSet):
             saturn_count = SaturnProduct.objects.filter(category=category).count()
             mediamarkt_count = MediaMarktProduct.objects.filter(category=category).count()
             otto_count = OttoProduct.objects.filter(category=category).count()
-            kaufland_count = KauflandProduct.objects.filter(category=category).count()
+
+            try:
+                kaufland_count = KauflandProduct.objects.filter(category=category).count()
+            except Exception:
+                kaufland_count = 0
+
             total_count = saturn_count + mediamarkt_count + otto_count + kaufland_count
 
             categories_with_count.append({
