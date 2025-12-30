@@ -398,8 +398,10 @@ class ProductViewSet(viewsets.ViewSet):
             data = serializer.data
             data['retailer'] = 'kaufland'
             return Response(data)
-        except KauflandProduct.DoesNotExist:
-            return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+        except (KauflandProduct.DoesNotExist, Exception) as e:
+            pass
+
+        return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=['get'])
     def categories(self, request):
