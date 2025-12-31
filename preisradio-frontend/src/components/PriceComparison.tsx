@@ -82,6 +82,14 @@ export default function PriceComparison({ currentProduct }: PriceComparisonProps
         textColor: 'text-blue-600',
         logo: '🛒'
       };
+    } else if (retailer === 'kaufland') {
+      return {
+        name: 'Kaufland',
+        color: 'bg-green-600',
+        borderColor: 'border-green-600',
+        textColor: 'text-green-600',
+        logo: '🛍️'
+      };
     }
     return {
       name: 'Händler',
