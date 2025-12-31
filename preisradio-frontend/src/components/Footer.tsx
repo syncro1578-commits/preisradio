@@ -160,7 +160,7 @@ export default function Footer() {
         <div className="mt-8 border-t border-gray-200 pt-8 dark:border-zinc-800">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              © {currentYear} PrixRadio. Alle Rechte vorbehalten.
+              © {currentYear} Preisradio. Alle Rechte vorbehalten.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
               <Link

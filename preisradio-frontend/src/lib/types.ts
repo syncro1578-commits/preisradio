@@ -1,4 +1,4 @@
-// Types TypeScript pour l'API PrixRadio
+// Types TypeScript pour l'API Preisradio
 
 export interface Retailer {
   id: string;

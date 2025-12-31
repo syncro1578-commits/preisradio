@@ -412,7 +412,7 @@ export default function ProductSearchPage() {
         {/* Features Section */}
         <div className="mt-20">
           <h2 className="mb-12 text-center text-3xl font-bold text-gray-900 dark:text-white">
-            Warum PrixRadio?
+            Warum Preisradio?
           </h2>
           <div className="grid gap-8 md:grid-cols-3">
             <div className="text-center">
