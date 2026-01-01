@@ -4,33 +4,34 @@ import { Product } from '@/lib/types';
 
 interface ProductCardProps {
   product: Product;
+  isBestPrice?: boolean;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, isBestPrice }: ProductCardProps) {
   // Prix actuel
   const currentPrice = product.price;
   const oldPrice = product.old_price;
   const hasDiscount = oldPrice && oldPrice > currentPrice;
 
-  // Déterminer le nom et les couleurs du retailer
+  // Déterminer le logo et nom du retailer
   const getRetailerInfo = (retailer?: string) => {
     if (retailer === 'saturn') {
-      return { name: 'Saturn', bgColor: 'bg-red-600', textColor: 'text-white' };
+      return { name: 'Saturn', logo: '/retailers/saturn.png' };
     } else if (retailer === 'mediamarkt') {
-      return { name: 'MediaMarkt', bgColor: 'bg-red-700', textColor: 'text-white' };
+      return { name: 'MediaMarkt', logo: '/retailers/mediamarkt.png' };
     } else if (retailer === 'otto') {
-      return { name: 'Otto', bgColor: 'bg-blue-600', textColor: 'text-white' };
+      return { name: 'Otto', logo: '/retailers/otto.png' };
     } else if (retailer === 'kaufland') {
-      return { name: 'Kaufland', bgColor: 'bg-green-600', textColor: 'text-white' };
+      return { name: 'Kaufland', logo: '/retailers/kaufland.png' };
     }
-    return { name: 'Händler', bgColor: 'bg-gray-600', textColor: 'text-white' };
+    return { name: 'Händler', logo: null };
   };
 
   const retailerInfo = getRetailerInfo(product.retailer);
 
   return (
     <Link href={`/product/${product.id}`}>
-      <div className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-3 sm:p-4 transition-all hover:shadow-xl hover:border-blue-300 dark:bg-zinc-900 dark:border-zinc-800 dark:hover:border-blue-600">
+      <div className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-3 sm:p-4 transition-all duration-300 hover:shadow-xl hover:border-blue-300 hover:-translate-y-1 dark:bg-zinc-900 dark:border-zinc-800 dark:hover:border-blue-600 animate-fadeIn">
         {/* Image du produit - Taille adaptée pour mobile */}
         <div className="relative mb-2 sm:mb-3 aspect-square w-full overflow-hidden rounded-lg bg-gray-50 dark:bg-zinc-800">
           {product.image ? (
@@ -61,11 +62,21 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        {/* Retailer badge only - optimized for mobile */}
-        <div className="mb-1 sm:mb-2">
-          <span className={`inline-block rounded-full ${retailerInfo.bgColor} px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium ${retailerInfo.textColor}`}>
-            {retailerInfo.name}
-          </span>
+        {/* Retailer logo - optimized for mobile */}
+        <div className="mb-1 sm:mb-2 h-6 sm:h-8">
+          {retailerInfo.logo ? (
+            <Image
+              src={retailerInfo.logo}
+              alt={retailerInfo.name}
+              width={80}
+              height={32}
+              className="h-full w-auto object-contain"
+            />
+          ) : (
+            <span className="inline-block rounded-full bg-gray-600 px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium text-white">
+              {retailerInfo.name}
+            </span>
+          )}
         </div>
 
         {/* Nom du produit - optimized for mobile */}
@@ -90,15 +101,27 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        {/* Badge de réduction */}
-        {hasDiscount && product.discount && (
+        {/* Badge "Meilleur Prix" - Priorité 1 */}
+        {isBestPrice && (
+          <div className="absolute left-3 top-3 rounded-lg bg-gradient-to-r from-yellow-400 to-orange-500 px-2 sm:px-3 py-1 shadow-lg animate-bounce-subtle">
+            <div className="flex items-center gap-1">
+              <svg className="h-3 w-3 sm:h-4 sm:w-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              <span className="text-[10px] sm:text-xs font-bold text-white">Meilleur Prix</span>
+            </div>
+          </div>
+        )}
+
+        {/* Badge de réduction - Priorité 2 */}
+        {!isBestPrice && hasDiscount && product.discount && (
           <div className="absolute right-3 top-3 rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white shadow-md">
             {product.discount}
           </div>
         )}
 
-        {/* Badge "Neu" si produit récent */}
-        {!hasDiscount && product.scraped_at && (() => {
+        {/* Badge "Neu" si produit récent - Priorité 3 */}
+        {!isBestPrice && !hasDiscount && product.scraped_at && (() => {
           const scrapedDate = new Date(product.scraped_at);
           const daysSinceScraping = Math.floor(
             (Date.now() - scrapedDate.getTime()) / (1000 * 60 * 60 * 24)

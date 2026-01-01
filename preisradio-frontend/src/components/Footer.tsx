@@ -19,7 +19,7 @@ export default function Footer() {
         { href: '/kategorien/smartphones', label: 'Smartphones' },
         { href: '/kategorien/laptops', label: 'Laptops' },
         { href: '/kategorien/fernseher', label: 'Fernseher' },
-        { href: '/kategorien/gaming', label: 'Gaming' },
+        { href: '/kategorien/spielkonsolen', label: 'Gaming' },
         { href: '/kategorien', label: 'Alle Kategorien' },
       ],
     },
