@@ -10,6 +10,7 @@ import ProductSimilar from '@/components/ProductSimilar';
 import PriceComparison from '@/components/PriceComparison';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import { getRetailerInfo } from '@/lib/retailerUtils';
 
 interface ProductDetailClientProps {
   productId: string;
@@ -108,19 +109,6 @@ export default function ProductDetailClient({
   const discountAmount = hasDiscount ? oldPrice - currentPrice : 0;
   const discountPercent = hasDiscount ? ((discountAmount / oldPrice) * 100) : 0;
 
-  const getRetailerInfo = (retailer?: string) => {
-    if (retailer === 'saturn') {
-      return { name: 'Saturn', color: 'bg-red-600', logo: '🪐' };
-    } else if (retailer === 'mediamarkt') {
-      return { name: 'MediaMarkt', color: 'bg-red-700', logo: '📺' };
-    } else if (retailer === 'otto') {
-      return { name: 'Otto', color: 'bg-blue-600', logo: '🛒' };
-    } else if (retailer === 'kaufland') {
-      return { name: 'Kaufland', color: 'bg-green-600', logo: '🛍️' };
-    }
-    return { name: 'Händler', color: 'bg-gray-600', logo: '🏪' };
-  };
-
   const retailerInfo = getRetailerInfo(product.retailer);
 
   // Generate SEO-friendly slugs
@@ -199,7 +187,15 @@ export default function ProductDetailClient({
                 href={`/search?retailer=${product.retailer}`}
                 className={`inline-flex items-center gap-1.5 md:gap-2 rounded-full ${retailerInfo.color} px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold text-white hover:opacity-90 transition-opacity`}
               >
-                <span>{retailerInfo.logo}</span>
+                {retailerInfo.logo && (
+                  <Image
+                    src={retailerInfo.logo}
+                    alt={retailerInfo.name}
+                    width={60}
+                    height={20}
+                    className="h-4 w-auto object-contain brightness-0 invert"
+                  />
+                )}
                 <span>{retailerInfo.name}</span>
               </Link>
               {product.discount && (

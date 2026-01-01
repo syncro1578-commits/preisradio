@@ -3,6 +3,8 @@
 import { Product } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import Image from 'next/image';
+import { getRetailerInfo } from '@/lib/retailerUtils';
 
 interface PriceComparisonProps {
   currentProduct: Product;
@@ -57,48 +59,6 @@ export default function PriceComparison({ currentProduct }: PriceComparisonProps
   const sortedPrices = [...products].sort((a, b) => a.price - b.price);
   const lowestPrice = sortedPrices[0]?.price;
 
-  const getRetailerInfo = (retailer?: string) => {
-    if (retailer === 'saturn') {
-      return {
-        name: 'Saturn',
-        color: 'bg-red-600',
-        borderColor: 'border-red-600',
-        textColor: 'text-red-600',
-        logo: '🪐'
-      };
-    } else if (retailer === 'mediamarkt') {
-      return {
-        name: 'MediaMarkt',
-        color: 'bg-red-700',
-        borderColor: 'border-red-700',
-        textColor: 'text-red-700',
-        logo: '📺'
-      };
-    } else if (retailer === 'otto') {
-      return {
-        name: 'Otto',
-        color: 'bg-blue-600',
-        borderColor: 'border-blue-600',
-        textColor: 'text-blue-600',
-        logo: '🛒'
-      };
-    } else if (retailer === 'kaufland') {
-      return {
-        name: 'Kaufland',
-        color: 'bg-green-600',
-        borderColor: 'border-green-600',
-        textColor: 'text-green-600',
-        logo: '🛍️'
-      };
-    }
-    return {
-      name: 'Händler',
-      color: 'bg-gray-600',
-      borderColor: 'border-gray-600',
-      textColor: 'text-gray-600',
-      logo: '🏪'
-    };
-  };
 
   return (
     <div className="mb-8 rounded-xl bg-white p-4 md:p-6 shadow-lg dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800">
@@ -134,7 +94,15 @@ export default function PriceComparison({ currentProduct }: PriceComparisonProps
                 {/* Retailer Info */}
                 <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                   <span className={`inline-flex items-center gap-1.5 rounded-full ${retailerInfo.color} px-2 md:px-3 py-1 text-xs md:text-sm font-bold text-white whitespace-nowrap`}>
-                    <span>{retailerInfo.logo}</span>
+                    {retailerInfo.logo && (
+                      <Image
+                        src={retailerInfo.logo}
+                        alt={retailerInfo.name}
+                        width={50}
+                        height={16}
+                        className="h-3 w-auto object-contain brightness-0 invert"
+                      />
+                    )}
                     <span className="hidden sm:inline">{retailerInfo.name}</span>
                   </span>
 

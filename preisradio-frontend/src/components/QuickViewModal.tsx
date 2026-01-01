@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from '@/lib/types';
+import { getRetailerInfo } from '@/lib/retailerUtils';
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -28,19 +29,6 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
   }, [isOpen, onClose]);
 
   if (!isOpen || !product) return null;
-
-  const getRetailerInfo = (retailer?: string) => {
-    if (retailer === 'saturn') {
-      return { name: 'Saturn', logo: '/retailers/saturn.png' };
-    } else if (retailer === 'mediamarkt') {
-      return { name: 'MediaMarkt', logo: '/retailers/mediamarkt.png' };
-    } else if (retailer === 'otto') {
-      return { name: 'Otto', logo: '/retailers/otto.png' };
-    } else if (retailer === 'kaufland') {
-      return { name: 'Kaufland', logo: '/retailers/kaufland.png' };
-    }
-    return { name: 'Händler', logo: null };
-  };
 
   const retailerInfo = getRetailerInfo(product.retailer);
 
