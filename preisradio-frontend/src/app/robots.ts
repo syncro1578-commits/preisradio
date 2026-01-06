@@ -13,6 +13,7 @@ export default function robots(): MetadataRoute.Robots {
           '/*.css$',
           '/*.xml$',
           '/sitemap.xml',
+          '/favicon.ico',     // Allow favicon with or without query parameters
         ],
         disallow: [
           '/api/',
