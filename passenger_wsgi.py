@@ -26,9 +26,9 @@ log_debug(f"BASE_DIR: {BASE_DIR}")
 # 2. Find virtualenv (check multiple locations)
 VENV_PATH = None
 possible_venv_paths = [
+    Path('/usr/home/wael/venv'),                # ✅ CORRECT PATH for serv00
     BASE_DIR / 'venv',                          # In public_python
     BASE_DIR.parent / 'venv',                   # In domain root (api.preisradio.de)
-    Path('/home/wael/domains/venv'),            # ✅ GLOBAL VENV (ADD THIS!)
 ]
 
 for path in possible_venv_paths:
