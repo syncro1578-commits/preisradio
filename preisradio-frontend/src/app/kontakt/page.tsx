@@ -226,10 +226,10 @@ export default function KontaktPage() {
                       E-Mail
                     </h3>
                     <a
-                      href="mailto:kontakt@preisradio.de"
+                      href="mailto:contact@preisradio.de"
                       className="text-blue-600 hover:underline dark:text-blue-400"
                     >
-                      kontakt@preisradio.de
+                      contact@preisradio.de
                     </a>
                   </div>
                 </div>
