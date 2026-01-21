@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Retailer } from '@/lib/types';
@@ -11,6 +11,8 @@ import Footer from '@/components/Footer';
 export default function HaendlerPage() {
   const [retailers, setRetailers] = useState<Retailer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({ shopName: '', website: '', email: '' });
+  const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
   useEffect(() => {
     loadData();
@@ -24,6 +26,28 @@ export default function HaendlerPage() {
       console.error('Error loading data:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setFormStatus('sending');
+
+    try {
+      const response = await fetch('/api/shop-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setFormStatus('success');
+        setFormData({ shopName: '', website: '', email: '' });
+      } else {
+        setFormStatus('error');
+      }
+    } catch {
+      setFormStatus('error');
     }
   };
 
@@ -180,6 +204,69 @@ export default function HaendlerPage() {
                 Alle Partner werden sorgfältig ausgewählt, um Ihnen das beste
                 Einkaufserlebnis zu garantieren.
               </p>
+            </div>
+
+            {/* Shop Request Form */}
+            <div className="mt-12 md:mt-16 rounded-2xl bg-white dark:bg-zinc-900 p-8 md:p-12 shadow-lg border border-gray-100 dark:border-zinc-800">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                  Händler werden
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Möchten Sie Ihre Produkte auf Preisradio listen? Kontaktieren Sie uns!
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Shop-Name"
+                    required
+                    value={formData.shopName}
+                    onChange={(e) => setFormData({ ...formData, shopName: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="url"
+                    placeholder="Website-URL"
+                    required
+                    value={formData.website}
+                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="email"
+                    placeholder="E-Mail-Adresse"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={formStatus === 'sending'}
+                  className="w-full rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 font-semibold text-white transition-all hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 shadow-lg hover:shadow-xl"
+                >
+                  {formStatus === 'sending' ? 'Wird gesendet...' : 'Anfrage senden'}
+                </button>
+
+                {formStatus === 'success' && (
+                  <p className="text-center text-green-600 dark:text-green-400 font-medium">
+                    Vielen Dank! Wir melden uns bei Ihnen.
+                  </p>
+                )}
+                {formStatus === 'error' && (
+                  <p className="text-center text-red-600 dark:text-red-400 font-medium">
+                    Fehler beim Senden. Bitte versuchen Sie es erneut.
+                  </p>
+                )}
+              </form>
             </div>
           </>
         )}
