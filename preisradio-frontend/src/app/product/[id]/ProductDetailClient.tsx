@@ -103,9 +103,9 @@ export default function ProductDetailClient({
     );
   }
 
-  const currentPrice = product.price;
+  const currentPrice = product.price || 0;
   const oldPrice = product.old_price;
-  const hasDiscount = oldPrice && oldPrice > currentPrice;
+  const hasDiscount = oldPrice && oldPrice > currentPrice && currentPrice > 0;
   const discountAmount = hasDiscount ? oldPrice - currentPrice : 0;
   const discountPercent = hasDiscount ? ((discountAmount / oldPrice) * 100) : 0;
 

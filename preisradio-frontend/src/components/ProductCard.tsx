@@ -10,9 +10,9 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, isBestPrice }: ProductCardProps) {
   // Prix actuel
-  const currentPrice = product.price;
+  const currentPrice = product.price || 0;
   const oldPrice = product.old_price;
-  const hasDiscount = oldPrice && oldPrice > currentPrice;
+  const hasDiscount = oldPrice && oldPrice > currentPrice && currentPrice > 0;
 
   const retailerInfo = getRetailerInfo(product.retailer);
 
