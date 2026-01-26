@@ -15,26 +15,24 @@ import { getRetailerInfo } from '@/lib/retailerUtils';
 interface ProductDetailClientProps {
   productId: string;
   initialProduct: Product | null;
-  initialError: string | null;
 }
 
 export default function ProductDetailClient({
   productId,
   initialProduct,
-  initialError
 }: ProductDetailClientProps) {
   const router = useRouter();
   // Use server-provided data as initial state
   const [product, setProduct] = useState<Product | null>(initialProduct);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(initialError);
+  const [error, setError] = useState<string | null>(null);
 
   // Only fetch client-side if initial data is missing
   useEffect(() => {
-    if (!initialProduct && !initialError) {
+    if (!initialProduct) {
       loadProduct();
     }
-  }, [productId, initialProduct, initialError]);
+  }, [productId, initialProduct]);
 
   const loadProduct = async () => {
     try {
