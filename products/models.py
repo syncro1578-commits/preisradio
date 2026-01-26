@@ -102,7 +102,11 @@ class OttoProduct(Document):
 
 
 class KauflandProduct(Document):
-    """Kaufland.de product from MongoDB"""
+    """Kaufland.de product from MongoDB
+
+    Note: Kaufland uses string IDs instead of ObjectIds in MongoDB
+    """
+    id = StringField(primary_key=True)  # Override default ObjectId with string ID
     sku = StringField(max_length=50, unique=True, sparse=True)
     brand = StringField(max_length=255, null=True, blank=True)
     category = StringField(max_length=255, required=True)
