@@ -18,14 +18,22 @@ export function generateProductSchema(
       ? 'Saturn'
       : product.retailer === 'mediamarkt'
         ? 'MediaMarkt'
-        : 'Retailer';
+        : product.retailer === 'otto'
+          ? 'Otto'
+          : product.retailer === 'kaufland'
+            ? 'Kaufland'
+            : 'Retailer';
 
   const retailerUrl =
     product.retailer === 'saturn'
       ? 'https://www.saturn.de'
       : product.retailer === 'mediamarkt'
         ? 'https://www.mediamarkt.de'
-        : undefined;
+        : product.retailer === 'otto'
+          ? 'https://www.otto.de'
+          : product.retailer === 'kaufland'
+            ? 'https://www.kaufland.de'
+            : undefined;
 
   // Construire le seller - conforme schema-dts
   const seller: Organization = {

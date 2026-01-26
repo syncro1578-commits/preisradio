@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       : product.title;
 
     // Optimize description to 150-160 chars
-    const retailerName = product.retailer === 'saturn' ? 'Saturn' : product.retailer === 'mediamarkt' ? 'MediaMarkt' : 'Otto';
+    const retailerName = product.retailer === 'saturn' ? 'Saturn' : product.retailer === 'mediamarkt' ? 'MediaMarkt' : product.retailer === 'kaufland' ? 'Kaufland' : 'Otto';
     const description = `${product.title.substring(0, 80)} bei ${retailerName}. Preis: ${product.price.toFixed(2)} ${product.currency}. Jetzt Preise vergleichen!`;
 
     // Keywords: ['Preisvergleich brandName', 'brandName Produkt', 'toppreise brandName Produkt']
