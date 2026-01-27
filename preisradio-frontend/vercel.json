@@ -1,6 +1,11 @@
 {
   "framework": "nextjs",
   "regions": ["fra1"],
+  "git": {
+    "deploymentEnabled": {
+      "master": true
+    }
+  },
   "env": {
     "NEXT_PUBLIC_API_URL": "https://api.preisradio.de",
     "NEXT_PUBLIC_API_BASE": "/api",
