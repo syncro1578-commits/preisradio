@@ -17,6 +17,9 @@ export const metadata: Metadata = {
       'x-default': baseUrl,
     },
   },
+  other: {
+    'verify-admitad': 'daf3c79d55',
+  },
 };
 
 function HomeLoadingFallback() {
