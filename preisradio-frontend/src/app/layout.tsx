@@ -3,6 +3,7 @@ import Script from 'next/script';
 import "./globals.css";
 import Analytics from "@/components/Analytics";
 import ConsentBanner from "@/components/ConsentBanner";
+import PWAInstall from "@/components/PWAInstall";
 // Organization and FAQ schemas removed from global layout - Organization now only on homepage
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -20,10 +21,16 @@ export const metadata: Metadata = {
   authors: [{ name: 'Preisradio' }],
   creator: 'Preisradio',
   publisher: 'Preisradio',
+  manifest: '/manifest.json',
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
     apple: '/favicon.ico',
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Preisradio',
   },
   robots: {
     index: true,
@@ -138,8 +145,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           }}
         />
 
+        {/* PWA Service Worker Registration */}
+        <Script id="register-sw" strategy="afterInteractive">
+          {`
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                  .then((registration) => {
+                    console.log('SW registered:', registration);
+                  })
+                  .catch((error) => {
+                    console.log('SW registration failed:', error);
+                  });
+              });
+            }
+          `}
+        </Script>
+
         <Analytics />
         <ConsentBanner />
+        <PWAInstall />
         {children}
         <VercelAnalytics />
         <SpeedInsights />

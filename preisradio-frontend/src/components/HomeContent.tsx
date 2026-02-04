@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { Product, Category } from '@/lib/types';
 import api from '@/lib/api';
 import ProductSection from '@/components/ProductSection';
+import SearchBar from '@/components/SearchBar';
 import Link from 'next/link';
 
 interface CategorySection {
@@ -16,25 +16,15 @@ interface CategorySection {
 }
 
 export default function HomeContent() {
-  const searchParams = useSearchParams();
-  const urlSearchQuery = searchParams.get('search') || '';
-
   const [topDeals, setTopDeals] = useState<Product[]>([]);
   const [categorySections, setCategorySections] = useState<CategorySection[]>([]);
   const [topCategories, setTopCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState(urlSearchQuery);
 
   useEffect(() => {
     loadAllSections();
   }, []);
-
-  useEffect(() => {
-    if (urlSearchQuery && urlSearchQuery !== searchQuery) {
-      setSearchQuery(urlSearchQuery);
-    }
-  }, [urlSearchQuery]);
 
   const loadTopCategories = async () => {
     try {
@@ -100,13 +90,6 @@ export default function HomeContent() {
       console.error('Error loading sections:', err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
     }
   };
 
@@ -181,27 +164,11 @@ export default function HomeContent() {
 
   return (
     <div className="space-y-16">
-      {/* Search Bar */}
-      <div>
-        <form onSubmit={handleSearch} className="mx-auto max-w-3xl">
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Produkt suchen (z.B. iPhone, Samsung TV, MacBook)..."
-                className="w-full rounded-lg border border-gray-300 bg-white px-6 py-4 text-gray-900 placeholder-gray-500 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:placeholder-gray-400"
-              />
-            </div>
-            <button
-              type="submit"
-              className="rounded-lg bg-blue-600 px-8 py-4 font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-            >
-              Suchen
-            </button>
-          </div>
-        </form>
+      {/* Enhanced Search Bar with Autocomplete */}
+      <div className="mx-auto max-w-3xl">
+        <SearchBar
+          placeholder="Produkt suchen (z.B. iPhone, Samsung TV, MacBook)..."
+        />
       </div>
 
       {/* Stats Cards */}
