@@ -214,6 +214,24 @@ GOOGLE_MERCHANT_ID = config('GOOGLE_MERCHANT_ID', default='5698148813')
 GOOGLE_SERVICE_ACCOUNT_KEY = os.path.join(BASE_DIR, 'astute-pride-262723-7f9bd77e07a5.json')
 
 
+# Cache Configuration
+# Using local memory cache (simple and effective for single server)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'preisradio-cache',
+        'TIMEOUT': 3600,  # Default: 1 hour
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,  # Maximum cached items
+        }
+    }
+}
+
+# Cache durations (in seconds)
+CACHE_HOMEPAGE_DURATION = 3600  # 1 hour for homepage (no filters)
+CACHE_SEARCH_DURATION = 600     # 10 minutes for search results
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

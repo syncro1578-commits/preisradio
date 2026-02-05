@@ -6,8 +6,11 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.http import condition
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse
+from django.core.cache import cache
+from django.conf import settings
 from mongoengine.queryset.visitor import Q
 from bson import ObjectId
+import hashlib
 from .models import SaturnProduct, MediaMarktProduct, OttoProduct, KauflandProduct
 from .serializers import (
     SaturnProductSerializer,
@@ -262,6 +265,20 @@ class ProductViewSet(viewsets.ViewSet):
         page = int(request.query_params.get('page', 1))
         page_size = int(request.query_params.get('page_size', 20))
 
+        # Generate cache key based on query parameters
+        cache_params = f"{search}:{category}:{brand}:{retailer}:{page}:{page_size}"
+        cache_key = f"products_list_{hashlib.md5(cache_params.encode()).hexdigest()}"
+
+        # Determine cache duration based on request type
+        # Homepage (no filters): 1 hour, Search/filters: 10 minutes
+        is_homepage = not search and not category and not brand and retailer == 'all' and page == 1
+        cache_duration = getattr(settings, 'CACHE_HOMEPAGE_DURATION', 3600) if is_homepage else getattr(settings, 'CACHE_SEARCH_DURATION', 600)
+
+        # Try to get from cache
+        cached_response = cache.get(cache_key)
+        if cached_response is not None:
+            return Response(cached_response)
+
         # Build queries with filters
         saturn_query = None
         mediamarkt_query = None
@@ -465,12 +482,18 @@ class ProductViewSet(viewsets.ViewSet):
         # Calculate pagination links
         has_next = (page * page_size) < total_count
 
-        return Response({
+        # Build response data
+        response_data = {
             'count': total_count,
             'next': f'/api/products/?page={page + 1}' if has_next else None,
             'previous': f'/api/products/?page={page - 1}' if page > 1 else None,
             'results': results
-        })
+        }
+
+        # Cache the response
+        cache.set(cache_key, response_data, cache_duration)
+
+        return Response(response_data)
 
     def retrieve(self, request, pk=None):
         """Retrieve a product by ID"""
