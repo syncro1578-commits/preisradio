@@ -35,11 +35,6 @@ class Command(BaseCommand):
         try:
             # Create index for Saturn products
             self.stdout.write('Creating text index for SaturnProduct...')
-            try:
-                SaturnProduct.drop_collection()
-                SaturnProduct.ensure_indexes()
-            except:
-                pass  # Collection might not exist
 
             saturn_collection = SaturnProduct._get_collection()
             try:
@@ -70,11 +65,6 @@ class Command(BaseCommand):
         try:
             # Create index for MediaMarkt products
             self.stdout.write('Creating text index for MediaMarktProduct...')
-            try:
-                MediaMarktProduct.drop_collection()
-                MediaMarktProduct.ensure_indexes()
-            except:
-                pass
 
             mediamarkt_collection = MediaMarktProduct._get_collection()
             try:
@@ -104,11 +94,6 @@ class Command(BaseCommand):
         try:
             # Create index for Otto products
             self.stdout.write('Creating text index for OttoProduct...')
-            try:
-                OttoProduct.drop_collection()
-                OttoProduct.ensure_indexes()
-            except:
-                pass
 
             otto_collection = OttoProduct._get_collection()
             try:
@@ -138,11 +123,6 @@ class Command(BaseCommand):
         try:
             # Create index for Kaufland products
             self.stdout.write('Creating text index for KauflandProduct...')
-            try:
-                KauflandProduct.drop_collection()
-                KauflandProduct.ensure_indexes()
-            except:
-                pass
 
             kaufland_collection = KauflandProduct._get_collection()
             try:
