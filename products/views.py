@@ -234,7 +234,13 @@ class ProductViewSet(viewsets.ViewSet):
         # Freshness boost (favor recent products)
         if product.scraped_at:
             from datetime import datetime, timezone
-            age_days = (datetime.now(timezone.utc) - product.scraped_at).days
+
+            # Make product.scraped_at timezone-aware if it's naive
+            scraped_at = product.scraped_at
+            if scraped_at.tzinfo is None:
+                scraped_at = scraped_at.replace(tzinfo=timezone.utc)
+
+            age_days = (datetime.now(timezone.utc) - scraped_at).days
 
             if age_days < 7:
                 score += 10  # Very recent
