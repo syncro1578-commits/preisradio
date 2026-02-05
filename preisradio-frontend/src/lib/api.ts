@@ -70,7 +70,7 @@ class ApiClient {
     return this.request<ApiResponse<Product>>(endpoint);
   }
 
-  // Charger les produits de tous les retailers et les mélanger
+  // Charger les produits (le backend gère le mélange des retailers)
   async getProductsFromBothRetailers(params?: {
     search?: string;
     category?: string;
@@ -79,96 +79,16 @@ class ApiClient {
     page?: number;
     page_size?: number;
   }): Promise<ApiResponse<Product>> {
-    const pageSize = params?.page_size || 20;
-    const page = params?.page || 1;
-
-    try {
-      // Si un retailer spécifique est demandé, charger uniquement ce retailer
-      if (params?.retailer) {
-        return this.getProducts({
-          search: params?.search,
-          category: params?.category,
-          brand: params?.brand,
-          retailer: params?.retailer,
-          page: page,
-          page_size: pageSize,
-        });
-      }
-
-      // Charger en parallèle depuis Saturn, MediaMarkt, Otto et Kaufland
-      const [saturnResponse, mediamarktResponse, ottoResponse, kauflandResponse] = await Promise.all([
-        this.getProducts({
-          search: params?.search,
-          category: params?.category,
-          brand: params?.brand,
-          retailer: 'saturn',
-          page: page,
-          page_size: pageSize,
-        }),
-        this.getProducts({
-          search: params?.search,
-          category: params?.category,
-          brand: params?.brand,
-          retailer: 'mediamarkt',
-          page: page,
-          page_size: pageSize,
-        }),
-        this.getProducts({
-          search: params?.search,
-          category: params?.category,
-          brand: params?.brand,
-          retailer: 'otto',
-          page: page,
-          page_size: pageSize,
-        }),
-        this.getProducts({
-          search: params?.search,
-          category: params?.category,
-          brand: params?.brand,
-          retailer: 'kaufland',
-          page: page,
-          page_size: pageSize,
-        }),
-      ]);
-
-      // Mélanger les résultats de manière alternée
-      const mixedResults: Product[] = [];
-      const maxLength = Math.max(
-        saturnResponse.results.length,
-        mediamarktResponse.results.length,
-        ottoResponse.results.length,
-        kauflandResponse.results.length
-      );
-
-      for (let i = 0; i < maxLength; i++) {
-        if (i < saturnResponse.results.length) {
-          mixedResults.push(saturnResponse.results[i]);
-        }
-        if (i < mediamarktResponse.results.length) {
-          mixedResults.push(mediamarktResponse.results[i]);
-        }
-        if (i < ottoResponse.results.length) {
-          mixedResults.push(ottoResponse.results[i]);
-        }
-        if (i < kauflandResponse.results.length) {
-          mixedResults.push(kauflandResponse.results[i]);
-        }
-      }
-
-      // Check if there are more results on the next page
-      const hasNextPage = saturnResponse.next !== null || mediamarktResponse.next !== null || ottoResponse.next !== null || kauflandResponse.next !== null;
-
-      return {
-        count: saturnResponse.count + mediamarktResponse.count + ottoResponse.count + kauflandResponse.count,
-        next: hasNextPage ? `?page=${page + 1}` : null,
-        previous: page > 1 ? `?page=${page - 1}` : null,
-        results: mixedResults,
-      };
-    } catch (error) {
-      console.error('Error loading products from all retailers:', error);
-      // Fallback : charger sans filtre retailer
-      return this.getProducts({ ...params, page_size: pageSize, page });
-    }
+    // Le backend gère maintenant le mélange des retailers et le cache
+    // Un seul appel API au lieu de 4
+    return this.getProducts({
+      search: params?.search,
+      category: params?.category,
+      brand: params?.brand,
+      retailer: params?.retailer, // Si undefined, le backend charge tous les retailers
+      page: params?.page || 1,
+      page_size: params?.page_size || 20,
+    });
   }
 
   async getCategories(params?: {
