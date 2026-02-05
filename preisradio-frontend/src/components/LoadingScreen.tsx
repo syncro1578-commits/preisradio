@@ -37,10 +37,10 @@ export default function LoadingScreen() {
 
           {/* Texte de chargement */}
           <div className="mt-4 text-white/80 text-sm animate-pulse">
-            {progress < 30 && 'Chargement...'}
-            {progress >= 30 && progress < 60 && 'Connexion à l\'API...'}
-            {progress >= 60 && progress < 90 && 'Récupération des données...'}
-            {progress >= 90 && 'Presque prêt...'}
+            {progress < 30 && 'Lädt...'}
+            {progress >= 30 && progress < 60 && 'Verbindung zur API...'}
+            {progress >= 60 && progress < 90 && 'Daten werden geladen...'}
+            {progress >= 90 && 'Fast fertig...'}
           </div>
         </div>
 
