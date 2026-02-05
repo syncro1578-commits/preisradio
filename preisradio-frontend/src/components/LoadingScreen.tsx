@@ -23,16 +23,6 @@ export default function LoadingScreen() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700">
       <div className="text-center px-6">
-        {/* Logo/Nom Preisradio */}
-        <div className="mb-8">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-2 tracking-tight">
-            Preisradio
-          </h1>
-          <p className="text-blue-100 text-lg">
-            Preisvergleich Deutschland
-          </p>
-        </div>
-
         {/* Barre de progression */}
         <div className="w-full max-w-md mx-auto">
           <div className="h-2 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
