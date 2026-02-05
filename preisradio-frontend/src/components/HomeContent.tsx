@@ -46,12 +46,13 @@ export default function HomeContent() {
       // Load top categories first
       const categories = await loadTopCategories();
 
-      // Load products from Saturn and MediaMarkt for top deals (they have discounts)
-      const [saturnRes, mediamarktRes] = await Promise.all([
+      // Load products from Saturn, MediaMarkt and Otto for top deals (they have discounts)
+      const [saturnRes, mediamarktRes, ottoRes] = await Promise.all([
         api.getProducts({ retailer: 'saturn', page_size: 100 }),
         api.getProducts({ retailer: 'mediamarkt', page_size: 100 }),
+        api.getProducts({ retailer: 'otto', page_size: 100 }),
       ]);
-      const allProductsWithDeals = [...saturnRes.results, ...mediamarktRes.results];
+      const allProductsWithDeals = [...saturnRes.results, ...mediamarktRes.results, ...ottoRes.results];
 
       // Filter products with discounts for top deals
       const productsWithDiscount = allProductsWithDeals.filter(p => {
