@@ -277,7 +277,10 @@ class ProductViewSet(viewsets.ViewSet):
             if search:
                 saturn_query = saturn_query.filter(
                     Q(title__icontains=search) |
+                    Q(sku__icontains=search) |
+                    Q(sku=search) |  # Exact SKU match
                     Q(gtin__icontains=search) |
+                    Q(gtin=search) |  # Exact GTIN match
                     Q(description__icontains=search) |
                     Q(brand__icontains=search)
                 )
@@ -291,7 +294,10 @@ class ProductViewSet(viewsets.ViewSet):
             if search:
                 mediamarkt_query = mediamarkt_query.filter(
                     Q(title__icontains=search) |
+                    Q(sku__icontains=search) |
+                    Q(sku=search) |  # Exact SKU match
                     Q(gtin__icontains=search) |
+                    Q(gtin=search) |  # Exact GTIN match
                     Q(description__icontains=search) |
                     Q(brand__icontains=search)
                 )
@@ -305,7 +311,10 @@ class ProductViewSet(viewsets.ViewSet):
             if search:
                 otto_query = otto_query.filter(
                     Q(title__icontains=search) |
+                    Q(sku__icontains=search) |
+                    Q(sku=search) |  # Exact SKU match
                     Q(gtin__icontains=search) |
+                    Q(gtin=search) |  # Exact GTIN match
                     Q(description__icontains=search) |
                     Q(brand__icontains=search)
                 )
@@ -319,7 +328,10 @@ class ProductViewSet(viewsets.ViewSet):
             if search:
                 kaufland_query = kaufland_query.filter(
                     Q(title__icontains=search) |
+                    Q(sku__icontains=search) |
+                    Q(sku=search) |  # Exact SKU match
                     Q(gtin__icontains=search) |
+                    Q(gtin=search) |  # Exact GTIN match
                     Q(description__icontains=search) |
                     Q(brand__icontains=search)
                 )
