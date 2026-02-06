@@ -54,12 +54,15 @@ export default async function BrandDetailPage({ params }: { params: Promise<{ sl
   try {
     const decodedSlug = decodeURIComponent(slug);
 
-    // First, get all brands to find the exact brand name
-    const brandsResponse = await api.getBrands({ page_size: 1000 });
-    const allBrands = brandsResponse.results || [];
+    // Convert slug back to potential brand name (e.g., "samsung" -> "Samsung")
+    const searchTerm = decodedSlug.replace(/-/g, ' ');
 
-    // Find the matching brand by slug
-    const matchingBrand = allBrands.find(b => {
+    // Search for the brand using the API's search parameter
+    const brandsResponse = await api.getBrands({ search: searchTerm, page_size: 50 });
+    const matchingBrands = brandsResponse.results || [];
+
+    // Find exact match by comparing slugs
+    const matchingBrand = matchingBrands.find(b => {
       const brandSlug = b.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       const normalizedSlug = slug.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       return brandSlug === normalizedSlug;
@@ -76,8 +79,11 @@ export default async function BrandDetailPage({ params }: { params: Promise<{ sl
 
       products = response?.results || [];
     } else {
-      // Fallback to formatted slug
-      brandName = decodedSlug.charAt(0).toUpperCase() + decodedSlug.slice(1).toLowerCase();
+      // Fallback: capitalize first letter of each word from slug
+      brandName = searchTerm
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
     }
   } catch (err) {
     console.error('Error fetching brand products:', err);
