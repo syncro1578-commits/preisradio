@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Product } from '@/lib/types';
 import api from '@/lib/api';
@@ -37,13 +37,13 @@ function SearchContent() {
   // Load categories and brands once on mount
   useEffect(() => {
     loadCategoriesAndBrands();
-  }, []);
+  }, [loadCategoriesAndBrands]);
 
   // Synchronize state with URL params
   useEffect(() => {
     setCurrentPage(1);
     loadProducts(1);
-  }, [query, categoryParam, brandParam, retailerParam, minPriceParam, maxPriceParam, discountParam, sortParam]);
+  }, [query, categoryParam, brandParam, retailerParam, minPriceParam, maxPriceParam, discountParam, sortParam, loadProducts]);
 
   // Update document title, canonical URL and JSON-LD
   useEffect(() => {
@@ -107,7 +107,7 @@ function SearchContent() {
     };
   }, [query, products]);
 
-  const loadCategoriesAndBrands = async () => {
+  const loadCategoriesAndBrands = useCallback(async () => {
     try {
       const [categoriesRes, brandsRes] = await Promise.all([
         api.getCategories({ page_size: 200 }),
@@ -119,9 +119,9 @@ function SearchContent() {
     } catch (err) {
       console.error('Error loading categories and brands:', err);
     }
-  };
+  }, []);
 
-  const loadProducts = async (page: number = 1) => {
+  const loadProducts = useCallback(async (page: number = 1) => {
     try {
       setLoading(true);
       setError(null);
@@ -144,8 +144,10 @@ function SearchContent() {
       const response = await api.getProductsFromBothRetailers(params);
 
       let results = response?.results || [];
+      let count = response?.count || 0;
 
       // Discount filter still needs to be client-side (backend doesn't support it yet)
+      // When discount filter is active, we need to adjust totalCount
       if (discountParam) {
         const minDiscount = parseFloat(discountParam);
         results = results.filter(p => {
@@ -153,17 +155,20 @@ function SearchContent() {
           const discountValue = parseFloat(p.discount.replace('%', ''));
           return discountValue >= minDiscount;
         });
+        // Important: Use filtered results count, not API count
+        // This disables true pagination when discount filter is active
+        count = results.length;
       }
 
       setProducts(results);
-      setTotalCount(response?.count || results.length);
+      setTotalCount(count);
     } catch (err) {
       setError('Fehler beim Laden der Suchergebnisse');
       console.error('Error loading search results:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [query, categoryParam, brandParam, retailerParam, minPriceParam, maxPriceParam, sortParam, discountParam, pageSize]);
 
   const updateURL = (params: Record<string, string>) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -398,8 +403,12 @@ function SearchContent() {
                   ))}
                 </div>
 
-                {/* Pagination */}
-                {totalCount > pageSize && (
+                {/* Pagination
+                    Note: When discount filter is active, pagination shows current page results only
+                    because discount filtering happens client-side after API call.
+                    To enable full pagination with discount, backend support would be needed.
+                */}
+                {totalCount > pageSize && !discountParam && (
                   <div className="mt-12 flex items-center justify-center gap-2">
                     <button
                       onClick={() => loadProducts(currentPage - 1)}
