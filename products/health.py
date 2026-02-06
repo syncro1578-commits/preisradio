@@ -22,13 +22,25 @@ def api_status(request):
     """
     Endpoint pour vérifier le statut de l'API et les dépendances
     """
-    from products.models import SaturnProduct, MediaMarktProduct
+    from products.models import SaturnProduct, MediaMarktProduct, OttoProduct, KauflandProduct
+    import logging
+
+    logger = logging.getLogger(__name__)
 
     try:
-        # Test MongoDB connection
+        # Test MongoDB connection for all retailers
         saturn_count = SaturnProduct.objects.count()
         mediamarkt_count = MediaMarktProduct.objects.count()
-        product_count = saturn_count + mediamarkt_count
+        otto_count = OttoProduct.objects.count()
+
+        # Kaufland may have connection issues, handle gracefully
+        try:
+            kaufland_count = KauflandProduct.objects.count()
+        except Exception as e:
+            logger.warning(f"Could not count Kaufland products: {e}")
+            kaufland_count = 0
+
+        product_count = saturn_count + mediamarkt_count + otto_count + kaufland_count
 
         return Response({
             'status': 'operational',
@@ -38,8 +50,10 @@ def api_status(request):
                     'total': product_count,
                     'saturn': saturn_count,
                     'mediamarkt': mediamarkt_count,
+                    'otto': otto_count,
+                    'kaufland': kaufland_count,
                 },
-                'retailers': 2,  # Saturn et MediaMarkt
+                'retailers': 4,  # Saturn, MediaMarkt, Otto, Kaufland
             },
 
             'dependencies': {

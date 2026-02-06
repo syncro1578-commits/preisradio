@@ -669,62 +669,6 @@ class ProductViewSet(viewsets.ViewSet):
             'results': similar_products
         })
 
-    @action(detail=True, methods=['get'])
-    def price_history(self, request, pk=None):
-        """Get price history for a product (currently returns latest snapshot)
-
-        Note: This endpoint returns the current price snapshot.
-        For full historical tracking, implement periodic price scraping
-        and store price snapshots with timestamps in a separate collection.
-        """
-        # Get the current product
-        product = None
-        retailer = None
-
-        try:
-            product = SaturnProduct.objects.get(id=pk)
-            retailer = 'saturn'
-        except SaturnProduct.DoesNotExist:
-            try:
-                product = MediaMarktProduct.objects.get(id=pk)
-                retailer = 'mediamarkt'
-            except MediaMarktProduct.DoesNotExist:
-                return Response({'detail': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        if not product:
-            return Response({'detail': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        # Return current price as latest history point
-        if retailer == 'saturn':
-            serializer = SaturnProductSerializer(product)
-        else:
-            serializer = MediaMarktProductSerializer(product)
-
-        data = serializer.data
-        data['retailer'] = retailer
-
-        # Structure for historical data (currently just latest)
-        history_data = {
-            'product_id': str(product.id),
-            'current_price': product.price,
-            'old_price': product.old_price,
-            'discount': product.discount,
-            'currency': product.currency,
-            'retailer': retailer,
-            'last_checked': product.scraped_at,
-            'history': [
-                {
-                    'date': product.scraped_at,
-                    'price': product.price,
-                    'old_price': product.old_price,
-                    'discount': product.discount
-                }
-            ],
-            'product_details': data
-        }
-
-        return Response(history_data)
-
     @action(detail=False, methods=['get'])
     def sitemap(self, request):
         """
