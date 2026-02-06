@@ -39,11 +39,11 @@ export default function AdSenseInFeed({
   return (
     <ins
       className={`adsbygoogle ${className}`}
-      style={{ display: 'block' }}
-      data-ad-format="fluid"
-      data-ad-layout-key={layoutKey}
+      style={{ display: 'inline-block', width: '100%', minHeight: '250px' }}
       data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
       data-ad-slot={adSlot}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
     />
   );
 }
