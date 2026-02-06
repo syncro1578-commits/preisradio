@@ -279,79 +279,30 @@ class ProductViewSet(viewsets.ViewSet):
         if cached_response is not None:
             return Response(cached_response)
 
-        # Build queries with filters
-        saturn_query = None
-        mediamarkt_query = None
-        otto_query = None
-        kaufland_query = None
-
-        if retailer in ['all', 'saturn']:
-            saturn_query = SaturnProduct.objects()
-            if category:
-                saturn_query = saturn_query.filter(category=category)
-            if brand:
-                saturn_query = saturn_query.filter(brand=brand)
-            if search:
-                saturn_query = saturn_query.filter(
-                    Q(title__icontains=search) |
-                    Q(sku__icontains=search) |
-                    Q(sku=search) |  # Exact SKU match
-                    Q(gtin__icontains=search) |
-                    Q(gtin=search) |  # Exact GTIN match
-                    Q(description__icontains=search) |
-                    Q(brand__icontains=search)
+        # Build queries with filters using helper function
+        def build_query(model, category_filter, brand_filter, search_query):
+            """Build a filtered query for any product model"""
+            query = model.objects()
+            if category_filter:
+                query = query.filter(category=category_filter)
+            if brand_filter:
+                query = query.filter(brand=brand_filter)
+            if search_query:
+                query = query.filter(
+                    Q(title__icontains=search_query) |
+                    Q(sku__icontains=search_query) |
+                    Q(sku=search_query) |  # Exact SKU match
+                    Q(gtin__icontains=search_query) |
+                    Q(gtin=search_query) |  # Exact GTIN match
+                    Q(description__icontains=search_query) |
+                    Q(brand__icontains=search_query)
                 )
+            return query
 
-        if retailer in ['all', 'mediamarkt']:
-            mediamarkt_query = MediaMarktProduct.objects()
-            if category:
-                mediamarkt_query = mediamarkt_query.filter(category=category)
-            if brand:
-                mediamarkt_query = mediamarkt_query.filter(brand=brand)
-            if search:
-                mediamarkt_query = mediamarkt_query.filter(
-                    Q(title__icontains=search) |
-                    Q(sku__icontains=search) |
-                    Q(sku=search) |  # Exact SKU match
-                    Q(gtin__icontains=search) |
-                    Q(gtin=search) |  # Exact GTIN match
-                    Q(description__icontains=search) |
-                    Q(brand__icontains=search)
-                )
-
-        if retailer in ['all', 'otto']:
-            otto_query = OttoProduct.objects()
-            if category:
-                otto_query = otto_query.filter(category=category)
-            if brand:
-                otto_query = otto_query.filter(brand=brand)
-            if search:
-                otto_query = otto_query.filter(
-                    Q(title__icontains=search) |
-                    Q(sku__icontains=search) |
-                    Q(sku=search) |  # Exact SKU match
-                    Q(gtin__icontains=search) |
-                    Q(gtin=search) |  # Exact GTIN match
-                    Q(description__icontains=search) |
-                    Q(brand__icontains=search)
-                )
-
-        if retailer in ['all', 'kaufland']:
-            kaufland_query = KauflandProduct.objects()
-            if category:
-                kaufland_query = kaufland_query.filter(category=category)
-            if brand:
-                kaufland_query = kaufland_query.filter(brand=brand)
-            if search:
-                kaufland_query = kaufland_query.filter(
-                    Q(title__icontains=search) |
-                    Q(sku__icontains=search) |
-                    Q(sku=search) |  # Exact SKU match
-                    Q(gtin__icontains=search) |
-                    Q(gtin=search) |  # Exact GTIN match
-                    Q(description__icontains=search) |
-                    Q(brand__icontains=search)
-                )
+        saturn_query = build_query(SaturnProduct, category, brand, search) if retailer in ['all', 'saturn'] else None
+        mediamarkt_query = build_query(MediaMarktProduct, category, brand, search) if retailer in ['all', 'mediamarkt'] else None
+        otto_query = build_query(OttoProduct, category, brand, search) if retailer in ['all', 'otto'] else None
+        kaufland_query = build_query(KauflandProduct, category, brand, search) if retailer in ['all', 'kaufland'] else None
 
         # Apply pagination
         start = (page - 1) * page_size
@@ -567,32 +518,43 @@ class ProductViewSet(viewsets.ViewSet):
 
         Returns categories with product counts for better UX.
         """
-        # Get all unique categories from each retailer
-        saturn_categories = list(SaturnProduct.objects.distinct('category'))
-        mediamarkt_categories = list(MediaMarktProduct.objects.distinct('category'))
-        otto_categories = list(OttoProduct.objects.distinct('category'))
+        # Use aggregation to count products per category efficiently (avoids N+1 query problem)
+        # Each retailer: 1 aggregation query instead of N count queries
 
-        try:
-            kaufland_categories = list(KauflandProduct.objects.distinct('category'))
-        except Exception as e:
-            logger.warning(f"Could not get Kaufland categories: {e}")
-            kaufland_categories = []
-
-        # Combine all categories
-        all_categories_set = set(saturn_categories + mediamarkt_categories + otto_categories + kaufland_categories)
-
-        # Count products per category
-        categories_with_count = []
-        for category in all_categories_set:
-            saturn_count = SaturnProduct.objects.filter(category=category).count()
-            mediamarkt_count = MediaMarktProduct.objects.filter(category=category).count()
-            otto_count = OttoProduct.objects.filter(category=category).count()
-
+        def get_category_counts(model):
+            """Get category counts using MongoDB aggregation"""
             try:
-                kaufland_count = KauflandProduct.objects.filter(category=category).count()
-            except Exception:
-                kaufland_count = 0
+                pipeline = [
+                    {'$group': {'_id': '$category', 'count': {'$sum': 1}}},
+                    {'$sort': {'count': -1}}
+                ]
+                results = model.objects.aggregate(pipeline)
+                return {item['_id']: item['count'] for item in results if item['_id']}
+            except Exception as e:
+                logger.warning(f"Could not aggregate {model.__name__} categories: {e}")
+                return {}
 
+        # Get counts from all retailers (4 queries instead of N*4)
+        saturn_counts = get_category_counts(SaturnProduct)
+        mediamarkt_counts = get_category_counts(MediaMarktProduct)
+        otto_counts = get_category_counts(OttoProduct)
+        kaufland_counts = get_category_counts(KauflandProduct)
+
+        # Combine all unique categories
+        all_categories = set(
+            list(saturn_counts.keys()) +
+            list(mediamarkt_counts.keys()) +
+            list(otto_counts.keys()) +
+            list(kaufland_counts.keys())
+        )
+
+        # Build category list with counts
+        categories_with_count = []
+        for category in all_categories:
+            saturn_count = saturn_counts.get(category, 0)
+            mediamarkt_count = mediamarkt_counts.get(category, 0)
+            otto_count = otto_counts.get(category, 0)
+            kaufland_count = kaufland_counts.get(category, 0)
             total_count = saturn_count + mediamarkt_count + otto_count + kaufland_count
 
             categories_with_count.append({
@@ -691,78 +653,59 @@ class ProductViewSet(viewsets.ViewSet):
 
     @action(detail=True, methods=['get'])
     def similar(self, request, pk=None):
-        """Get similar products based on category and brand"""
-        # Get the current product
+        """Get similar products based on category from all retailers"""
+        # Find the product across all retailers
         product = None
         retailer = None
 
-        try:
-            product = SaturnProduct.objects.get(id=pk)
-            retailer = 'saturn'
-        except SaturnProduct.DoesNotExist:
+        retailers_config = [
+            ('saturn', SaturnProduct, SaturnProductSerializer),
+            ('mediamarkt', MediaMarktProduct, MediaMarktProductSerializer),
+            ('otto', OttoProduct, OttoProductSerializer),
+            ('kaufland', KauflandProduct, KauflandProductSerializer),
+        ]
+
+        # Find the original product
+        for ret_name, model, _ in retailers_config:
             try:
-                product = MediaMarktProduct.objects.get(id=pk)
-                retailer = 'mediamarkt'
-            except MediaMarktProduct.DoesNotExist:
-                return Response({'detail': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+                product = model.objects.get(id=pk)
+                retailer = ret_name
+                break
+            except model.DoesNotExist:
+                continue
+            except Exception as e:
+                logger.warning(f"Error checking {ret_name} for product {pk}: {e}")
+                continue
 
         if not product:
             return Response({'detail': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Find similar products in same category
+        # Find similar products from all retailers
         similar_products = []
-        limit = 3
+        limit = 6  # Increased limit to show more products from all retailers
 
-        if retailer == 'saturn':
-            # Search in Saturn for similar products
-            similar = SaturnProduct.objects.filter(
-                category=product.category,
-                id__ne=pk
-            ).order_by('-scraped_at').limit(limit)
+        # Search in same retailer first, then others
+        for ret_name, model, serializer_class in retailers_config:
+            if len(similar_products) >= limit:
+                break
 
-            for p in similar:
-                serializer = SaturnProductSerializer(p)
-                data = serializer.data
-                data['retailer'] = 'saturn'
-                similar_products.append(data)
+            try:
+                # Exclude current product if searching in same retailer
+                query = model.objects.filter(category=product.category)
+                if ret_name == retailer:
+                    query = query.filter(id__ne=pk)
 
-            # If not enough results, try to find in MediaMarkt as well
-            if len(similar_products) < limit:
                 remaining = limit - len(similar_products)
-                mediamarkt_similar = MediaMarktProduct.objects.filter(
-                    category=product.category
-                ).order_by('-scraped_at').limit(remaining)
+                similar = query.order_by('-scraped_at').limit(remaining)
 
-                for p in mediamarkt_similar:
-                    serializer = MediaMarktProductSerializer(p)
+                for p in similar:
+                    serializer = serializer_class(p)
                     data = serializer.data
-                    data['retailer'] = 'mediamarkt'
+                    data['retailer'] = ret_name
                     similar_products.append(data)
-        else:
-            # Search in MediaMarkt for similar products
-            similar = MediaMarktProduct.objects.filter(
-                category=product.category,
-                id__ne=pk
-            ).order_by('-scraped_at').limit(limit)
-
-            for p in similar:
-                serializer = MediaMarktProductSerializer(p)
-                data = serializer.data
-                data['retailer'] = 'mediamarkt'
-                similar_products.append(data)
-
-            # If not enough results, try to find in Saturn as well
-            if len(similar_products) < limit:
-                remaining = limit - len(similar_products)
-                saturn_similar = SaturnProduct.objects.filter(
-                    category=product.category
-                ).order_by('-scraped_at').limit(remaining)
-
-                for p in saturn_similar:
-                    serializer = SaturnProductSerializer(p)
-                    data = serializer.data
-                    data['retailer'] = 'saturn'
-                    similar_products.append(data)
+            except Exception as e:
+                logger.warning(f"Error fetching similar products from {ret_name}: {e}")
+                continue
 
         return Response({
             'count': len(similar_products),
