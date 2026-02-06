@@ -93,13 +93,13 @@ export default function ProductSection({
 
           <div
             ref={scrollRef}
-            className="flex gap-4 md:gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory scroll-smooth"
+            className="flex gap-2 sm:gap-4 md:gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory scroll-smooth"
           >
             {products.map((product, index) => (
               <>
                 <div
                   key={product.id}
-                  className="flex-none w-[260px] sm:w-[280px] md:w-[240px] lg:w-[260px] snap-start"
+                  className="flex-none w-[150px] sm:w-[280px] md:w-[240px] lg:w-[260px] snap-start"
                 >
                   <ProductCard product={product} />
                 </div>
@@ -107,7 +107,7 @@ export default function ProductSection({
                 {(index + 1) % 8 === 0 && index < products.length - 1 && (
                   <div
                     key={`ad-${index}`}
-                    className="flex-none w-[260px] sm:w-[280px] md:w-[240px] lg:w-[260px] snap-start"
+                    className="flex-none w-[150px] sm:w-[280px] md:w-[240px] lg:w-[260px] snap-start"
                   >
                     <AdSenseInFeed
                       adSlot="6399181253"
