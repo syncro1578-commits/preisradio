@@ -173,8 +173,8 @@ export default function KategorienPage() {
             {/* Categories Grid */}
             <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {categories.map((category, index) => {
-                const slug = category.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-                const icon = getCategoryIcon(category.name);
+                const slug = category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                const icon = getCategoryIcon(category);
 
                 // Gradient variations for visual interest
                 const gradients = [
@@ -189,7 +189,7 @@ export default function KategorienPage() {
 
                 return (
                   <Link
-                    key={category.name}
+                    key={category}
                     href={`/kategorien/${slug}`}
                     className="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl dark:bg-zinc-900 border-2 border-gray-100 dark:border-zinc-800 hover:border-transparent"
                   >
@@ -210,31 +210,8 @@ export default function KategorienPage() {
 
                       {/* Category Name */}
                       <h3 className="mb-3 text-lg sm:text-xl font-bold text-gray-900 dark:text-white line-clamp-2 min-h-[3.5rem]">
-                        {category.name}
+                        {category}
                       </h3>
-
-                      {/* Stats Row */}
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 px-3 py-1.5 text-xs sm:text-sm font-semibold text-blue-700 dark:text-blue-300">
-                          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                          </svg>
-                          {category.count}
-                        </span>
-
-                        {/* Retailer indicators */}
-                        <div className="flex gap-1">
-                          {category.saturn_count && category.saturn_count > 0 && (
-                            <div className="h-2 w-2 rounded-full bg-red-500" title="Saturn"></div>
-                          )}
-                          {category.mediamarkt_count && category.mediamarkt_count > 0 && (
-                            <div className="h-2 w-2 rounded-full bg-red-600" title="MediaMarkt"></div>
-                          )}
-                          {category.otto_count && category.otto_count > 0 && (
-                            <div className="h-2 w-2 rounded-full bg-blue-500" title="Otto"></div>
-                          )}
-                        </div>
-                      </div>
 
                       {/* Hover Arrow */}
                       <div className="mt-3 flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">

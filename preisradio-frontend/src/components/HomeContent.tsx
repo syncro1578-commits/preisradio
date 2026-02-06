@@ -75,7 +75,7 @@ export default function HomeContent() {
       for (const category of categories) {
         // Load products from all retailers for this category
         const response = await api.getProductsFromBothRetailers({
-          category: category.name,
+          category: category,  // category is now a string, not an object
           page_size: 20
         });
 
@@ -196,8 +196,8 @@ export default function HomeContent() {
 
       {/* Dynamic Category Sections */}
       {categorySections.map((section) => {
-        // Skip if category or category name is missing
-        if (!section.category?.name || typeof section.category.name !== 'string') return null;
+        // Skip if category is missing or invalid
+        if (!section.category || typeof section.category !== 'string') return null;
 
         // Mix products from all retailers
         const allProducts = [
@@ -207,16 +207,16 @@ export default function HomeContent() {
           ...section.kauflandProducts
         ];
 
-        const categoryName = section.category.name;
+        const categoryName = section.category;  // category is now a string
         const translatedName = simplifyGermanName(categoryName);
         const categorySlug = categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         const icon = getCategoryIcon(categoryName);
 
         return (
           <ProductSection
-            key={section.category.name}
+            key={section.category}
             title={translatedName}
-            description={`${section.category.count || 0} Produkte von Saturn, MediaMarkt, Otto & Kaufland`}
+            description={`Produkte von Saturn, MediaMarkt, Otto & Kaufland`}
             products={allProducts}
             viewAllLink={`/kategorien/${categorySlug}`}
             icon={icon}

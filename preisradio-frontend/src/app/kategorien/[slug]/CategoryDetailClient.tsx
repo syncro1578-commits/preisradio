@@ -54,17 +54,17 @@ export default function CategoryDetailClient({
 
       // Find the matching category by slug
       const matchingCategory = allCategories.find(cat => {
-        const catSlug = cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const catSlug = cat.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         const normalizedSlug = slug.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         return catSlug === normalizedSlug;
       });
 
       if (matchingCategory) {
-        setCategoryName(matchingCategory.name);
+        setCategoryName(matchingCategory);  // matchingCategory is now a string
 
         // Fetch products using the exact category name
         const response = await api.getProductsFromBothRetailers({
-          category: matchingCategory.name,
+          category: matchingCategory,
           page_size: 100,
         });
 

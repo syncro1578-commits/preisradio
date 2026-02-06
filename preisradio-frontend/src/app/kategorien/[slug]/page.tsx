@@ -61,14 +61,13 @@ export default async function CategoryDetailPage({ params }: { params: Promise<{
 
     // Find the matching category by slug
     const matchingCategory = allCategories.find(cat => {
-      const catSlug = cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const catSlug = cat.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       const normalizedSlug = slug.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       return catSlug === normalizedSlug;
     });
 
     if (matchingCategory) {
-      categoryName = matchingCategory.name;
-      totalProductsCount = matchingCategory.count;
+      categoryName = matchingCategory;  // matchingCategory is now a string
 
       // Fetch products using the exact category name
       const response = await api.getProductsFromBothRetailers({
@@ -77,6 +76,7 @@ export default async function CategoryDetailPage({ params }: { params: Promise<{
       });
 
       products = response?.results || [];
+      totalProductsCount = response?.count || 0;  // Get count from products response
     } else {
       // Fallback to formatted slug
       categoryName = decodedSlug.replace(/-/g, ' ').split(' ').map(word =>

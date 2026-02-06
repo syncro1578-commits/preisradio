@@ -74,13 +74,9 @@ export interface Brand {
   maxPrice?: number;
 }
 
-export interface Category {
-  name: string;
-  count: number;
-  saturn_count?: number;
-  mediamarkt_count?: number;
-  otto_count?: number;
-}
+// Category is now just a string (category name)
+// The backend simplified the response to return only category names
+export type Category = string;
 
 export interface CategoriesResponse {
   count: number;
@@ -89,5 +85,5 @@ export interface CategoriesResponse {
   page: number;
   page_size: number;
   total_pages: number;
-  results: Category[];
+  results: string[];  // Array of category names
 }
