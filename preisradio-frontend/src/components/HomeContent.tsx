@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { Product, Category } from '@/lib/types';
 import api from '@/lib/api';
 import ProductSection from '@/components/ProductSection';
-import SearchBar from '@/components/SearchBar';
 import Link from 'next/link';
 
 interface CategorySection {
@@ -169,13 +168,6 @@ export default function HomeContent() {
 
   return (
     <div className="space-y-16">
-      {/* Enhanced Search Bar with Autocomplete */}
-      <div className="mx-auto max-w-3xl">
-        <SearchBar
-          placeholder="Produkt suchen (z.B. iPhone, Samsung TV, MacBook)..."
-        />
-      </div>
-
       {/* Product Sections with Horizontal Scroll on Mobile */}
       <ProductSection
         title="Top Angebote"
