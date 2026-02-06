@@ -256,6 +256,54 @@ class ProductViewSet(viewsets.ViewSet):
 
         return score
 
+    def _get_serializer_for_retailer(self, retailer_name):
+        """Get the appropriate serializer class for a retailer"""
+        serializers_map = {
+            'saturn': SaturnProductSerializer,
+            'mediamarkt': MediaMarktProductSerializer,
+            'otto': OttoProductSerializer,
+            'kaufland': KauflandProductSerializer,
+        }
+        return serializers_map.get(retailer_name)
+
+    def _process_single_retailer(self, query, retailer_name, search, page_size, start):
+        """Process products for a single retailer with relevance scoring and pagination
+
+        Args:
+            query: MongoEngine query object for the retailer
+            retailer_name: Name of the retailer ('saturn', 'mediamarkt', 'otto', 'kaufland')
+            search: Search query string
+            page_size: Number of results per page
+            start: Starting index for pagination
+
+        Returns:
+            tuple: (page_products, total_count) where page_products is a list of (product, retailer_name) tuples
+        """
+        if not query:
+            return [], 0
+
+        # Limit query to avoid loading too much data
+        query_limit = min(page_size * 2, 10000)
+        results = list(query.order_by('-scraped_at').limit(query_limit))
+        total_count = query.count()
+
+        # Add relevance scores and sort by score (descending), then by date
+        products_with_scores = [
+            (p, retailer_name, self._calculate_search_relevance(p, search))
+            for p in results
+        ]
+        products_with_scores.sort(
+            key=lambda x: (-x[2], -(x[0].scraped_at.timestamp() if x[0].scraped_at else 0))
+        )
+
+        # Apply pagination after sorting
+        end = start + page_size
+        page_products = products_with_scores[start:end]
+        # Remove scores, keep only (product, retailer_name)
+        page_products = [(p, source) for p, source, _ in page_products]
+
+        return page_products, total_count
+
     def list(self, request):
         """List products from both retailers with filtering and search"""
         search = request.query_params.get('search', '')
@@ -307,69 +355,18 @@ class ProductViewSet(viewsets.ViewSet):
         # Apply pagination
         start = (page - 1) * page_size
 
-        if retailer == 'saturn':
-            # Single retailer pagination with relevance scoring
-            # Limit to max of 10000 to respect MAX_PAGE_SIZE setting
-            query_limit = min(page_size * 2, 10000)
-            saturn_results = list(saturn_query.order_by('-scraped_at').limit(query_limit)) if saturn_query else []
-            total_count = saturn_query.count() if saturn_query else 0
-
-            # Add relevance scores and sort by score (descending), then by date
-            saturn_with_scores = [(p, 'saturn', self._calculate_search_relevance(p, search)) for p in saturn_results]
-            saturn_with_scores.sort(key=lambda x: (-x[2], -(x[0].scraped_at.timestamp() if x[0].scraped_at else 0)))
-
-            # Apply pagination after sorting
-            end = start + page_size
-            page_products = saturn_with_scores[start:end]
-            page_products = [(p, source) for p, source, _ in page_products]
-
-        elif retailer == 'mediamarkt':
-            # Single retailer pagination with relevance scoring
-            # Limit to max of 10000 to respect MAX_PAGE_SIZE setting
-            query_limit = min(page_size * 2, 10000)
-            mediamarkt_results = list(mediamarkt_query.order_by('-scraped_at').limit(query_limit)) if mediamarkt_query else []
-            total_count = mediamarkt_query.count() if mediamarkt_query else 0
-
-            # Add relevance scores and sort by score (descending), then by date
-            mediamarkt_with_scores = [(p, 'mediamarkt', self._calculate_search_relevance(p, search)) for p in mediamarkt_results]
-            mediamarkt_with_scores.sort(key=lambda x: (-x[2], -(x[0].scraped_at.timestamp() if x[0].scraped_at else 0)))
-
-            # Apply pagination after sorting
-            end = start + page_size
-            page_products = mediamarkt_with_scores[start:end]
-            page_products = [(p, source) for p, source, _ in page_products]
-
-        elif retailer == 'otto':
-            # Single retailer pagination with relevance scoring
-            # Limit to max of 10000 to respect MAX_PAGE_SIZE setting
-            query_limit = min(page_size * 2, 10000)
-            otto_results = list(otto_query.order_by('-scraped_at').limit(query_limit)) if otto_query else []
-            total_count = otto_query.count() if otto_query else 0
-
-            # Add relevance scores and sort by score (descending), then by date
-            otto_with_scores = [(p, 'otto', self._calculate_search_relevance(p, search)) for p in otto_results]
-            otto_with_scores.sort(key=lambda x: (-x[2], -(x[0].scraped_at.timestamp() if x[0].scraped_at else 0)))
-
-            # Apply pagination after sorting
-            end = start + page_size
-            page_products = otto_with_scores[start:end]
-            page_products = [(p, source) for p, source, _ in page_products]
-
-        elif retailer == 'kaufland':
-            # Single retailer pagination with relevance scoring
-            # Limit to max of 10000 to respect MAX_PAGE_SIZE setting
-            query_limit = min(page_size * 2, 10000)
-            kaufland_results = list(kaufland_query.order_by('-scraped_at').limit(query_limit)) if kaufland_query else []
-            total_count = kaufland_query.count() if kaufland_query else 0
-
-            # Add relevance scores and sort by score (descending), then by date
-            kaufland_with_scores = [(p, 'kaufland', self._calculate_search_relevance(p, search)) for p in kaufland_results]
-            kaufland_with_scores.sort(key=lambda x: (-x[2], -(x[0].scraped_at.timestamp() if x[0].scraped_at else 0)))
-
-            # Apply pagination after sorting
-            end = start + page_size
-            page_products = kaufland_with_scores[start:end]
-            page_products = [(p, source) for p, source, _ in page_products]
+        # Process single retailer requests
+        if retailer in ['saturn', 'mediamarkt', 'otto', 'kaufland']:
+            query_map = {
+                'saturn': saturn_query,
+                'mediamarkt': mediamarkt_query,
+                'otto': otto_query,
+                'kaufland': kaufland_query,
+            }
+            query = query_map.get(retailer)
+            page_products, total_count = self._process_single_retailer(
+                query, retailer, search, page_size, start
+            )
 
         else:
             # For 'all' retailers - load from all in PARALLEL and merge with relevance scoring
@@ -429,16 +426,11 @@ class ProductViewSet(viewsets.ViewSet):
         # Serialize results
         results = []
         for product, source in page_products:
-            if source == 'saturn':
-                serializer = SaturnProductSerializer(product)
-            elif source == 'mediamarkt':
-                serializer = MediaMarktProductSerializer(product)
-            elif source == 'otto':
-                serializer = OttoProductSerializer(product)
-            elif source == 'kaufland':
-                serializer = KauflandProductSerializer(product)
-            else:
+            serializer_class = self._get_serializer_for_retailer(source)
+            if not serializer_class:
                 continue  # Unknown retailer
+
+            serializer = serializer_class(product)
             data = serializer.data
             data['retailer'] = source
             results.append(data)
