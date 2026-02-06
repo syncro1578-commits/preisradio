@@ -38,58 +38,33 @@ export default function BrandDetailClient({
     try {
       setLoading(true);
 
-      // Décoder le slug URL (ex: "ASUS" reste "ASUS", "acer" devient "Acer")
       const decodedSlug = decodeURIComponent(slug);
 
-      // Essayer différentes variations du nom de marque
-      const brandVariations = [
-        decodedSlug, // Tel quel (ex: "ASUS")
-        decodedSlug.toUpperCase(), // Tout en majuscules (ex: "ASUS")
-        decodedSlug.toLowerCase(), // Tout en minuscules (ex: "asus")
-        decodedSlug.charAt(0).toUpperCase() + decodedSlug.slice(1).toLowerCase(), // Première lettre majuscule (ex: "Asus")
-      ];
+      // First, get all brands to find the exact brand name
+      const brandsResponse = await api.getBrands({ page_size: 1000 });
+      const allBrands = brandsResponse.results || [];
 
-      console.log('Loading brand products for slug:', slug, 'variations:', brandVariations);
-
-      // Utiliser la recherche avec le nom de marque
-      const response = await api.getProductsFromBothRetailers({
-        search: decodedSlug, // Rechercher avec le nom de marque
-        page_size: 100,
-      });
-
-      const allProducts = response?.results || [];
-      console.log('Total products loaded:', allProducts.length);
-
-      // Filtrer côté client pour trouver les produits de cette marque
-      const brandProducts = allProducts.filter((product) => {
-        if (!product.brand) return false;
-
-        // Normaliser le nom de marque du produit
-        const productBrand = product.brand.trim();
-        const productSlug = productBrand.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      // Find the matching brand by slug
+      const matchingBrand = allBrands.find(b => {
+        const brandSlug = b.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         const normalizedSlug = slug.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-        // Vérifier si le slug correspond
-        const slugMatches = productSlug === normalizedSlug;
-
-        // Vérifier si une des variations correspond exactement
-        const exactMatch = brandVariations.some(variant =>
-          productBrand.toLowerCase() === variant.toLowerCase()
-        );
-
-        return slugMatches || exactMatch;
+        return brandSlug === normalizedSlug;
       });
 
-      console.log('Filtered brand products:', brandProducts.length);
+      if (matchingBrand) {
+        setBrandName(matchingBrand);
 
-      if (brandProducts.length > 0) {
-        setBrandName(brandProducts[0].brand || '');
+        // Fetch products using the exact brand name via brand parameter
+        const response = await api.getProductsFromBothRetailers({
+          brand: matchingBrand,
+          page_size: 100,
+        });
+
+        setProducts(response?.results || []);
       } else {
-        // Si aucun produit trouvé, définir le nom depuis le slug
-        setBrandName(decodedSlug.toUpperCase());
+        // Fallback to formatted slug
+        setBrandName(decodedSlug.charAt(0).toUpperCase() + decodedSlug.slice(1).toLowerCase());
       }
-
-      setProducts(brandProducts);
     } catch (err) {
       console.error('Error loading brand products:', err);
     } finally {

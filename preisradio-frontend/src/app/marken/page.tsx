@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Product, Brand } from '@/lib/types';
+import { Brand } from '@/lib/types';
 import api from '@/lib/api';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -20,63 +20,11 @@ export default function MarkenPage() {
     try {
       setLoading(true);
 
-      // Récupérer tous les produits en utilisant la pagination
-      let allProducts: Product[] = [];
-      let page = 1;
-      let hasMore = true;
-      const pageSize = 500; // Load 500 products per request
+      // Use the new /products/brands/ endpoint instead of loading all products
+      const response = await api.getBrands({ page_size: 1000 });
+      const brandNames = response?.results || [];
 
-      while (hasMore) {
-        const response = await api.getProductsFromBothRetailers({
-          page: page,
-          page_size: pageSize,
-        });
-
-        const products = response?.results || [];
-        allProducts = allProducts.concat(products);
-
-        // Check if there are more pages
-        hasMore = response?.next !== null && products.length === pageSize;
-        page++;
-      }
-
-      const products = allProducts;
-
-      // Grouper les produits par marque
-      const brandMap = new Map<string, Product[]>();
-
-      products.forEach((product) => {
-        if (product.brand) {
-          const brandName = product.brand;
-          if (!brandMap.has(brandName)) {
-            brandMap.set(brandName, []);
-          }
-          brandMap.get(brandName)?.push(product);
-        }
-      });
-
-      // Créer les objets Brand avec les statistiques
-      const brandsArray: Brand[] = Array.from(brandMap.entries()).map(([name, products]) => {
-        const retailers = Array.from(new Set(products.map(p => p.retailer).filter(Boolean)));
-        const categories = Array.from(new Set(products.map(p => p.category)));
-        const prices = products.map(p => p.price);
-
-        return {
-          name,
-          slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-          productsCount: products.length,
-          retailers: retailers as string[],
-          categories,
-          averagePrice: prices.reduce((sum, p) => sum + p, 0) / prices.length,
-          minPrice: Math.min(...prices),
-          maxPrice: Math.max(...prices),
-        };
-      });
-
-      // Trier par nombre de produits
-      brandsArray.sort((a, b) => b.productsCount - a.productsCount);
-
-      setBrands(brandsArray);
+      setBrands(brandNames);
     } catch (err) {
       console.error('Error loading brands:', err);
     } finally {
@@ -86,7 +34,7 @@ export default function MarkenPage() {
 
   // Filtrer les marques par recherche
   const filteredBrands = brands.filter((brand) =>
-    brand.name.toLowerCase().includes(searchQuery.toLowerCase())
+    brand.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -237,11 +185,12 @@ export default function MarkenPage() {
                   'from-pink-600 to-rose-600',
                 ];
                 const gradient = gradients[index % gradients.length];
+                const slug = brand.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
                 return (
                   <Link
-                    key={brand.slug}
-                    href={`/marken/${encodeURIComponent(brand.slug)}`}
+                    key={brand}
+                    href={`/marken/${encodeURIComponent(slug)}`}
                     className="group relative overflow-hidden rounded-2xl bg-white p-5 md:p-6 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl dark:bg-zinc-900 border-2 border-gray-100 dark:border-zinc-800 hover:border-transparent"
                   >
                     {/* Gradient overlay on hover */}
@@ -260,55 +209,9 @@ export default function MarkenPage() {
                     <div className="relative mb-4 md:mb-5">
                       <div className={`flex h-20 md:h-24 items-center justify-center rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 p-3 md:p-4 dark:from-zinc-800 dark:to-zinc-900 shadow-inner group-hover:shadow-lg transition-shadow border border-gray-200 dark:border-zinc-700`}>
                         <span className={`text-base md:text-lg lg:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r ${gradient} text-center line-clamp-2 group-hover:scale-110 transition-transform`}>
-                          {brand.name}
+                          {brand}
                         </span>
                       </div>
-                    </div>
-
-                    {/* Stats */}
-                    <div className="relative mb-3 md:mb-4 flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                        </svg>
-                        <span className="text-xs md:text-sm font-bold text-gray-700 dark:text-gray-300">
-                          {brand.productsCount}
-                        </span>
-                      </div>
-                      {brand.retailers.length > 0 && (
-                        <div className="flex items-center gap-1">
-                          {brand.retailers.slice(0, 3).map((retailer, idx) => (
-                            <div
-                              key={idx}
-                              className={`h-2 w-2 rounded-full ${
-                                retailer === 'saturn' ? 'bg-red-500' :
-                                retailer === 'mediamarkt' ? 'bg-red-600' :
-                                retailer === 'otto' ? 'bg-blue-500' :
-                                retailer === 'kaufland' ? 'bg-green-600' :
-                                'bg-gray-400'
-                              }`}
-                              title={retailer}
-                            ></div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Categories Pills */}
-                    <div className="relative flex flex-wrap gap-1 mb-3">
-                      {brand.categories.slice(0, 2).map((category, idx) => (
-                        <span
-                          key={idx}
-                          className="inline-block rounded-full bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300"
-                        >
-                          {category.length > 10 ? category.substring(0, 10) + '...' : category}
-                        </span>
-                      ))}
-                      {brand.categories.length > 2 && (
-                        <span className="inline-block rounded-full bg-gray-100 dark:bg-zinc-800 px-2 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-400">
-                          +{brand.categories.length - 2}
-                        </span>
-                      )}
                     </div>
 
                     {/* Hover Arrow */}

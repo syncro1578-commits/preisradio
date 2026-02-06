@@ -54,44 +54,30 @@ export default async function BrandDetailPage({ params }: { params: Promise<{ sl
   try {
     const decodedSlug = decodeURIComponent(slug);
 
-    // Try different brand name variations
-    const brandVariations = [
-      decodedSlug,
-      decodedSlug.toUpperCase(),
-      decodedSlug.toLowerCase(),
-      decodedSlug.charAt(0).toUpperCase() + decodedSlug.slice(1).toLowerCase(),
-    ];
+    // First, get all brands to find the exact brand name
+    const brandsResponse = await api.getBrands({ page_size: 1000 });
+    const allBrands = brandsResponse.results || [];
 
-    // Search for products with the brand name
-    const response = await api.getProductsFromBothRetailers({
-      search: decodedSlug,
-      page_size: 100,
-    });
-
-    const allProducts = response?.results || [];
-
-    // Filter products by brand
-    const brandProducts = allProducts.filter((product) => {
-      if (!product.brand) return false;
-
-      const productBrand = product.brand.trim();
-      const productSlug = productBrand.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    // Find the matching brand by slug
+    const matchingBrand = allBrands.find(b => {
+      const brandSlug = b.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       const normalizedSlug = slug.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-      const slugMatches = productSlug === normalizedSlug;
-      const exactMatch = brandVariations.some(variant =>
-        productBrand.toLowerCase() === variant.toLowerCase()
-      );
-
-      return slugMatches || exactMatch;
+      return brandSlug === normalizedSlug;
     });
 
-    products = brandProducts;
+    if (matchingBrand) {
+      brandName = matchingBrand;
 
-    if (brandProducts.length > 0) {
-      brandName = brandProducts[0].brand || '';
+      // Fetch products using the exact brand name via brand parameter
+      const response = await api.getProductsFromBothRetailers({
+        brand: brandName,
+        page_size: 100,
+      });
+
+      products = response?.results || [];
     } else {
-      brandName = decodedSlug.toUpperCase();
+      // Fallback to formatted slug
+      brandName = decodedSlug.charAt(0).toUpperCase() + decodedSlug.slice(1).toLowerCase();
     }
   } catch (err) {
     console.error('Error fetching brand products:', err);

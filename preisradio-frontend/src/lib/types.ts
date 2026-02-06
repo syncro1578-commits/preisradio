@@ -63,15 +63,18 @@ export interface StatusResponse {
   };
 }
 
-export interface Brand {
-  name: string;
-  slug: string;
-  productsCount: number;
-  retailers: string[];
-  categories: string[];
-  averagePrice?: number;
-  minPrice?: number;
-  maxPrice?: number;
+// Brand is now just a string (brand name)
+// The backend simplified the response to return only brand names
+export type Brand = string;
+
+export interface BrandsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  page: number;
+  page_size: number;
+  total_pages: number;
+  results: string[];  // Array of brand names
 }
 
 // Category is now just a string (category name)
