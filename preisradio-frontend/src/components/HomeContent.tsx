@@ -49,8 +49,27 @@ export default function HomeContent() {
       const dealsRes = await api.getProductsFromBothRetailers({ page_size: 100 });
       const allProductsWithDeals = dealsRes.results;
 
+      // Calculate discount for products that don't have it
+      const productsWithCalculatedDiscount = allProductsWithDeals.map(p => {
+        // If discount already exists, use it
+        if (p.discount) {
+          return p;
+        }
+
+        // If old_price exists and is greater than current price, calculate discount
+        if (p.old_price && p.old_price > p.price) {
+          const discountPercent = ((p.old_price - p.price) / p.old_price) * 100;
+          return {
+            ...p,
+            discount: `-${Math.round(discountPercent)}%`
+          };
+        }
+
+        return p;
+      });
+
       // Filter products with discounts for top deals
-      const productsWithDiscount = allProductsWithDeals.filter(p => {
+      const productsWithDiscount = productsWithCalculatedDiscount.filter(p => {
         if (!p.discount) return false;
         const discountStr = p.discount.toString().replace(/[-%]/g, '');
         const discount = parseFloat(discountStr);
@@ -63,7 +82,15 @@ export default function HomeContent() {
         return discountB - discountA;
       });
 
-      setTopDeals(sortedByDiscount.slice(0, 20));
+      // If no products with discount, show all products (sorted by price)
+      if (sortedByDiscount.length === 0) {
+        const sortedByPrice = allProductsWithDeals
+          .filter(p => p.price > 0)
+          .sort((a, b) => a.price - b.price);
+        setTopDeals(sortedByPrice.slice(0, 20));
+      } else {
+        setTopDeals(sortedByDiscount.slice(0, 20));
+      }
 
       // Load products for each top category from all retailers mixed (in parallel)
       const sectionPromises = categories.map(async (category) => {
