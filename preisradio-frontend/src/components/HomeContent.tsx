@@ -49,45 +49,24 @@ export default function HomeContent() {
       const dealsRes = await api.getProductsFromBothRetailers({ page_size: 100 });
       const allProductsWithDeals = dealsRes.results;
 
-      // Calculate discount for products that don't have it
-      const productsWithCalculatedDiscount = allProductsWithDeals.map(p => {
-        // If discount already exists, use it
-        if (p.discount) {
-          return p;
-        }
-
-        // If old_price exists and is greater than current price, calculate discount
-        if (p.old_price && p.old_price > p.price) {
-          const discountPercent = ((p.old_price - p.price) / p.old_price) * 100;
-          return {
-            ...p,
-            discount: `-${Math.round(discountPercent)}%`
-          };
-        }
-
-        return p;
-      });
-
-      // Filter products with discounts for top deals
-      const productsWithDiscount = productsWithCalculatedDiscount.filter(p => {
+      // Filter products that have existing discount values
+      const productsWithDiscount = allProductsWithDeals.filter(p => {
         if (!p.discount) return false;
         const discountStr = p.discount.toString().replace(/[-%]/g, '');
         const discount = parseFloat(discountStr);
         return !isNaN(discount) && discount > 0;
       });
 
+      // Sort by discount value (highest first)
       const sortedByDiscount = productsWithDiscount.sort((a, b) => {
         const discountA = parseFloat(a.discount?.toString().replace(/[-%]/g, '') || '0');
         const discountB = parseFloat(b.discount?.toString().replace(/[-%]/g, '') || '0');
         return discountB - discountA;
       });
 
-      // If no products with discount, show all products (sorted by price)
+      // If no products with discount, show all products
       if (sortedByDiscount.length === 0) {
-        const sortedByPrice = allProductsWithDeals
-          .filter(p => p.price > 0)
-          .sort((a, b) => a.price - b.price);
-        setTopDeals(sortedByPrice.slice(0, 20));
+        setTopDeals(allProductsWithDeals.slice(0, 20));
       } else {
         setTopDeals(sortedByDiscount.slice(0, 20));
       }
