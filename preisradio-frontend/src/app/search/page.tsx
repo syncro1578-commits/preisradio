@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense, useCallback } from 'react';
+import React, { useEffect, useState, Suspense, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Product } from '@/lib/types';
 import api from '@/lib/api';
@@ -8,6 +8,9 @@ import ProductCard from '@/components/ProductCard';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import SearchFilters from '@/components/SearchFilters';
+import AdSenseDisplay from '@/components/AdSenseDisplay';
+import AdSenseInFeed from '@/components/AdSenseInFeed';
+import AdSenseMultiplex from '@/components/AdSenseMultiplex';
 import Link from 'next/link';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
@@ -231,6 +234,12 @@ function SearchContent() {
           )}
         </div>
 
+        {/* AdSense Display - After Header */}
+        <AdSenseDisplay
+          adSlot="1502312871"
+          className="mb-8"
+        />
+
         {/* Mobile Filters Button - Fixed at bottom */}
         <button
           onClick={() => setMobileFiltersOpen(true)}
@@ -398,8 +407,19 @@ function SearchContent() {
                   </h2>
                 </div>
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                  {products.map((product, index) => (
+                    <React.Fragment key={product.id}>
+                      <ProductCard product={product} />
+                      {/* InFeed Ad every 6 products */}
+                      {(index + 1) % 6 === 0 && index < products.length - 1 && (
+                        <div className="col-span-2 lg:col-span-3">
+                          <AdSenseInFeed
+                            adSlot="6399181253"
+                            className="my-4"
+                          />
+                        </div>
+                      )}
+                    </React.Fragment>
                   ))}
                 </div>
 
@@ -467,6 +487,8 @@ function SearchContent() {
             )}
           </div>
         </div>
+        {/* AdSense Multiplex - Before Footer */}
+        <AdSenseMultiplex className="mt-12" />
       </main>
 
       <Footer />

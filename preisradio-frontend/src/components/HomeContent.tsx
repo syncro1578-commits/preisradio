@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { Product, Category } from '@/lib/types';
 import api from '@/lib/api';
 import ProductSection from '@/components/ProductSection';
+import AdSenseDisplay from '@/components/AdSenseDisplay';
+import AdSenseMultiplex from '@/components/AdSenseMultiplex';
 import Link from 'next/link';
 
 interface CategorySection {
@@ -194,6 +196,12 @@ export default function HomeContent() {
         icon="🔥"
       />
 
+      {/* AdSense Display - After Top Deals */}
+      <AdSenseDisplay
+        adSlot="1502312871"
+        className="my-8"
+      />
+
       {/* Dynamic Category Sections */}
       {categorySections.map((section) => {
         // Skip if category is missing or invalid
@@ -223,6 +231,9 @@ export default function HomeContent() {
           />
         );
       })}
+
+      {/* AdSense Multiplex - Before Features */}
+      <AdSenseMultiplex className="my-12" />
 
       {/* Features Section */}
       <div>

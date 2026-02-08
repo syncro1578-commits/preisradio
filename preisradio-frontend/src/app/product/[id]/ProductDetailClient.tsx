@@ -9,6 +9,8 @@ import api from '@/lib/api';
 import ProductSimilar from '@/components/ProductSimilar';
 import PriceComparison from '@/components/PriceComparison';
 import AdSenseDisplay from '@/components/AdSenseDisplay';
+import AdSenseInArticle from '@/components/AdSenseInArticle';
+import AdSenseMultiplex from '@/components/AdSenseMultiplex';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { getRetailerInfo } from '@/lib/retailerUtils';
@@ -250,6 +252,9 @@ export default function ProductDetailClient({
               </div>
             )}
 
+            {/* AdSense In-Article - After Description */}
+            <AdSenseInArticle />
+
             {/* GTIN/EAN */}
             {product.gtin && (
               <div className="rounded-lg bg-gray-50 p-3 md:p-4 dark:bg-zinc-800">
@@ -407,9 +412,9 @@ export default function ProductDetailClient({
         {/* Price Comparison */}
         <PriceComparison currentProduct={product} />
 
-        {/* AdSense Display Ad */}
+        {/* AdSense Display Ad - Rectangle */}
         <div className="my-8">
-          <AdSenseDisplay adSlot="6054157785" />
+          <AdSenseDisplay adSlot="8370973552" />
         </div>
 
         {/* Quick Links Section */}
@@ -472,6 +477,9 @@ export default function ProductDetailClient({
           </div>
           <ProductSimilar productId={productId} />
         </div>
+
+        {/* AdSense Multiplex - End of Page */}
+        <AdSenseMultiplex className="mt-12" />
       </main>
 
       <Footer />

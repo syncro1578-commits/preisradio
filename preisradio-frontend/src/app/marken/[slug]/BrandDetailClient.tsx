@@ -8,6 +8,9 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import AdSenseDisplay from '@/components/AdSenseDisplay';
+import AdSenseInFeed from '@/components/AdSenseInFeed';
+import AdSenseMultiplex from '@/components/AdSenseMultiplex';
 
 interface BrandDetailClientProps {
   slug: string;
@@ -306,6 +309,9 @@ export default function BrandDetailClient({
               </div>
             </div>
 
+            {/* AdSense Display - After Stats */}
+            <AdSenseDisplay adSlot="1502312871" className="my-6" />
+
             <div className="lg:grid lg:grid-cols-4 lg:gap-8">
               {/* Sidebar Filters */}
               <aside className="mb-6 lg:col-span-1 lg:mb-0">
@@ -459,12 +465,26 @@ export default function BrandDetailClient({
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {sortedProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                  {sortedProducts.map((product, index) => (
+                    <>
+                      <ProductCard key={product.id} product={product} />
+                      {/* Insert In-Feed ad after every 6th product */}
+                      {(index + 1) % 6 === 0 && index < sortedProducts.length - 1 && (
+                        <div key={`ad-${index}`} className="col-span-2 lg:col-span-3">
+                          <AdSenseInFeed
+                            adSlot="6399181253"
+                            layoutKey="-fb+5w+4e-db+86"
+                          />
+                        </div>
+                      )}
+                    </>
                   ))}
                 </div>
               </div>
             </div>
+
+            {/* AdSense Multiplex - Before Footer */}
+            <AdSenseMultiplex className="mt-8" />
           </>
         )}
       </main>
