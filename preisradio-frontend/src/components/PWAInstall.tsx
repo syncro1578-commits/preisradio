@@ -108,99 +108,78 @@ export default function PWAInstall() {
     return null;
   }
 
-  // iOS Install Instructions
+  // iOS Install Instructions - Compact banner
   if (isIOS && showInstallPrompt) {
     return (
-      <div className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:max-w-sm">
-        <div className="rounded-2xl bg-white dark:bg-zinc-900 p-5 shadow-2xl border-2 border-blue-500">
-          <button
-            onClick={handleDismiss}
-            className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-          >
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          <div className="flex items-start gap-4">
-            <div className="rounded-full bg-blue-100 dark:bg-blue-900 p-3">
-              <svg className="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
+      <div className="fixed bottom-0 left-0 right-0 z-50 safe-area-bottom">
+        <div className="bg-white dark:bg-zinc-900 px-4 py-3 shadow-lg border-t border-gray-200 dark:border-zinc-700">
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <span className="text-lg">📻</span>
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                Als App installieren
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                Installieren Sie Preisradio für schnellen Zugriff:
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                App installieren
               </p>
-              <ol className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
-                <li className="flex items-center gap-2">
-                  <span className="font-bold">1.</span>
-                  Tippen Sie auf
-                  <svg className="h-5 w-5 inline text-blue-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                  </svg>
-                  (Teilen)
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="font-bold">2.</span>
-                  Wählen Sie "Zum Home-Bildschirm"
-                </li>
-              </ol>
+              <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                <svg className="h-3.5 w-3.5 text-blue-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                Teilen → Zum Home-Bildschirm
+              </p>
             </div>
+
+            <button
+              onClick={handleDismiss}
+              className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              aria-label="Schließen"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  // Android/Desktop Install Prompt
+  // Android Install Prompt - Compact banner
   if (showInstallPrompt && deferredPrompt) {
     return (
-      <div className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:max-w-sm">
-        <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-5 shadow-2xl">
-          <button
-            onClick={handleDismiss}
-            className="absolute right-3 top-3 text-white/80 hover:text-white"
-          >
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          <div className="flex items-start gap-4">
-            <div className="rounded-full bg-white/20 backdrop-blur-sm p-3">
-              <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
+      <div className="fixed bottom-0 left-0 right-0 z-50 safe-area-bottom">
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-3 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+              <span className="text-lg">📻</span>
             </div>
 
-            <div className="flex-1 min-w-0 pr-6">
-              <h3 className="text-lg font-bold text-white mb-2">
-                Preisradio installieren
-              </h3>
-              <p className="text-sm text-white/90 mb-4">
-                Installieren Sie unsere App für schnelleren Zugriff und ein besseres Erlebnis
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white">
+                Preisradio als App
               </p>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={handleInstallClick}
-                  className="flex-1 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-white/90 transition-colors"
-                >
-                  Installieren
-                </button>
-                <button
-                  onClick={handleDismiss}
-                  className="rounded-lg border-2 border-white/30 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
-                >
-                  Später
-                </button>
-              </div>
+              <p className="text-xs text-white/70">
+                Schneller Zugriff auf Angebote
+              </p>
             </div>
+
+            <button
+              onClick={handleInstallClick}
+              className="flex-shrink-0 rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-blue-600 hover:bg-white/90 transition-colors"
+            >
+              Installieren
+            </button>
+
+            <button
+              onClick={handleDismiss}
+              className="flex-shrink-0 p-1.5 text-white/70 hover:text-white"
+              aria-label="Schließen"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
