@@ -415,6 +415,7 @@ function SearchContent() {
                         <div className="col-span-2 lg:col-span-3">
                           <AdSenseInFeed
                             adSlot="6399181253"
+                            layoutKey="-fb+5w+4e-db+86"
                             className="my-4"
                           />
                         </div>
