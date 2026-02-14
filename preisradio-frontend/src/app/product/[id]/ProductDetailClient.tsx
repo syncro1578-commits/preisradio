@@ -344,7 +344,7 @@ export default function ProductDetailClient({
                   alt="Amazon"
                   width={24}
                   height={24}
-                  className="h-6 w-6 md:h-7 md:w-7 object-contain brightness-0 invert"
+                  className="h-6 w-6 md:h-7 md:w-7 object-contain"
                 />
                 Auch auf Amazon suchen
                 <svg className="h-4 w-4 md:h-5 md:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
