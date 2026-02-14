@@ -17,8 +17,8 @@ export const metadata: Metadata = {
     default: 'Preisradio | Bester Preisvergleicher in Deutschland',
     template: '%s | Preisradio'
   },
-  description: 'Vergleichen Sie Elektronik-Preise von Saturn, MediaMarkt und Otto in Echtzeit. Finden Sie täglich die besten Angebote und sparen Sie beim Shopping.',
-  keywords: ['Preisvergleich preisradio', 'toppreise preisradio', 'guenstiger preisradio'],
+  description: 'Vergleichen Sie Elektronik-Preise von Saturn, MediaMarkt, Otto und Kaufland in Echtzeit. Finden Sie täglich die besten Angebote und sparen Sie beim Shopping.',
+  keywords: ['Preisvergleich preisradio', 'toppreise preisradio', 'guenstiger preisradio', 'Kaufland Preisvergleich'],
   authors: [{ name: 'Preisradio' }],
   creator: 'Preisradio',
   publisher: 'Preisradio',
