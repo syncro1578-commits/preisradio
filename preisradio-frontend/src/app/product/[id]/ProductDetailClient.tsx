@@ -331,6 +331,29 @@ export default function ProductDetailClient({
               </svg>
             </a>
 
+            {/* Amazon Affiliate Button */}
+            {process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG && (
+              <a
+                href={`https://www.amazon.de/s?k=${encodeURIComponent(product.title)}&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG}`}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                className="flex items-center justify-center gap-3 rounded-2xl bg-[#FF9900] px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-bold text-white transition-all hover:bg-[#e68a00] hover:shadow-xl hover:scale-105 active:scale-95"
+              >
+                <svg className="h-5 w-5 md:h-6 md:w-6" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M13.958 10.09c0 1.232.029 2.256-.591 3.351-.502.891-1.301 1.438-2.186 1.438-1.214 0-1.922-.924-1.922-2.292 0-2.692 2.415-3.182 4.699-3.182v.685zm3.186 7.705c-.209.189-.512.201-.748.074-1.052-.872-1.238-1.276-1.814-2.106-1.734 1.767-2.962 2.297-5.209 2.297-2.66 0-4.731-1.641-4.731-4.925 0-2.565 1.391-4.309 3.37-5.164 1.715-.754 4.11-.891 5.942-1.095v-.41c0-.753.06-1.642-.384-2.294-.385-.579-1.124-.819-1.776-.819-1.205 0-2.277.618-2.54 1.897-.054.285-.261.567-.549.582l-3.061-.333c-.259-.056-.545-.266-.47-.66.704-3.716 4.06-4.838 7.066-4.838 1.537 0 3.547.41 4.758 1.574 1.537 1.437 1.39 3.352 1.39 5.438v4.923c0 1.481.614 2.132 1.192 2.932.204.285.249.628-.011.839l-2.426 2.088h.001z"/>
+                </svg>
+                Auch auf Amazon suchen
+                <svg className="h-4 w-4 md:h-5 md:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+            {process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG && (
+              <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
+                * Affiliate-Link: Wir erhalten eine Provision bei Kauf über Amazon.
+              </p>
+            )}
+
             {/* Product Metadata */}
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {product.sku && (

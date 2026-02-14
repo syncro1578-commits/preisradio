@@ -16,6 +16,7 @@ Toute la documentation technique du projet Preisradio.
 
 ## Monétisation
 - [adsense-integration.md](adsense-integration.md) - Intégration Google AdSense (composants, slots, pages)
+- [amazon-affiliate.md](amazon-affiliate.md) - Amazon Partnerprogramm (setup, tracking ID, commissions)
 
 ## SEO
 - [SEO_IMPROVEMENTS_SUMMARY.md](SEO_IMPROVEMENTS_SUMMARY.md) - Résumé des améliorations SEO
