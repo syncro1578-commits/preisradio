@@ -50,18 +50,7 @@ export default function Home() {
 
       <Navigation />
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <div className="mb-12 text-center">
-          <h1 className="mb-4 text-5xl font-bold text-gray-900 dark:text-white">
-            Preise vergleichen & Geld sparen
-          </h1>
-          <p className="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-400">
-            Finden Sie die besten Angebote für Elektronik, Haushaltsgeräte und mehr.
-            Vergleichen Sie Preise von Top-Händlern in Deutschland.
-          </p>
-        </div>
-
+      <main className="container mx-auto px-4 py-4">
         {/* AdSense Display Ad */}
         <div className="mb-8 mx-auto max-w-4xl">
           <AdSenseDisplay adSlot="6054157785" />
