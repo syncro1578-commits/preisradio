@@ -3,7 +3,6 @@ import { Metadata } from 'next';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import HomeContent from '@/components/HomeContent';
-import AdSenseDisplay from '@/components/AdSenseDisplay';
 import { generateOrganizationSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
@@ -51,11 +50,6 @@ export default function Home() {
       <Navigation />
 
       <main className="container mx-auto px-4 py-4">
-        {/* AdSense Display Ad */}
-        <div className="mb-8 mx-auto max-w-4xl">
-          <AdSenseDisplay adSlot="6054157785" />
-        </div>
-
         <Suspense fallback={<HomeLoadingFallback />}>
           <HomeContent />
         </Suspense>
