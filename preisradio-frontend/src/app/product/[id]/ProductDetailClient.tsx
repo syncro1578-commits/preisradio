@@ -133,8 +133,6 @@ export default function ProductDetailClient({
   const allParagraphs = product.description
     ? product.description.split(/\n\n|\n|<br\s*\/?>/gi).map(p => p.trim()).filter(p => p.length > 0)
     : [];
-  const previewParagraphs = allParagraphs.slice(0, 3);
-  const hasMore = allParagraphs.length > 3;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
@@ -272,26 +270,24 @@ export default function ProductDetailClient({
               )}
             </div>
 
-            {/* Description — expandable */}
+            {/* Description — 4 lines clamp, expandable */}
             {allParagraphs.length > 0 && (
               <div className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                <div className="space-y-2">
-                  {(descExpanded ? allParagraphs : previewParagraphs).map((p, i) => (
-                    <p key={i}>{p}</p>
+                <div className={descExpanded ? '' : 'line-clamp-4'}>
+                  {allParagraphs.map((p: string, i: number) => (
+                    <p key={i} className="mb-1.5">{p}</p>
                   ))}
                 </div>
-                {hasMore && (
-                  <button
-                    onClick={() => setDescExpanded(!descExpanded)}
-                    className="mt-2 flex items-center gap-1 text-blue-600 dark:text-blue-400 font-medium hover:underline text-xs"
-                  >
-                    {descExpanded ? (
-                      <>Weniger anzeigen <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg></>
-                    ) : (
-                      <>Mehr lesen <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></>
-                    )}
-                  </button>
-                )}
+                <button
+                  onClick={() => setDescExpanded(!descExpanded)}
+                  className="mt-1.5 flex items-center gap-1 text-blue-600 dark:text-blue-400 font-medium hover:underline text-xs"
+                >
+                  {descExpanded ? (
+                    <>Weniger anzeigen <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg></>
+                  ) : (
+                    <>Mehr lesen <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></>
+                  )}
+                </button>
               </div>
             )}
 
