@@ -2,12 +2,12 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import ProductDetailClient from './ProductDetailClient';
 import api from '@/lib/api';
-import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/schema';
+import { generateProductSchema, generateBreadcrumbSchema, generateProductFAQSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
-// Revalidate every 48 hours (172800 seconds) - ISR
-export const revalidate = 172800;
+// Revalidate every 24 hours - ISR
+export const revalidate = 86400;
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
@@ -15,40 +15,62 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   try {
     const product = await api.getProduct(resolvedParams.id);
 
-    // Get brand name for keywords
-    const brandName = product.brand || product.category || 'Produkt';
+    const retailerName =
+      product.retailer === 'saturn' ? 'Saturn' :
+      product.retailer === 'mediamarkt' ? 'MediaMarkt' :
+      product.retailer === 'kaufland' ? 'Kaufland' : 'Otto';
 
-    // Optimize title to 50-60 chars - Use product title directly
-    const title = product.title.length > 50
-      ? `${product.title.substring(0, 47)}...`
-      : product.title;
+    const brand = product.brand || '';
+    const price = product.price.toFixed(2);
+    const currency = product.currency || 'EUR';
+    const hasDiscount = product.old_price && product.old_price > product.price;
+    const savings = hasDiscount ? (product.old_price! - product.price).toFixed(2) : null;
 
-    // Optimize description to 150-160 chars
-    const retailerName = product.retailer === 'saturn' ? 'Saturn' : product.retailer === 'mediamarkt' ? 'MediaMarkt' : product.retailer === 'kaufland' ? 'Kaufland' : 'Otto';
-    const description = `${product.title.substring(0, 80)} bei ${retailerName}. Preis: ${product.price.toFixed(2)} ${product.currency}. Jetzt Preise vergleichen!`;
+    // Title: "{Brand} {Model} – {Price}€ | Preisradio" (max 60 chars)
+    const titleBase = brand ? `${brand} ${product.title}` : product.title;
+    const titleWithPrice = `${titleBase.substring(0, 42)} – ${price}€`;
+    const title = titleWithPrice.length > 55
+      ? `${titleBase.substring(0, 38)}... – ${price}€`
+      : titleWithPrice;
 
-    // Keywords: ['Preisvergleich brandName', 'brandName Produkt', 'toppreise brandName Produkt']
+    // Description: compelling, includes savings and retailers (max 160 chars)
+    const descriptionParts = [
+      `${product.title}`,
+      `für ${price} ${currency} bei ${retailerName}.`,
+      savings ? `Sie sparen ${savings} ${currency}!` : null,
+      `Preise vergleichen bei Saturn, MediaMarkt, Otto & Kaufland auf Preisradio.`,
+    ].filter(Boolean);
+    const description = descriptionParts.join(' ').substring(0, 157) + (descriptionParts.join(' ').length > 157 ? '...' : '');
+
+    // Keywords — specific, purchase-intent
     const keywords = [
-      `Preisvergleich ${brandName}`,
-      `${brandName} Produkt`,
-      `toppreise ${brandName} Produkt`
-    ];
+      brand ? `${brand} ${product.category} kaufen` : `${product.category} kaufen`,
+      brand ? `${brand} günstig` : `${product.category} günstig`,
+      `${product.category} Preisvergleich`,
+      `${product.category} Angebot`,
+      brand ? `${brand} ${product.category} Angebot` : `${product.category} günstig kaufen`,
+      'Preisradio',
+    ].filter(Boolean);
 
     return {
       title,
-      description: description.length > 160 ? description.substring(0, 157) + '...' : description,
+      description,
       keywords,
       openGraph: {
-        title: `${product.title} | Preisradio`,
-        description: `${product.title} - Preis: ${product.price.toFixed(2)} ${product.currency}`,
-        images: [{ url: product.image || `${baseUrl}/favicon.ico` }],
+        title: `${product.title} – ${price}€ | Preisradio`,
+        description: `${product.title} für ${price} ${currency} bei ${retailerName}.${savings ? ` Spare ${savings} ${currency}!` : ''} Jetzt vergleichen!`,
+        images: product.image
+          ? [{ url: product.image, alt: product.title }]
+          : [{ url: `${baseUrl}/favicon.ico` }],
         url: `${baseUrl}/product/${resolvedParams.id}`,
         type: 'website',
+        locale: 'de_DE',
+        siteName: 'Preisradio',
       },
       twitter: {
-        card: 'summary',
-        title: `${product.title} | Preisradio`,
-        description: `${product.title} - Preis: ${product.price.toFixed(2)} ${product.currency}`,
+        card: 'summary_large_image',
+        title: `${product.title} – ${price}€ | Preisradio`,
+        description: `${product.title} für ${price} ${currency} bei ${retailerName}.${savings ? ` Spare ${savings} ${currency}!` : ''}`,
         images: [product.image || `${baseUrl}/favicon.ico`],
       },
       alternates: {
@@ -70,41 +92,41 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
 
-  // Fetch product server-side for SSR and JSON-LD
   let product = null;
   let productSchema = null;
   let breadcrumbSchema = null;
+  let faqSchema = null;
 
   try {
     product = await api.getProduct(resolvedParams.id);
     productSchema = generateProductSchema(product, baseUrl);
     breadcrumbSchema = generateBreadcrumbSchema(product, baseUrl);
+    faqSchema = generateProductFAQSchema(product, baseUrl);
   } catch (err) {
     console.error('Error fetching product:', err);
-    // Product not found - redirect to homepage
     redirect('/');
   }
 
   return (
     <>
-      {/* JSON-LD schemas - Server-side rendered */}
       {productSchema && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(productSchema),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
         />
       )}
       {breadcrumbSchema && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(breadcrumbSchema),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
       )}
-      {/* Pass server-fetched data to client component */}
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
       <ProductDetailClient
         productId={resolvedParams.id}
         initialProduct={product}

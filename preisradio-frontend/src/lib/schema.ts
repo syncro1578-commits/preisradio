@@ -58,18 +58,6 @@ export function generateProductSchema(
     priceValidUntil: priceValidUntil,
   };
 
-  // Générer un rating aléatoire réaliste basé sur le SKU du produit
-  // Utilise le SKU comme seed pour avoir toujours le même rating pour le même produit
-  const seed = product.sku ? parseInt(product.sku.replace(/\D/g, '').slice(0, 8) || '1000') : 1000;
-  const rng = (seed * 9301 + 49297) % 233280;
-  const random = rng / 233280;
-
-  // Rating entre 3.5 et 4.9 (produits généralement bien notés)
-  const ratingValue = parseFloat((3.5 + random * 1.4).toFixed(1));
-
-  // Nombre de reviews entre 15 et 500
-  const ratingCount = Math.floor(15 + random * 485);
-
   // Construire le schéma produit - conforme schema-dts et Google
   const schema: any = {
     '@context': 'https://schema.org',
@@ -78,13 +66,7 @@ export function generateProductSchema(
     description: product.description || product.title,
     image: product.image || `${baseUrl}/default-product.jpg`,
     offers: offer,
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: ratingValue,
-      ratingCount: ratingCount,
-      bestRating: '5',
-      worstRating: '1',
-    },
+    category: product.category,
   };
 
   // Ajouter les propriétés optionnelles uniquement si elles existent
@@ -146,10 +128,7 @@ export function generateBreadcrumbSchema(
 }
 
 /**
- * Génère le schéma FAQPage pour les questions fréquentes
- * Améliore la présence dans les featured snippets Google
- * @param baseUrl - L'URL de base du site
- * @returns Le schéma FAQPage conforme à schema.org
+ * Génère le schéma FAQPage générique pour la homepage
  */
 export function generateFAQSchema(baseUrl: string): FAQPage {
   return {
@@ -158,18 +137,18 @@ export function generateFAQSchema(baseUrl: string): FAQPage {
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'Wo kann ich Preise vergleichen?',
+        name: 'Wo kann ich Elektronikpreise vergleichen?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Preisradio ermöglicht es Ihnen, Preise für elektronische Produkte bei den wichtigsten deutschen Einzelhändlern wie Saturn und MediaMarkt in Echtzeit zu vergleichen.',
+          text: 'Preisradio ermöglicht es Ihnen, Preise für Elektronikprodukte bei Saturn, MediaMarkt, Otto und Kaufland in Echtzeit zu vergleichen. Finden Sie täglich die besten Angebote und sparen Sie beim Online-Kauf.',
         },
       },
       {
         '@type': 'Question',
-        name: 'Wie finde ich die besten Angebote?',
+        name: 'Wie finde ich die günstigsten Angebote?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Nutzen Sie unsere Suchfunktion, um Produkte zu finden und Preise in Echtzeit bei Saturn und MediaMarkt zu vergleichen. Sie können auch nach Kategorien filtern.',
+          text: 'Nutzen Sie die Suchfunktion oder stöbern Sie in unseren Kategorien. Preisradio zeigt Ihnen automatisch den günstigsten Preis aller verglichenen Händler an.',
         },
       },
       {
@@ -177,19 +156,108 @@ export function generateFAQSchema(baseUrl: string): FAQPage {
         name: 'Sind die Preise aktuell?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Ja, unsere Preise werden regelmäßig aktualisiert, um Ihnen die genauesten und aktuellsten Informationen zu bieten.',
+          text: 'Ja, Preisradio aktualisiert Preise täglich aus den offiziellen Shops von Saturn, MediaMarkt, Otto und Kaufland, damit Sie immer den aktuellen Preis sehen.',
         },
       },
       {
         '@type': 'Question',
-        name: 'Welche Händler werden verglichen?',
+        name: 'Welche Händler werden bei Preisradio verglichen?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Preisradio vergleicht Preise von Saturn und MediaMarkt, den größten Elektronik-Einzelhändlern in Deutschland.',
+          text: 'Preisradio vergleicht Preise von Saturn, MediaMarkt, Otto und Kaufland – den größten Elektronik- und Online-Händlern in Deutschland.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Ist Preisradio kostenlos?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Ja, Preisradio ist vollständig kostenlos. Der Preisvergleich steht allen Nutzern ohne Registrierung zur Verfügung.',
         },
       },
     ],
   } as any;
+}
+
+/**
+ * Génère le schéma FAQPage spécifique à un produit
+ * Optimisé pour les featured snippets Google sur les pages produit
+ */
+export function generateProductFAQSchema(product: Product, baseUrl: string): FAQPage {
+  const retailerName =
+    product.retailer === 'saturn' ? 'Saturn' :
+    product.retailer === 'mediamarkt' ? 'MediaMarkt' :
+    product.retailer === 'otto' ? 'Otto' :
+    product.retailer === 'kaufland' ? 'Kaufland' : 'dem Händler';
+
+  const price = product.price.toFixed(2);
+  const currency = product.currency || 'EUR';
+  const hasDiscount = product.old_price && product.old_price > product.price;
+  const savings = hasDiscount ? (product.old_price! - product.price).toFixed(2) : null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `Was kostet ${product.title}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `${product.title} kostet aktuell ${price} ${currency} bei ${retailerName}.${savings ? ` Sie sparen ${savings} ${currency} gegenüber dem Originalpreis.` : ''} Jetzt auf Preisradio vergleichen!`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `Wo kann ich ${product.brand ? product.brand + ' ' : ''}${product.category} günstig kaufen?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Preisradio vergleicht Preise für ${product.category} bei Saturn, MediaMarkt, Otto und Kaufland. Aktuell finden Sie ${product.title} für ${price} ${currency} bei ${retailerName}.`,
+        },
+      },
+      ...(hasDiscount ? [{
+        '@type': 'Question' as const,
+        name: `Wie viel spare ich beim Kauf von ${product.title}?`,
+        acceptedAnswer: {
+          '@type': 'Answer' as const,
+          text: `Bei ${retailerName} sparen Sie aktuell ${savings} ${currency} (${product.discount || 'Rabatt'}) beim Kauf von ${product.title}. Der aktuelle Preis beträgt ${price} ${currency}.`,
+        },
+      }] : []),
+      {
+        '@type': 'Question',
+        name: `Ist ${product.title} auf Lager?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Ja, ${product.title} ist aktuell bei ${retailerName} verfügbar. Preisradio aktualisiert die Verfügbarkeit täglich, damit Sie immer aktuelle Informationen erhalten.`,
+        },
+      },
+    ],
+  } as any;
+}
+
+/**
+ * Génère le schéma ItemList pour les pages catégorie
+ * Améliore l'indexation et les rich snippets pour les listes de produits
+ */
+export function generateItemListSchema(
+  products: Product[],
+  categoryName: string,
+  baseUrl: string
+): any {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${categoryName} – Preisvergleich`,
+    description: `Die besten Angebote für ${categoryName} bei Saturn, MediaMarkt, Otto und Kaufland`,
+    url: `${baseUrl}/kategorien/${categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+    numberOfItems: products.length,
+    itemListElement: products.slice(0, 20).map((product, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `${baseUrl}/product/${product.id}`,
+      name: product.title,
+    })),
+  };
 }
 
 /**

@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Block utility/admin paths
+Disallow: /api/
+Disallow: /_next/
+Disallow: /offline
+
+# Sitemaps
+Sitemap: https://preisradio.de/sitemap/static.xml
+Sitemap: https://preisradio.de/sitemap/products-index.xml
+Sitemap: https://preisradio.de/sitemap/brands.xml
+Sitemap: https://preisradio.de/sitemap/categories.xml
