@@ -3,32 +3,32 @@ import { Metadata } from 'next';
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
 export const metadata: Metadata = {
-  title: 'Alle Kategorien: Finde die günstigsten Preise online',
-  description: 'Durchsuchen Sie unsere Produktkategorien und finden Sie die besten Angebote im Preisvergleich',
-  alternates: {
-    canonical: `${baseUrl}/kategorien`,
-    languages: {
-      'de-DE': `${baseUrl}/kategorien`,
-      'x-default': `${baseUrl}/kategorien`,
-    },
-  },
+  title: 'Alle Kategorien – Laptops, TVs, Smartphones & mehr günstig kaufen | Preisradio',
+  description: 'Laptops, Fernseher, Smartphones, Kopfhörer, Waschmaschinen und mehr im Preisvergleich. Alle Kategorien bei Saturn, MediaMarkt, Otto und Kaufland – täglich aktuell.',
+  keywords: [
+    'Elektronik Kategorien Preisvergleich',
+    'Laptops günstig kaufen',
+    'Fernseher Preisvergleich',
+    'Smartphones Angebote',
+    'Haushaltsgeräte günstig',
+    'Elektronik online kaufen',
+    'Preisradio Kategorien',
+  ],
   openGraph: {
-    title: 'Alle Kategorien | Preisradio',
-    description: 'Durchsuchen Sie unsere Produktkategorien und finden Sie die besten Angebote im Preisvergleich',
+    title: 'Alle Kategorien im Preisvergleich | Preisradio',
+    description: 'Laptops, TVs, Smartphones und mehr – günstigste Preise täglich bei Saturn, MediaMarkt, Otto & Kaufland.',
     url: `${baseUrl}/kategorien`,
     type: 'website',
-    images: [{
-      url: `${baseUrl}/favicon.ico`,
-      width: 512,
-      height: 512,
-      alt: 'Preisradio Kategorien',
-    }],
+    locale: 'de_DE',
+    siteName: 'Preisradio',
   },
   twitter: {
-    card: 'summary',
-    title: 'Alle Kategorien | Preisradio',
-    description: 'Durchsuchen Sie unsere Produktkategorien und finden Sie die besten Angebote',
-    images: [`${baseUrl}/favicon.ico`],
+    card: 'summary_large_image',
+    title: 'Alle Kategorien im Preisvergleich | Preisradio',
+    description: 'Laptops, TVs, Smartphones – günstig kaufen auf Preisradio.',
+  },
+  alternates: {
+    canonical: `${baseUrl}/kategorien`,
   },
 };
 

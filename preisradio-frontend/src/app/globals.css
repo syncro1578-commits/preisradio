@@ -132,8 +132,10 @@ body {
   animation: bounce 0.5s ease-in-out;
 }
 
-/* Smooth transitions */
-* {
+/* Smooth transitions — scoped to interactive elements only (improves LCP score) */
+a, button, input, select, textarea,
+[role="button"], [role="tab"], [role="switch"],
+.transition-colors, .transition-all, .transition-opacity, .transition-transform {
   transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;

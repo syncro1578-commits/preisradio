@@ -3,32 +3,32 @@ import { Metadata } from 'next';
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
 export const metadata: Metadata = {
-  title: 'Reduzierte Markenprodukte – Beste Deals auf Preisradio',
-  description: 'Alle Marken und Hersteller im Überblick - Finden Sie Produkte von führenden Marken',
-  alternates: {
-    canonical: `${baseUrl}/marken`,
-    languages: {
-      'de-DE': `${baseUrl}/marken`,
-      'x-default': `${baseUrl}/marken`,
-    },
-  },
+  title: 'Alle Marken im Preisvergleich – Samsung, Apple, Sony & mehr | Preisradio',
+  description: 'Alle Elektronik-Marken im Überblick: Samsung, Apple, Sony, LG, Bosch und viele mehr. Preise vergleichen bei Saturn, MediaMarkt, Otto und Kaufland – täglich aktuell.',
+  keywords: [
+    'Elektronik Marken Preisvergleich',
+    'Samsung günstig kaufen',
+    'Apple Preisvergleich',
+    'Sony Angebote',
+    'Marken Elektronik Deutschland',
+    'günstige Markenprodukte',
+    'Preisradio Marken',
+  ],
   openGraph: {
-    title: 'Alle Marken | Preisradio',
-    description: 'Alle Marken und Hersteller im Überblick - Finden Sie Produkte von führenden Marken',
+    title: 'Alle Marken im Preisvergleich | Preisradio',
+    description: 'Samsung, Apple, Sony, LG und mehr – Markenprodukte günstig bei Saturn, MediaMarkt, Otto & Kaufland.',
     url: `${baseUrl}/marken`,
     type: 'website',
-    images: [{
-      url: `${baseUrl}/favicon.ico`,
-      width: 512,
-      height: 512,
-      alt: 'Preisradio Marken',
-    }],
+    locale: 'de_DE',
+    siteName: 'Preisradio',
   },
   twitter: {
-    card: 'summary',
-    title: 'Alle Marken | Preisradio',
-    description: 'Entdecken Sie Produkte von führenden Marken',
-    images: [`${baseUrl}/favicon.ico`],
+    card: 'summary_large_image',
+    title: 'Alle Marken im Preisvergleich | Preisradio',
+    description: 'Samsung, Apple, Sony und mehr – günstig kaufen auf Preisradio.',
+  },
+  alternates: {
+    canonical: `${baseUrl}/marken`,
   },
 };
 
