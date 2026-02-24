@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import ProductDetailClient from './ProductDetailClient';
 import api from '@/lib/api';
-import { generateProductSchema, generateBreadcrumbSchema, generateProductFAQSchema } from '@/lib/schema';
+import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
@@ -95,13 +95,10 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
   let product = null;
   let productSchema = null;
   let breadcrumbSchema = null;
-  let faqSchema = null;
-
   try {
     product = await api.getProduct(resolvedParams.id);
     productSchema = generateProductSchema(product, baseUrl);
     breadcrumbSchema = generateBreadcrumbSchema(product, baseUrl);
-    faqSchema = generateProductFAQSchema(product, baseUrl);
   } catch (err) {
     console.error('Error fetching product:', err);
     redirect('/');
@@ -119,12 +116,6 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
-      )}
-      {faqSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       )}
       <ProductDetailClient
