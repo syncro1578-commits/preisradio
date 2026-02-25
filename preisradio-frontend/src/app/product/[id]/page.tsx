@@ -61,7 +61,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         description: `${product.title} für ${price} ${currency} bei ${retailerName}.${savings ? ` Spare ${savings} ${currency}!` : ''} Jetzt vergleichen!`,
         images: product.image
           ? [{ url: product.image, alt: product.title }]
-          : [{ url: `${baseUrl}/og-image.png`, width: 1200, height: 630 }],
+          : [{ url: `${baseUrl}/og-image.webp`, width: 1200, height: 630 }],
         url: `${baseUrl}/product/${resolvedParams.id}`,
         type: 'website',
         locale: 'de_DE',
@@ -71,7 +71,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         card: 'summary_large_image',
         title: `${product.title} – ${price}€ | Preisradio`,
         description: `${product.title} für ${price} ${currency} bei ${retailerName}.${savings ? ` Spare ${savings} ${currency}!` : ''}`,
-        images: [product.image || `${baseUrl}/og-image.png`],
+        images: [product.image || `${baseUrl}/og-image.webp`],
       },
       alternates: {
         canonical: `${baseUrl}/product/${resolvedParams.id}`,
