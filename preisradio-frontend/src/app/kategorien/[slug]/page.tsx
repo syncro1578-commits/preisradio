@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import api from '@/lib/api';
 import CategoryDetailClient from './CategoryDetailClient';
 import { Product } from '@/lib/types';
-import { generateItemListSchema } from '@/lib/schema';
+import { generateItemListSchema, generateCategoryBreadcrumbSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 const PAGE_SIZE = 100;
@@ -27,7 +27,20 @@ export async function generateMetadata({
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
 
-    const title = `${categoryName} günstig kaufen – Preisvergleich | Preisradio`;
+    // Fetch product count for dynamic title
+    let productCount = 0;
+    try {
+      const countRes = await api.getProductsFromBothRetailers({
+        category: categoryName,
+        page_size: 1,
+      });
+      productCount = countRes?.count || 0;
+    } catch {
+      // fallback: title without count
+    }
+
+    const countLabel = productCount > 0 ? ` (${productCount} Produkte)` : '';
+    const title = `${categoryName}${countLabel} günstig kaufen – Preisvergleich | Preisradio`;
     const description = `${categoryName} im Preisvergleich: Saturn, MediaMarkt, Otto & Kaufland. Finden Sie täglich die günstigsten ${categoryName}-Angebote und sparen Sie beim Online-Kauf.`;
 
     const keywords = [
@@ -129,13 +142,14 @@ export default async function CategoryDetailPage({
 
   const canonicalBase = `${baseUrl}/kategorien/${slug}`;
 
+  const breadcrumbSchema = generateCategoryBreadcrumbSchema(categoryName, slug, baseUrl);
   const itemListSchema = products.length > 0
     ? generateItemListSchema(products, categoryName, baseUrl)
     : null;
 
   return (
     <>
-      {/* Pagination rel=prev/next — signal SEO pour pages catégorie */}
+      {/* Pagination rel=prev/next */}
       {currentPage > 1 && (
         <link
           rel="prev"
@@ -145,6 +159,12 @@ export default async function CategoryDetailPage({
       {currentPage < totalPages && (
         <link rel="next" href={`${canonicalBase}?page=${currentPage + 1}`} />
       )}
+
+      {/* BreadcrumbList JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
 
       {itemListSchema && (
         <script

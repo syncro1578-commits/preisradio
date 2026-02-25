@@ -248,6 +248,25 @@ export function generateProductFAQSchema(product: Product, baseUrl: string): FAQ
 }
 
 /**
+ * Génère le schéma BreadcrumbList pour les pages catégorie
+ */
+export function generateCategoryBreadcrumbSchema(
+  categoryName: string,
+  slug: string,
+  baseUrl: string
+): any {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Startseite', item: baseUrl },
+      { '@type': 'ListItem', position: 2, name: 'Kategorien', item: `${baseUrl}/kategorien` },
+      { '@type': 'ListItem', position: 3, name: categoryName, item: `${baseUrl}/kategorien/${slug}` },
+    ],
+  };
+}
+
+/**
  * Génère le schéma ItemList pour les pages catégorie
  * Améliore l'indexation et les rich snippets pour les listes de produits
  */

@@ -158,7 +158,7 @@ export default function CategoryDetailClient({
 
             <div className="relative">
               <h1 className="mb-3 text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg">
-                {categoryName}
+                {categoryName}{totalCount > 0 ? ` (${totalCount} Produkte)` : ''}
               </h1>
               <p className="text-base md:text-lg text-white/90 mb-6">
                 Entdecken Sie die besten Angebote in dieser Kategorie
@@ -469,6 +469,41 @@ export default function CategoryDetailClient({
             )}
           </div>
         </div>
+
+        {/* Contenu éditorial SEO — généré dynamiquement depuis le nom de catégorie */}
+        {categoryName && (
+          <div className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+              {categoryName} günstig kaufen – Kaufberater & Tipps
+            </h2>
+            <div className="space-y-4 text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p>
+                Bei Preisradio vergleichen Sie Preise für <strong className="text-gray-800 dark:text-gray-200">{categoryName}</strong> von
+                Saturn, MediaMarkt, Otto und Kaufland – den größten Elektronik- und Online-Händlern in Deutschland.
+                Unser täglicher Preisvergleich zeigt Ihnen auf einen Blick, wo Sie {categoryName} am günstigsten kaufen können.
+              </p>
+
+              <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
+                Worauf sollten Sie beim Kauf von {categoryName} achten?
+              </h3>
+              <p>
+                Achten Sie neben dem Preis auch auf Garantiezeit, Versandkosten und Lieferdauer.
+                Alle bei Preisradio gelisteten Händler bieten sichere Zahlungsmethoden, gesetzliches Widerrufsrecht
+                und zuverlässigen Versand innerhalb Deutschlands.
+              </p>
+
+              <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
+                Wann gibt es die besten Angebote für {categoryName}?
+              </h3>
+              <p>
+                Preisradio aktualisiert die Preise täglich – so verpassen Sie keine Rabattaktion.
+                Besonders günstige {categoryName}-Angebote finden Sie regelmäßig zu Black Friday,
+                Cyber Monday, Weihnachten und im Sommerausverkauf.
+                Nutzen Sie unsere Filter, um schnell das beste Angebot für Ihr Budget zu finden.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* AdSense Multiplex - Before Footer */}
         <AdSenseMultiplex className="mt-8" />
