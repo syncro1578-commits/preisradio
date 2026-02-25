@@ -61,7 +61,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         description: `${product.title} für ${price} ${currency} bei ${retailerName}.${savings ? ` Spare ${savings} ${currency}!` : ''} Jetzt vergleichen!`,
         images: product.image
           ? [{ url: product.image, alt: product.title }]
-          : [{ url: `${baseUrl}/favicon.ico` }],
+          : [{ url: `${baseUrl}/og-image.png`, width: 1200, height: 630 }],
         url: `${baseUrl}/product/${resolvedParams.id}`,
         type: 'website',
         locale: 'de_DE',
@@ -71,7 +71,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         card: 'summary_large_image',
         title: `${product.title} – ${price}€ | Preisradio`,
         description: `${product.title} für ${price} ${currency} bei ${retailerName}.${savings ? ` Spare ${savings} ${currency}!` : ''}`,
-        images: [product.image || `${baseUrl}/favicon.ico`],
+        images: [product.image || `${baseUrl}/og-image.png`],
       },
       alternates: {
         canonical: `${baseUrl}/product/${resolvedParams.id}`,
@@ -106,6 +106,10 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
 
   return (
     <>
+      {/* Preload LCP image — produit principal */}
+      {product?.image && (
+        <link rel="preload" as="image" href={product.image} />
+      )}
       {productSchema && (
         <script
           type="application/ld+json"

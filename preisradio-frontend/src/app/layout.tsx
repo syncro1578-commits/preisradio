@@ -53,18 +53,18 @@ export const metadata: Metadata = {
     description: 'Vergleichen Sie Elektronik-Preise von Saturn, MediaMarkt und Otto in Echtzeit. Finden Sie täglich die besten Angebote und sparen Sie beim Shopping.',
     images: [
       {
-        url: `${baseUrl}/favicon.ico`,
-        width: 512,
-        height: 512,
-        alt: 'Preisradio Preisvergleich',
+        url: `${baseUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: 'Preisradio – Preisvergleich für Elektronik in Deutschland',
       },
     ],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Preisvergleich Saturn MediaMarkt Otto',
     description: 'Vergleichen Sie Elektronik-Preise von Saturn, MediaMarkt und Otto in Echtzeit. Finden Sie täglich die besten Angebote und sparen Sie beim Shopping.',
-    images: [`${baseUrl}/favicon.ico`],
+    images: [`${baseUrl}/og-image.png`],
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
