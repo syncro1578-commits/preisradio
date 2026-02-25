@@ -187,20 +187,26 @@ export default function HomeContent() {
 
   return (
     <div className="space-y-16">
-      {/* Product Sections with Horizontal Scroll on Mobile */}
-      <ProductSection
-        title="Top Angebote"
-        description="Die besten Rabatte und Deals von allen Händlern"
-        products={topDeals}
-        viewAllLink="/search?sort=discount"
-        icon="🔥"
-      />
+      {/* H2 — Top Angebote */}
+      <section aria-labelledby="top-angebote-heading">
+        <h2 id="top-angebote-heading" className="sr-only">Aktuelle Top Angebote</h2>
+        <ProductSection
+          title="Top Angebote"
+          description="Die besten Rabatte und Deals von allen Händlern"
+          products={topDeals}
+          viewAllLink="/search?sort=discount"
+          icon="🔥"
+        />
+      </section>
 
       {/* AdSense Display - After Top Deals */}
       <AdSenseDisplay
         adSlot="1502312871"
         className="my-8"
       />
+
+      {/* H2 — Kategorien */}
+      <h2 className="sr-only">Produkte nach Kategorien</h2>
 
       {/* Dynamic Category Sections */}
       {categorySections.map((section) => {

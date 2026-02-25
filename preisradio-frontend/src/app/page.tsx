@@ -50,6 +50,11 @@ export default function Home() {
       <Navigation />
 
       <main className="container mx-auto px-4 py-4">
+        {/* H1 — signal SEO principal */}
+        <h1 className="mb-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+          Preisvergleich für Elektronik in Deutschland &mdash; Saturn, MediaMarkt, Otto &amp; Kaufland
+        </h1>
+
         <Suspense fallback={<HomeLoadingFallback />}>
           <HomeContent />
         </Suspense>
