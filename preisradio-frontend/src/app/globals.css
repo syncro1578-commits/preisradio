@@ -143,9 +143,9 @@ a, button, input, select, textarea,
 
 /* ===== Brand Showrooms — réplication fidèle du modèle Geizhals ===== */
 
-/* Container — fond gris-bleu + shine sweep animé */
+/* Container — fond clair + shine sweep animé */
 .brand-showrooms-wrap {
-  background-color: #52627a;
+  background-color: #e8ecf2;
   border-radius: 14px;
   padding: 10px;
   position: relative;
@@ -159,7 +159,7 @@ a, button, input, select, textarea,
   width: 40%;
   height: 100%;
   filter: blur(10px);
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.7), transparent);
   animation: showroom-shine 8s ease-in-out 0.5s infinite;
   pointer-events: none;
   z-index: 0;
@@ -179,7 +179,7 @@ a, button, input, select, textarea,
   display: flex;
   align-items: stretch;
   z-index: 1;
-  opacity: 0.78;
+  opacity: 0.88;
   transition: opacity 80ms linear;
 }
 .brand-showroom-btn:hover,
@@ -249,7 +249,7 @@ a, button, input, select, textarea,
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   .brand-showrooms-wrap {
-    background-color: #374151;
+    background-color: #1f2937;
   }
   .brand-showroom-link {
     color: #d1d5db;
