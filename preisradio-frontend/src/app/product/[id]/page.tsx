@@ -26,12 +26,15 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const hasDiscount = product.old_price && product.old_price > product.price;
     const savings = hasDiscount ? (product.old_price! - product.price).toFixed(2) : null;
 
-    // Title: "{Brand} {Model} – {Price}€ | Preisradio" (max 60 chars)
+    // Title: "{Brand} {Model} – {Price}€ (Monat Jahr) | Preisradio" (max 60 chars)
+    const month = new Intl.DateTimeFormat('de-DE', { month: 'long' }).format(new Date());
+    const year = new Date().getFullYear();
+    const suffix = ` – ${price}€ (${month} ${year})`;
     const titleBase = brand ? `${brand} ${product.title}` : product.title;
-    const titleWithPrice = `${titleBase.substring(0, 42)} – ${price}€`;
-    const title = titleWithPrice.length > 55
-      ? `${titleBase.substring(0, 38)}... – ${price}€`
-      : titleWithPrice;
+    const maxBase = 52 - suffix.length;
+    const title = titleBase.length > maxBase
+      ? `${titleBase.substring(0, maxBase - 3)}...${suffix}`
+      : `${titleBase}${suffix}`;
 
     // Description: compelling, includes savings and retailers (max 160 chars)
     const descriptionParts = [
