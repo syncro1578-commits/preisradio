@@ -144,53 +144,57 @@ a, button, input, select, textarea,
 /* ===== Category Bar — idealo-style quick-access strip ===== */
 
 .category-bar {
-  background: linear-gradient(0deg, rgba(0,0,0,.08), rgba(0,0,0,.08)), #e8ecf2;
-  border-bottom: 1px solid rgba(0,0,0,.06);
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
 }
 .category-bar-scroll {
   display: flex;
-  gap: 2px;
+  justify-content: center;
+  gap: 0;
   overflow-x: auto;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 8px;
 }
 .category-bar-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 68px;
-  padding: 12px 10px 10px;
+  flex: 1 1 0;
+  max-width: 110px;
+  padding: 10px 6px 8px;
   text-decoration: none;
-  color: #374151;
-  border-radius: 8px;
+  color: #6b7280;
+  border-bottom: 2px solid transparent;
 }
 .category-bar-item:hover {
-  background-color: rgba(0,0,0,.06);
+  color: #2563eb;
+  border-bottom-color: #2563eb;
 }
 .category-bar-icon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
 }
 .category-bar-label {
-  margin-top: 4px;
+  margin-top: 3px;
   font-size: 11px;
-  line-height: 16px;
+  line-height: 14px;
   font-weight: 500;
   white-space: nowrap;
 }
 
 @media (prefers-color-scheme: dark) {
   .category-bar {
-    background: linear-gradient(0deg, rgba(255,255,255,.04), rgba(255,255,255,.04)), #1f2937;
-    border-bottom-color: rgba(255,255,255,.06);
+    background-color: #111827;
+    border-bottom-color: #1f2937;
   }
   .category-bar-item {
-    color: #d1d5db;
+    color: #9ca3af;
   }
   .category-bar-item:hover {
-    background-color: rgba(255,255,255,.08);
+    color: #60a5fa;
+    border-bottom-color: #60a5fa;
   }
 }
 
