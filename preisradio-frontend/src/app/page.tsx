@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import HomeContent from '@/components/HomeContent';
+import HomeBrandShowcase from '@/components/HomeBrandShowcase';
 import { generateOrganizationSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
@@ -56,6 +57,9 @@ export default function Home() {
         <h1 className="mb-6 text-sm font-medium text-gray-500 dark:text-gray-400">
           Preisvergleich für Elektronik in Deutschland
         </h1>
+
+        {/* Bandeau marques — style Geizhals showrooms (SSR, indexé Google) */}
+        <HomeBrandShowcase />
 
         <Suspense fallback={<HomeLoadingFallback />}>
           <HomeContent />

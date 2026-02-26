@@ -141,6 +141,12 @@ a, button, input, select, textarea,
   transition-duration: 150ms;
 }
 
+/* Brand showroom hover — couleur par marque via CSS variable (modèle Geizhals) */
+.brand-showroom-item:hover {
+  border-color: var(--brand-color, #7c3aed);
+  color: var(--brand-color, #7c3aed);
+}
+
 /* Google Funding Choices CMP - Reduce size, stick to bottom */
 #fc-iframe-wrap,
 [id^="sp_message_iframe"],
