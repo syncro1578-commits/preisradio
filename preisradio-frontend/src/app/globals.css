@@ -141,6 +141,145 @@ a, button, input, select, textarea,
   transition-duration: 150ms;
 }
 
+/* ===== Category Bar — idealo-style quick-access strip ===== */
+
+.category-bar {
+  background: linear-gradient(0deg, rgba(0,0,0,.08), rgba(0,0,0,.08)), #e8ecf2;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+.category-bar-scroll {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+.category-bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 68px;
+  padding: 12px 10px 10px;
+  text-decoration: none;
+  color: #374151;
+  border-radius: 8px;
+}
+.category-bar-item:hover {
+  background-color: rgba(0,0,0,.06);
+}
+.category-bar-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.category-bar-label {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .category-bar {
+    background: linear-gradient(0deg, rgba(255,255,255,.04), rgba(255,255,255,.04)), #1f2937;
+    border-bottom-color: rgba(255,255,255,.06);
+  }
+  .category-bar-item {
+    color: #d1d5db;
+  }
+  .category-bar-item:hover {
+    background-color: rgba(255,255,255,.08);
+  }
+}
+
+/* ===== Deals Section — fond bleu clair (idealo-style) ===== */
+
+.deals-section {
+  background-color: #dce8f3;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  padding: 24px 1rem;
+  border-radius: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .deals-section {
+    background-color: #1a2332;
+  }
+}
+
+/* ===== USP Section — idealo-style propositions ===== */
+
+.usp-section {
+  padding: 32px 0;
+}
+.usp-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 16px;
+}
+.usp-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.usp-icon svg {
+  width: 28px;
+  height: 28px;
+}
+.usp-icon--blue {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+.usp-icon--green {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+.usp-icon--purple {
+  background-color: #ede9fe;
+  color: #7c3aed;
+}
+.usp-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+.usp-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+@media (prefers-color-scheme: dark) {
+  .usp-icon--blue {
+    background-color: #1e3a5f;
+    color: #60a5fa;
+  }
+  .usp-icon--green {
+    background-color: #14532d;
+    color: #4ade80;
+  }
+  .usp-icon--purple {
+    background-color: #2e1065;
+    color: #a78bfa;
+  }
+  .usp-title {
+    color: #e5e7eb;
+  }
+  .usp-text {
+    color: #9ca3af;
+  }
+}
+
 /* ===== Brand Showrooms — réplication fidèle du modèle Geizhals ===== */
 
 /* Container — fond clair + shine sweep animé */

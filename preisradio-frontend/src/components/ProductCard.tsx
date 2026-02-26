@@ -27,7 +27,7 @@ export default function ProductCard({ product, isBestPrice }: ProductCardProps) 
               alt={product.title || 'Product'}
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-contain p-0.5 sm:p-2 transition-transform duration-300 group-hover:scale-105"
+              className="object-contain p-0.5 sm:p-2 mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
               unoptimized={product.image?.startsWith('http')}
             />
           ) : (

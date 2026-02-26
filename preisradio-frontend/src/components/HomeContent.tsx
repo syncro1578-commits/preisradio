@@ -186,34 +186,32 @@ export default function HomeContent() {
   }
 
   return (
-    <div className="space-y-16">
-      {/* H2 — Top Angebote */}
-      <section aria-labelledby="top-angebote-heading">
-        <h2 id="top-angebote-heading" className="sr-only">Aktuelle Top Angebote</h2>
-        <ProductSection
-          title="Top Angebote"
-          description="Die besten Rabatte und Deals von allen Händlern"
-          products={topDeals}
-          viewAllLink="/search?sort=discount"
-          icon="🔥"
-        />
+    <div className="space-y-10">
+      {/* ── Deals section — fond distinct (idealo-style) ─────────────── */}
+      <section className="deals-section" aria-labelledby="top-angebote-heading">
+        <div className="container mx-auto">
+          <h2 id="top-angebote-heading" className="sr-only">Aktuelle Top Angebote</h2>
+          <ProductSection
+            title="Aktuelle Deals"
+            description="Die besten Rabatte von Saturn, MediaMarkt, Otto & Kaufland"
+            products={topDeals}
+            viewAllLink="/search?sort=discount"
+          />
+        </div>
       </section>
 
       {/* AdSense Display - After Top Deals */}
       <AdSenseDisplay
         adSlot="1502312871"
-        className="my-8"
+        className="my-6"
       />
 
-      {/* H2 — Kategorien */}
+      {/* ── Kategorien ─────────────────────────────────────────────── */}
       <h2 className="sr-only">Produkte nach Kategorien</h2>
 
-      {/* Dynamic Category Sections */}
       {categorySections.map((section) => {
-        // Skip if category is missing or invalid
         if (!section.category || typeof section.category !== 'string') return null;
 
-        // Mix products from all retailers
         const allProducts = [
           ...section.saturnProducts,
           ...section.mediamarktProducts,
@@ -221,10 +219,9 @@ export default function HomeContent() {
           ...section.kauflandProducts
         ];
 
-        const categoryName = section.category;  // category is now a string
+        const categoryName = section.category;
         const translatedName = simplifyGermanName(categoryName);
         const categorySlug = categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        const icon = getCategoryIcon(categoryName);
 
         return (
           <ProductSection
@@ -233,93 +230,50 @@ export default function HomeContent() {
             description={`Produkte von Saturn, MediaMarkt, Otto & Kaufland`}
             products={allProducts}
             viewAllLink={`/kategorien/${categorySlug}`}
-            icon={icon}
           />
         );
       })}
 
       {/* AdSense Multiplex - Before Features */}
-      <AdSenseMultiplex className="my-12" />
+      <AdSenseMultiplex className="my-8" />
 
-      {/* Features Section */}
-      <div>
-        <h2 className="mb-12 text-center text-3xl font-bold text-gray-900 dark:text-white">
-          Warum Preisradio?
-        </h2>
-        <div className="grid gap-8 md:grid-cols-3">
-          <div className="text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
-              <svg
-                className="h-8 w-8 text-blue-600 dark:text-blue-300"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
+      {/* ── USP section — idealo-style ─────────────────────────────── */}
+      <section className="usp-section">
+        <div className="container mx-auto px-4">
+          <h2 className="mb-8 text-center text-xl font-medium text-gray-800 dark:text-gray-200">
+            Preisradio — Ihr Preisvergleich
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-3">
+            <div className="usp-card">
+              <div className="usp-icon usp-icon--blue">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="usp-title">Schneller Vergleich</h3>
+              <p className="usp-text">Preise von Saturn, MediaMarkt, Otto & Kaufland sofort vergleichen</p>
             </div>
-            <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
-              Schneller Vergleich
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Vergleichen Sie Preise von mehreren Händlern in Sekunden
-            </p>
-          </div>
-
-          <div className="text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
-              <svg
-                className="h-8 w-8 text-green-600 dark:text-green-300"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+            <div className="usp-card">
+              <div className="usp-icon usp-icon--green">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="usp-title">Geld sparen</h3>
+              <p className="usp-text">Finden Sie immer den besten Preis und sparen Sie bares Geld</p>
             </div>
-            <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
-              Geld sparen
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Finden Sie immer den besten Preis und sparen Sie bares Geld
-            </p>
-          </div>
-
-          <div className="text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900">
-              <svg
-                className="h-8 w-8 text-purple-600 dark:text-purple-300"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                />
-              </svg>
+            <div className="usp-card">
+              <div className="usp-icon usp-icon--purple">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <h3 className="usp-title">Vertrauenswurdig</h3>
+              <p className="usp-text">Nur seriose und bekannte Handler in unserem Vergleich</p>
             </div>
-            <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
-              Vertrauenswürdig
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Nur seriöse und bekannte Händler in unserem Vergleich
-            </p>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

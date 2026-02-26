@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import Link from 'next/link';
 import ProductCard from './ProductCard';
 import AdSenseInFeed from './AdSenseInFeed';
 import { Product } from '@/lib/types';
@@ -17,7 +18,7 @@ export default function ProductSection({
   title,
   description,
   products,
-  icon = '📦'
+  viewAllLink,
 }: ProductSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -33,13 +34,23 @@ export default function ProductSection({
 
   return (
     <section className="relative">
-      <div className="mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-          {icon} {title}
-        </h2>
-        <p className="mt-1 md:mt-2 text-sm md:text-base text-gray-600 dark:text-gray-400">
-          {description}
-        </p>
+      <div className="mb-4 flex items-end justify-between">
+        <div>
+          <h2 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">
+            {title}
+          </h2>
+          <p className="mt-0.5 text-xs md:text-sm text-gray-500 dark:text-gray-400">
+            {description}
+          </p>
+        </div>
+        {viewAllLink && (
+          <Link
+            href={viewAllLink}
+            className="flex-none text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            Alle anzeigen &rsaquo;
+          </Link>
+        )}
       </div>
 
       {products.length === 0 ? (

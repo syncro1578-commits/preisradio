@@ -4,6 +4,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import HomeContent from '@/components/HomeContent';
 import HomeBrandShowcase from '@/components/HomeBrandShowcase';
+import HomeCategoryBar from '@/components/HomeCategoryBar';
 import { generateOrganizationSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
@@ -51,6 +52,9 @@ export default function Home() {
       />
 
       <Navigation />
+
+      {/* Category quick-access bar — idealo-style (SSR) */}
+      <HomeCategoryBar />
 
       <main className="container mx-auto px-4 py-4">
         {/* H1 — signal SEO principal */}
