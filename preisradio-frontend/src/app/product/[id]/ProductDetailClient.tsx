@@ -140,7 +140,7 @@ export default function ProductDetailClient({
 
       <main className="container mx-auto px-4 py-4 md:py-6 pb-24 md:pb-8">
         {/* Breadcrumb */}
-        <nav className="mb-4 flex items-center space-x-2 text-xs md:text-sm">
+        <nav aria-label="Breadcrumb" className="mb-4 flex items-center space-x-2 text-xs md:text-sm">
           <Link href="/" className="text-gray-500 hover:text-blue-600 dark:text-gray-400 transition-colors">Startseite</Link>
           <span className="text-gray-300 dark:text-gray-600">/</span>
           <Link href={`/kategorien/${categorySlug}`} className="text-gray-500 hover:text-blue-600 dark:text-gray-400 transition-colors">

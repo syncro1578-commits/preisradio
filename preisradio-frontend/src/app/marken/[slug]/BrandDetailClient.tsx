@@ -16,12 +16,14 @@ interface BrandDetailClientProps {
   slug: string;
   initialProducts: Product[];
   initialBrandName: string;
+  totalProductsCount: number;
 }
 
 export default function BrandDetailClient({
   slug,
   initialProducts,
-  initialBrandName
+  initialBrandName,
+  totalProductsCount,
 }: BrandDetailClientProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [brandName, setBrandName] = useState<string>(initialBrandName);
@@ -142,7 +144,7 @@ export default function BrandDetailClient({
               </div>
 
               <h1 className="mb-3 text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg">
-                {brandName || 'Marke'}
+                {brandName || 'Marke'}{totalProductsCount > 0 ? ` (${totalProductsCount} Produkte)` : ''}
               </h1>
               <p className="text-base md:text-lg text-white/90 mb-6 max-w-2xl">
                 Entdecken Sie alle Produkte von {brandName} bei unseren Partner-Händlern und finden Sie die besten Angebote
@@ -482,6 +484,30 @@ export default function BrandDetailClient({
                 </div>
               </div>
             </div>
+
+            {/* Editorial SEO content */}
+            {brandName && (
+              <div className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-8 shadow-sm">
+                <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+                  {brandName} Produkte günstig kaufen – Kaufberater & Tipps
+                </h2>
+                <p className="mb-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  Bei Preisradio vergleichen Sie alle {brandName} Produkte von Saturn, MediaMarkt, Otto und Kaufland auf einen Blick. Ob Smartphones, Laptops, Haushaltsgeräte oder Unterhaltungselektronik – wir zeigen Ihnen täglich den günstigsten Preis für jedes {brandName} Gerät.
+                </p>
+                <h3 className="mb-2 text-base font-semibold text-gray-800 dark:text-gray-200">
+                  Worauf sollten Sie beim Kauf von {brandName} Produkten achten?
+                </h3>
+                <p className="mb-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  Achten Sie neben dem Preis auch auf Garantiezeit, Lieferbedingungen und den jeweiligen Händler. {brandName} Produkte sind bei mehreren deutschen Händlern erhältlich – ein Preisvergleich lohnt sich fast immer.
+                </p>
+                <h3 className="mb-2 text-base font-semibold text-gray-800 dark:text-gray-200">
+                  Wann gibt es die besten {brandName} Angebote?
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  Preisradio aktualisiert die {brandName} Preise täglich. Besonders günstige Angebote gibt es häufig zu Black Friday, Cyber Monday und den großen Saisonverkäufen. Nutzen Sie unseren Preisvergleich, um keine Aktion zu verpassen.
+                </p>
+              </div>
+            )}
 
             {/* AdSense Multiplex - Before Footer */}
             <AdSenseMultiplex className="mt-8" />

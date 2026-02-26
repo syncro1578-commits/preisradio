@@ -248,6 +248,25 @@ export function generateProductFAQSchema(product: Product, baseUrl: string): FAQ
 }
 
 /**
+ * Génère le schéma BreadcrumbList pour les pages marque
+ */
+export function generateBrandBreadcrumbSchema(
+  brandName: string,
+  slug: string,
+  baseUrl: string
+): any {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Startseite', item: baseUrl },
+      { '@type': 'ListItem', position: 2, name: 'Marken', item: `${baseUrl}/marken` },
+      { '@type': 'ListItem', position: 3, name: brandName, item: `${baseUrl}/marken/${slug}` },
+    ],
+  };
+}
+
+/**
  * Génère le schéma BreadcrumbList pour les pages catégorie
  */
 export function generateCategoryBreadcrumbSchema(

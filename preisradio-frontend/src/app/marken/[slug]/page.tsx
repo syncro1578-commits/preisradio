@@ -2,19 +2,43 @@ import { Metadata } from 'next';
 import api from '@/lib/api';
 import BrandDetailClient from './BrandDetailClient';
 import { Product } from '@/lib/types';
-import { generateItemListSchema } from '@/lib/schema';
+import { generateItemListSchema, generateBrandBreadcrumbSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
+const PAGE_SIZE = 100;
 
 export const revalidate = 43200; // 12 hours
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ page?: string }>;
+}): Promise<Metadata> {
   try {
     const resolvedParams = await params;
-    const decodedSlug = decodeURIComponent(resolvedParams.slug);
+    const resolvedSearch = await searchParams;
+    const currentPage = parseInt(resolvedSearch.page || '1', 10);
+    const slug = resolvedParams.slug;
+
+    const decodedSlug = decodeURIComponent(slug);
     const brandName = decodedSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-    const title = `${brandName} günstig kaufen – Preisvergleich Saturn, MediaMarkt & mehr | Preisradio`;
+    // Fetch product count for dynamic title
+    let productCount = 0;
+    try {
+      const countRes = await api.getProductsFromBothRetailers({
+        brand: brandName,
+        page_size: 1,
+      });
+      productCount = countRes?.count || 0;
+    } catch {
+      // fallback: title without count
+    }
+
+    const countLabel = productCount > 0 ? ` (${productCount} Produkte)` : '';
+    const title = `${brandName}${countLabel} günstig kaufen – Preisvergleich | Preisradio`;
     const description = `${brandName} Produkte im Preisvergleich: Saturn, MediaMarkt, Otto und Kaufland. Finden Sie täglich die günstigsten ${brandName} Angebote und sparen Sie beim Online-Kauf.`;
 
     const keywords = [
@@ -27,6 +51,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       'Preisradio',
     ];
 
+    const canonicalBase = `${baseUrl}/marken/${slug}`;
+    const canonical = currentPage === 1 ? canonicalBase : `${canonicalBase}?page=${currentPage}`;
+
     return {
       title: title.length > 70 ? title.substring(0, 67) + '...' : title,
       description: description.length > 160 ? description.substring(0, 157) + '...' : description,
@@ -34,7 +61,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       openGraph: {
         title: `${brandName} Produkte günstig | Preisradio`,
         description: `${brandName} im Preisvergleich – täglich günstigste Preise bei Saturn, MediaMarkt, Otto & Kaufland.`,
-        url: `${baseUrl}/marken/${resolvedParams.slug}`,
+        url: canonical,
         type: 'website',
         locale: 'de_DE',
         siteName: 'Preisradio',
@@ -45,10 +72,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         description: `${brandName} im Preisvergleich – täglich aktuell auf Preisradio.`,
       },
       alternates: {
-        canonical: `${baseUrl}/marken/${resolvedParams.slug}`,
+        canonical,
         languages: {
-          'de-DE': `${baseUrl}/marken/${resolvedParams.slug}`,
-          'x-default': `${baseUrl}/marken/${resolvedParams.slug}`,
+          'de-DE': canonical,
+          'x-default': canonical,
         },
       },
     };
@@ -60,12 +87,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-export default async function BrandDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BrandDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ page?: string }>;
+}) {
   const resolvedParams = await params;
+  const resolvedSearch = await searchParams;
   const slug = resolvedParams.slug;
+  const currentPage = Math.max(1, parseInt(resolvedSearch.page || '1', 10));
 
   let products: Product[] = [];
   let brandName = '';
+  let totalProductsCount = 0;
+  let totalPages = 1;
 
   try {
     const decodedSlug = decodeURIComponent(slug);
@@ -85,10 +122,13 @@ export default async function BrandDetailPage({ params }: { params: Promise<{ sl
 
       const response = await api.getProductsFromBothRetailers({
         brand: brandName,
-        page_size: 100,
+        page: currentPage,
+        page_size: PAGE_SIZE,
       });
 
       products = response?.results || [];
+      totalProductsCount = response?.count || 0;
+      totalPages = Math.ceil(totalProductsCount / PAGE_SIZE);
     } else {
       brandName = searchTerm
         .split(' ')
@@ -100,12 +140,32 @@ export default async function BrandDetailPage({ params }: { params: Promise<{ sl
     brandName = decodeURIComponent(slug).toUpperCase();
   }
 
+  const canonicalBase = `${baseUrl}/marken/${slug}`;
+
+  const breadcrumbSchema = generateBrandBreadcrumbSchema(brandName, slug, baseUrl);
   const itemListSchema = products.length > 0
     ? generateItemListSchema(products, brandName, baseUrl)
     : null;
 
   return (
     <>
+      {/* Pagination rel=prev/next */}
+      {currentPage > 1 && (
+        <link
+          rel="prev"
+          href={currentPage === 2 ? canonicalBase : `${canonicalBase}?page=${currentPage - 1}`}
+        />
+      )}
+      {currentPage < totalPages && (
+        <link rel="next" href={`${canonicalBase}?page=${currentPage + 1}`} />
+      )}
+
+      {/* BreadcrumbList JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       {itemListSchema && (
         <script
           type="application/ld+json"
@@ -116,6 +176,7 @@ export default async function BrandDetailPage({ params }: { params: Promise<{ sl
         slug={slug}
         initialProducts={products}
         initialBrandName={brandName}
+        totalProductsCount={totalProductsCount}
       />
     </>
   );
