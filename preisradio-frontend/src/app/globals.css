@@ -141,30 +141,125 @@ a, button, input, select, textarea,
   transition-duration: 150ms;
 }
 
-/* Brand showroom — modèle Geizhals avec accent bar colorée + lift au hover */
-.brand-showroom-item {
+/* ===== Brand Showrooms — réplication fidèle du modèle Geizhals ===== */
+
+/* Container — fond gris-bleu + shine sweep animé */
+.brand-showrooms-wrap {
+  background-color: #52627a;
+  border-radius: 14px;
+  padding: 10px;
   position: relative;
   overflow: hidden;
 }
-.brand-showroom-item::after {
+.brand-showrooms-wrap::before {
   content: '';
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--brand-color, #7c3aed);
-  transform: scaleX(0);
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 40%;
+  height: 100%;
+  filter: blur(10px);
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+  animation: showroom-shine 8s ease-in-out 0.5s infinite;
+  pointer-events: none;
+  z-index: 0;
 }
-.brand-showroom-item:hover::after {
-  transform: scaleX(1);
+@keyframes showroom-shine {
+  0%   { transform: translateX(-120%); }
+  30%  { transform: translateX(280%); }
+  100% { transform: translateX(280%); }
 }
-.brand-showroom-item:hover {
-  color: var(--brand-color, #7c3aed);
-  border-color: color-mix(in srgb, var(--brand-color, #7c3aed) 30%, transparent);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px -6px color-mix(in srgb, var(--brand-color, #7c3aed) 25%, transparent);
+
+/* Card wrapper — contient le gradient-border rotatif */
+.brand-showroom-btn {
+  border-radius: 10px;
+  padding: 6px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+  z-index: 1;
+  opacity: 0.78;
+  transition: opacity 80ms linear;
+}
+.brand-showroom-btn:hover,
+.brand-showroom-btn:focus-within {
+  opacity: 1;
+}
+
+/* Gradient rotatif (le "border" de couleur de marque) */
+.brand-showroom-btn::before {
+  content: '';
+  background: linear-gradient(transparent, var(--brand-color, #7c3aed), transparent);
+  filter: blur(3px);
+  position: absolute;
+  inset: 0;
+  rotate: 350deg;
+  transition: rotate 0.5s ease-in-out;
+}
+.brand-showroom-btn:hover::before,
+.brand-showroom-btn:focus-within::before {
+  rotate: 180deg;
+}
+
+/* Lien intérieur — la carte blanche visible */
+.brand-showroom-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 7px;
+  position: relative;
+  color: #374151;
+}
+
+/* Fond blanc — crée l'effet "carte à l'intérieur du border" */
+.brand-showroom-link::before {
+  content: '';
+  background-color: #ffffff;
+  border-radius: 7px;
+  position: absolute;
+  inset: 2px;
+  z-index: 0;
+}
+
+/* Gradient couleur-marque révélé au hover */
+.brand-showroom-link::after {
+  content: '';
+  background: linear-gradient(320deg, var(--brand-color, #7c3aed) 0%, #ffffff 65%);
+  border-radius: 7px;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+  position: absolute;
+  inset: 2px;
+  z-index: 0;
+}
+.brand-showroom-btn:hover .brand-showroom-link::after,
+.brand-showroom-btn:focus-within .brand-showroom-link::after {
+  opacity: 0.14;
+}
+
+/* Logo/texte au-dessus des pseudo-éléments */
+.brand-showroom-link > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .brand-showrooms-wrap {
+    background-color: #374151;
+  }
+  .brand-showroom-link {
+    color: #d1d5db;
+  }
+  .brand-showroom-link::before {
+    background-color: #27272a;
+  }
+  .brand-showroom-link::after {
+    background: linear-gradient(320deg, var(--brand-color, #7c3aed) 0%, #27272a 65%);
+  }
 }
 
 /* Google Funding Choices CMP - Reduce size, stick to bottom */
