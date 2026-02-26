@@ -104,18 +104,19 @@ function IconDeals() {
   );
 }
 
+// Links use /search?q= for reliable results (category slugs vary by API data)
 const CATEGORIES: CategoryEntry[] = [
-  { name: 'Deals', slug: '', icon: <IconDeals /> },
-  { name: 'Smartphones', slug: 'smartphones', icon: <IconSmartphone /> },
-  { name: 'Laptops', slug: 'laptops', icon: <IconLaptop /> },
-  { name: 'Fernseher', slug: 'fernseher', icon: <IconTV /> },
-  { name: 'Kopfhorer', slug: 'kopfhorer', icon: <IconHeadphones /> },
-  { name: 'Gaming', slug: 'gaming', icon: <IconGaming /> },
-  { name: 'Tablets', slug: 'tablets', icon: <IconTablet /> },
-  { name: 'Smartwatches', slug: 'smartwatches', icon: <IconWatch /> },
-  { name: 'Kameras', slug: 'kameras', icon: <IconCamera /> },
-  { name: 'Audio', slug: 'audio', icon: <IconSpeaker /> },
-  { name: 'Haushalt', slug: 'haushalt', icon: <IconAppliance /> },
+  { name: 'Deals', slug: '/search?sort=discount', icon: <IconDeals /> },
+  { name: 'Smartphones', slug: '/search?q=smartphone', icon: <IconSmartphone /> },
+  { name: 'Laptops', slug: '/search?q=laptop', icon: <IconLaptop /> },
+  { name: 'Fernseher', slug: '/search?q=fernseher', icon: <IconTV /> },
+  { name: 'Kopfhorer', slug: '/search?q=kopfhorer', icon: <IconHeadphones /> },
+  { name: 'Gaming', slug: '/kategorien/spielkonsolen', icon: <IconGaming /> },
+  { name: 'Tablets', slug: '/search?q=tablet', icon: <IconTablet /> },
+  { name: 'Watches', slug: '/search?q=smartwatch', icon: <IconWatch /> },
+  { name: 'Kameras', slug: '/search?q=kamera', icon: <IconCamera /> },
+  { name: 'Audio', slug: '/search?q=audio', icon: <IconSpeaker /> },
+  { name: 'Haushalt', slug: '/search?q=haushalt', icon: <IconAppliance /> },
 ];
 
 export default function HomeCategoryBar() {
@@ -125,7 +126,7 @@ export default function HomeCategoryBar() {
         {CATEGORIES.map((cat) => (
           <Link
             key={cat.name}
-            href={cat.slug ? `/kategorien/${cat.slug}` : '/search?sort=discount'}
+            href={cat.slug}
             className="category-bar-item"
           >
             {cat.icon}
