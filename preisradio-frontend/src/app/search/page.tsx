@@ -406,7 +406,7 @@ function SearchContent() {
                     {totalCount} {totalCount === 1 ? 'Ergebnis' : 'Ergebnisse'} insgesamt
                   </h2>
                 </div>
-                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-4">
                   {products.map((product, index) => (
                     <React.Fragment key={product.id}>
                       <ProductCard product={product} />
