@@ -20,14 +20,14 @@ export default function ProductCard({ product, isBestPrice }: ProductCardProps) 
     <Link href={`/product/${product.id}`}>
       <div className="group relative flex h-full flex-col overflow-hidden rounded-lg sm:rounded-xl border border-gray-200 bg-white p-1.5 sm:p-4 transition-all duration-300 hover:shadow-xl hover:border-blue-300 hover:-translate-y-1 dark:bg-zinc-900 dark:border-zinc-800 dark:hover:border-blue-600 animate-fadeIn">
         {/* Image du produit - Taille adaptée pour mobile */}
-        <div className="relative mb-1 sm:mb-3 aspect-square w-full overflow-hidden rounded-md sm:rounded-lg bg-gray-50 dark:bg-zinc-800">
+        <div className="relative mb-1 sm:mb-3 aspect-square w-full overflow-hidden rounded-md sm:rounded-lg bg-white dark:bg-zinc-800">
           {product.image ? (
             <Image
               src={product.image}
               alt={product.title || 'Product'}
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-contain p-0.5 sm:p-2 mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
+              className="object-contain p-0.5 sm:p-2 mix-blend-multiply dark:mix-blend-normal transition-transform duration-300 group-hover:scale-105"
               unoptimized={product.image?.startsWith('http')}
             />
           ) : (
