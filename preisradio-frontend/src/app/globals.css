@@ -141,10 +141,30 @@ a, button, input, select, textarea,
   transition-duration: 150ms;
 }
 
-/* Brand showroom hover — couleur par marque via CSS variable (modèle Geizhals) */
+/* Brand showroom — modèle Geizhals avec accent bar colorée + lift au hover */
+.brand-showroom-item {
+  position: relative;
+  overflow: hidden;
+}
+.brand-showroom-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--brand-color, #7c3aed);
+  transform: scaleX(0);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.brand-showroom-item:hover::after {
+  transform: scaleX(1);
+}
 .brand-showroom-item:hover {
-  border-color: var(--brand-color, #7c3aed);
   color: var(--brand-color, #7c3aed);
+  border-color: color-mix(in srgb, var(--brand-color, #7c3aed) 30%, transparent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -6px color-mix(in srgb, var(--brand-color, #7c3aed) 25%, transparent);
 }
 
 /* Google Funding Choices CMP - Reduce size, stick to bottom */

@@ -52,27 +52,35 @@ function getBrandLogo(name: string) {
 
 export default function HomeBrandShowcase() {
   return (
-    <section className="mb-8" aria-labelledby="brand-showcase-heading">
-      <h2
-        id="brand-showcase-heading"
-        className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500"
-      >
-        Top Marken
-      </h2>
+    <section className="mb-10" aria-labelledby="brand-showcase-heading">
+      <div className="mb-4 flex items-center justify-between">
+        <h2
+          id="brand-showcase-heading"
+          className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500"
+        >
+          Top Marken
+        </h2>
+        <Link
+          href="/marken"
+          className="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+        >
+          Alle Marken →
+        </Link>
+      </div>
 
-      <ul className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {BRANDS.map((brand) => {
           const logo = getBrandLogo(brand.name);
           return (
             <li key={brand.name}>
               <Link
                 href={`/marken/${brand.slug}`}
-                className="brand-showroom-item flex items-center justify-center h-14 rounded-xl border border-gray-200 bg-white px-4 shadow-sm hover:shadow-md dark:border-zinc-700 dark:bg-zinc-900"
+                className="brand-showroom-item flex items-center justify-center h-16 rounded-2xl border border-gray-200 bg-white px-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900 text-gray-500 dark:text-gray-400"
                 style={{ '--brand-color': brand.color } as React.CSSProperties}
                 aria-label={`${brand.name} Produkte`}
               >
                 {logo ?? (
-                  <span className="text-sm font-black tracking-tight text-gray-700 dark:text-gray-300">
+                  <span className="text-base font-black tracking-tight">
                     {brand.name}
                   </span>
                 )}
