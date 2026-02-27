@@ -1,10 +1,15 @@
 import Link from 'next/link';
+import api from '@/lib/api';
 
-type CategoryEntry = {
-  name: string;
-  slug: string;
-  icon: React.ReactNode;
-};
+// ── SVG Icons ────────────────────────────────────────────────────────────────
+
+function IconDeals() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="category-bar-icon">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+    </svg>
+  );
+}
 
 function IconSmartphone() {
   return (
@@ -96,43 +101,104 @@ function IconAppliance() {
   );
 }
 
-function IconDeals() {
+function IconPrinter() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="category-bar-icon">
-      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+      <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+      <rect x="6" y="14" width="12" height="8" />
     </svg>
   );
 }
 
-// Links use /search?q= for reliable results (category slugs vary by API data)
-const CATEGORIES: CategoryEntry[] = [
-  { name: 'Deals', slug: '/search?sort=discount', icon: <IconDeals /> },
-  { name: 'Smartphones', slug: '/search?q=smartphone', icon: <IconSmartphone /> },
-  { name: 'Laptops', slug: '/search?q=laptop', icon: <IconLaptop /> },
-  { name: 'Fernseher', slug: '/search?q=fernseher', icon: <IconTV /> },
-  { name: 'Kopfhorer', slug: '/search?q=kopfhorer', icon: <IconHeadphones /> },
-  { name: 'Gaming', slug: '/kategorien/spielkonsolen', icon: <IconGaming /> },
-  { name: 'Tablets', slug: '/search?q=tablet', icon: <IconTablet /> },
-  { name: 'Watches', slug: '/search?q=smartwatch', icon: <IconWatch /> },
-  { name: 'Kameras', slug: '/search?q=kamera', icon: <IconCamera /> },
-  { name: 'Audio', slug: '/search?q=audio', icon: <IconSpeaker /> },
-  { name: 'Haushalt', slug: '/search?q=haushalt', icon: <IconAppliance /> },
+function IconNetwork() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="category-bar-icon">
+      <path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" />
+    </svg>
+  );
+}
+
+function IconBox() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="category-bar-icon">
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+      <path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" />
+    </svg>
+  );
+}
+
+// ── Icon mapping by keyword ──────────────────────────────────────────────────
+
+type IconComponent = () => React.JSX.Element;
+
+const ICON_KEYWORDS: [string[], IconComponent][] = [
+  [['smartphone', 'handy', 'mobiltelefon', 'iphone', 'galaxy'], IconSmartphone],
+  [['laptop', 'notebook', 'computer', 'pc', 'desktop'], IconLaptop],
+  [['fernseher', 'tv', 'television', 'monitor', 'bildschirm'], IconTV],
+  [['kopfhörer', 'kopfhoerer', 'headphone', 'earbuds', 'in-ear'], IconHeadphones],
+  [['gaming', 'spielkonsol', 'playstation', 'xbox', 'nintendo', 'konsol'], IconGaming],
+  [['tablet', 'ipad'], IconTablet],
+  [['smartwatch', 'watch', 'uhr', 'fitness', 'tracker'], IconWatch],
+  [['kamera', 'camera', 'foto', 'objektiv'], IconCamera],
+  [['audio', 'lautsprecher', 'speaker', 'soundbar', 'sound'], IconSpeaker],
+  [['waschmaschine', 'trockner', 'kühlschrank', 'kuehlschrank', 'haushalt', 'spülmaschine', 'geschirrspüler', 'staubsauger', 'backofen', 'herd', 'mikrowelle'], IconAppliance],
+  [['drucker', 'printer', 'scanner'], IconPrinter],
+  [['netzwerk', 'router', 'wlan', 'wifi', 'nas', 'switch'], IconNetwork],
 ];
 
-export default function HomeCategoryBar() {
+function getIconForCategory(categoryName: string): IconComponent {
+  const lower = categoryName.toLowerCase();
+  for (const [keywords, Icon] of ICON_KEYWORDS) {
+    if (keywords.some((kw) => lower.includes(kw))) {
+      return Icon;
+    }
+  }
+  return IconBox; // fallback
+}
+
+function toSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+// ── Component (async server component) ───────────────────────────────────────
+
+export default async function HomeCategoryBar() {
+  let categories: string[] = [];
+
+  try {
+    const res = await api.getCategories({ page_size: 15 });
+    categories = res.results || [];
+  } catch {
+    // Fallback: show nothing if API fails (Deals link still shows)
+  }
+
+  // Limit to 10 categories max (+ Deals = 11 total)
+  const visibleCategories = categories.slice(0, 10);
+
   return (
     <nav className="category-bar" aria-label="Kategorien">
       <div className="category-bar-scroll scrollbar-hide">
-        {CATEGORIES.map((cat) => (
-          <Link
-            key={cat.name}
-            href={cat.slug}
-            className="category-bar-item"
-          >
-            {cat.icon}
-            <span className="category-bar-label">{cat.name}</span>
-          </Link>
-        ))}
+        {/* Deals — always first, hardcoded */}
+        <Link href="/search?sort=discount" className="category-bar-item">
+          <IconDeals />
+          <span className="category-bar-label">Deals</span>
+        </Link>
+
+        {/* Dynamic categories from API */}
+        {visibleCategories.map((cat) => {
+          const Icon = getIconForCategory(cat);
+          const slug = toSlug(cat);
+          return (
+            <Link
+              key={cat}
+              href={`/kategorien/${slug}`}
+              className="category-bar-item"
+            >
+              <Icon />
+              <span className="category-bar-label">{cat}</span>
+            </Link>
+          );
+        })}
       </div>
     </nav>
   );

@@ -6,6 +6,7 @@ import api from '@/lib/api';
 import ProductSection from '@/components/ProductSection';
 import AdSenseDisplay from '@/components/AdSenseDisplay';
 import AdSenseMultiplex from '@/components/AdSenseMultiplex';
+import HeroCarousel from '@/components/HeroCarousel';
 import Link from 'next/link';
 
 interface CategorySection {
@@ -200,7 +201,10 @@ export default function HomeContent() {
         </div>
       </section>
 
-      {/* AdSense Display - After Top Deals */}
+      {/* ── Hero Carousel — promotional banners ─────────────────── */}
+      <HeroCarousel />
+
+      {/* AdSense Display - After Carousel */}
       <AdSenseDisplay
         adSlot="1502312871"
         className="my-6"
