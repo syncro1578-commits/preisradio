@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface Slide {
@@ -9,45 +10,33 @@ interface Slide {
   cta: string;
   href: string;
   gradient: string;
-  icon: React.ReactNode;
+  image: string;
 }
 
 const SLIDES: Slide[] = [
   {
-    title: 'Die besten Preise finden',
-    subtitle: 'Vergleichen Sie Elektronik von Saturn, MediaMarkt, Otto & Kaufland',
-    cta: 'Jetzt vergleichen',
-    href: '/kategorien',
+    title: 'Smartwatches im Vergleich',
+    subtitle: 'Apple Watch, Samsung Galaxy Watch, Garmin & mehr — zum besten Preis',
+    cta: 'Smartwatches entdecken',
+    href: '/kategorien/smartwatches',
     gradient: 'from-blue-600 via-blue-700 to-indigo-800',
-    icon: (
-      <svg className="h-10 w-10 sm:h-14 sm:w-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-      </svg>
-    ),
+    image: '/banners/smartwatches.webp',
   },
   {
-    title: 'Top Marken im Vergleich',
-    subtitle: 'Samsung, Apple, Sony, Bosch und viele mehr — immer zum besten Preis',
-    cta: 'Marken entdecken',
-    href: '/marken',
+    title: 'Monitore gunstig kaufen',
+    subtitle: 'Gaming, Office & 4K Monitore von Samsung, LG, Dell und mehr',
+    cta: 'Monitore vergleichen',
+    href: '/kategorien/monitore',
     gradient: 'from-purple-600 via-purple-700 to-fuchsia-800',
-    icon: (
-      <svg className="h-10 w-10 sm:h-14 sm:w-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M7 7h.01M2 2h8.5L21 12.5a2 2 0 010 2.83l-6.17 6.17a2 2 0 01-2.83 0L2 11.5V2z" />
-      </svg>
-    ),
+    image: '/banners/monitore.webp',
   },
   {
-    title: 'Täglich neue Deals',
-    subtitle: 'Verpassen Sie keine Rabatte — die besten Angebote auf einen Blick',
-    cta: 'Deals ansehen',
-    href: '/search?sort=discount',
+    title: 'Staubsauger Angebote',
+    subtitle: 'Roboter, kabellose & Bodenstaubsauger — Dyson, Bosch, iRobot',
+    cta: 'Staubsauger ansehen',
+    href: '/kategorien/staubsauger',
     gradient: 'from-emerald-600 via-teal-700 to-cyan-800',
-    icon: (
-      <svg className="h-10 w-10 sm:h-14 sm:w-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
+    image: '/banners/staubsauger.webp',
   },
 ];
 
@@ -103,22 +92,26 @@ export default function HeroCarousel() {
             href={slide.href}
             className={`w-full flex-none bg-gradient-to-r ${slide.gradient} relative`}
           >
-            {/* Decorative circles */}
-            <div className="absolute right-[-40px] top-[-40px] h-48 w-48 rounded-full bg-white/5" />
-            <div className="absolute right-20 bottom-[-30px] h-32 w-32 rounded-full bg-white/5" />
+            {/* Background image */}
+            <Image
+              src={slide.image}
+              alt={slide.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 1280px"
+              className="object-cover opacity-30 mix-blend-luminosity"
+              priority={i === 0}
+            />
 
-            <div className="flex items-center gap-4 sm:gap-8 px-5 sm:px-10 py-6 sm:py-10">
-              {/* Icon */}
-              <div className="flex-none rounded-2xl bg-white/15 p-3 sm:p-5 text-white/90">
-                {slide.icon}
-              </div>
+            {/* Overlay gradient for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
 
+            <div className="relative flex items-center gap-4 sm:gap-8 px-5 sm:px-10 py-8 sm:py-12">
               {/* Text */}
               <div className="min-w-0 flex-1">
-                <h3 className="text-base sm:text-xl md:text-2xl font-bold text-white leading-tight">
+                <h3 className="text-base sm:text-xl md:text-2xl font-bold text-white leading-tight drop-shadow-md">
                   {slide.title}
                 </h3>
-                <p className="mt-1 text-xs sm:text-sm text-white/75 line-clamp-2">
+                <p className="mt-1 text-xs sm:text-sm text-white/80 line-clamp-2 drop-shadow-sm">
                   {slide.subtitle}
                 </p>
                 <span className="mt-2 sm:mt-3 inline-flex items-center gap-1 rounded-full bg-white/20 px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-white backdrop-blur-sm">

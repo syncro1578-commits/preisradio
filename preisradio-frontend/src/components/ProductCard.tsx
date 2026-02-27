@@ -101,14 +101,14 @@ export default function ProductCard({ product, isBestPrice }: ProductCardProps) 
         )}
 
         {/* Badge de réduction - Priorité 2 */}
-        {!isBestPrice && hasDiscount && product.discount && (
+        {!isBestPrice && product.discount && (
           <div className="absolute right-1 top-1 sm:right-3 sm:top-3 rounded-full bg-red-500 px-1 sm:px-2 py-0.5 text-[8px] sm:text-xs font-semibold text-white shadow-md">
             {product.discount}
           </div>
         )}
 
         {/* Badge "Neu" si produit récent - Priorité 3 */}
-        {!isBestPrice && !hasDiscount && product.scraped_at && (() => {
+        {!isBestPrice && !product.discount && product.scraped_at && (() => {
           const scrapedDate = new Date(product.scraped_at);
           const daysSinceScraping = Math.floor(
             (Date.now() - scrapedDate.getTime()) / (1000 * 60 * 60 * 24)
