@@ -92,29 +92,29 @@ export default function HeroCarousel() {
             href={slide.href}
             className={`w-full flex-none bg-gradient-to-r ${slide.gradient} relative`}
           >
-            {/* Background image */}
+            {/* Background image — full cover with dark overlay */}
             <Image
               src={slide.image}
               alt={slide.title}
               fill
               sizes="(max-width: 768px) 100vw, 1280px"
-              className="object-cover opacity-30 mix-blend-luminosity"
+              className="object-cover"
               priority={i === 0}
             />
 
-            {/* Overlay gradient for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
+            {/* Dark overlay for text readability */}
+            <div className="absolute inset-0 bg-black/50" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent" />
 
-            <div className="relative flex items-center gap-4 sm:gap-8 px-5 sm:px-10 py-8 sm:py-12">
-              {/* Text */}
+            <div className="relative flex items-center px-5 sm:px-10 py-5 sm:py-8">
               <div className="min-w-0 flex-1">
                 <h3 className="text-base sm:text-xl md:text-2xl font-bold text-white leading-tight drop-shadow-md">
                   {slide.title}
                 </h3>
-                <p className="mt-1 text-xs sm:text-sm text-white/80 line-clamp-2 drop-shadow-sm">
+                <p className="mt-1 text-xs sm:text-sm text-white/85 line-clamp-2 drop-shadow-sm">
                   {slide.subtitle}
                 </p>
-                <span className="mt-2 sm:mt-3 inline-flex items-center gap-1 rounded-full bg-white/20 px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-white backdrop-blur-sm">
+                <span className="mt-2 sm:mt-3 inline-flex items-center gap-1 rounded-full bg-white/20 px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-white backdrop-blur-sm hover:bg-white/30 transition-colors">
                   {slide.cta}
                   <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
