@@ -50,29 +50,38 @@ export default function HomeContent() {
 
       // Load products from all retailers for top deals (single API call)
       const dealsRes = await api.getProductsFromBothRetailers({ page_size: 100 });
-      const allProductsWithDeals = dealsRes.results;
+      const allProducts = dealsRes.results || [];
+      console.log(`[Deals] API returned ${allProducts.length} products`);
 
-      // Filter products that have existing discount values
-      const productsWithDiscount = allProductsWithDeals.filter(p => {
+      // Filter products that have discount values
+      const productsWithDiscount = allProducts.filter(p => {
         if (!p.discount) return false;
-        const discountStr = p.discount.toString().replace(/[-%]/g, '');
+        // Handle formats like "-15%", "15%", "15", etc.
+        const discountStr = String(p.discount).replace(/[^0-9.]/g, '');
         const discount = parseFloat(discountStr);
         return !isNaN(discount) && discount > 0;
       });
 
+      console.log(`[Deals] ${productsWithDiscount.length} products with discount`);
+
       // Sort by discount value (highest first)
-      const sortedByDiscount = productsWithDiscount.sort((a, b) => {
-        const discountA = parseFloat(a.discount?.toString().replace(/[-%]/g, '') || '0');
-        const discountB = parseFloat(b.discount?.toString().replace(/[-%]/g, '') || '0');
+      const sortedByDiscount = [...productsWithDiscount].sort((a, b) => {
+        const discountA = parseFloat(String(a.discount).replace(/[^0-9.]/g, '') || '0');
+        const discountB = parseFloat(String(b.discount).replace(/[^0-9.]/g, '') || '0');
         return discountB - discountA;
       });
 
-      // If no products with discount, show all products
-      if (sortedByDiscount.length === 0) {
-        setTopDeals(allProductsWithDeals.slice(0, 20));
-      } else {
-        setTopDeals(sortedByDiscount.slice(0, 20));
+      // Show discount products first, fill remaining slots with other products
+      const targetCount = 20;
+      const deals = sortedByDiscount.slice(0, targetCount);
+      if (deals.length < targetCount) {
+        const dealIds = new Set(deals.map(p => p.id));
+        const fillers = allProducts
+          .filter(p => !dealIds.has(p.id))
+          .slice(0, targetCount - deals.length);
+        deals.push(...fillers);
       }
+      setTopDeals(deals);
 
       // Load products for each top category from all retailers mixed (in parallel)
       const sectionPromises = categories.map(async (category) => {
