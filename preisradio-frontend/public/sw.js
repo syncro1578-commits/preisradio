@@ -1,10 +1,6 @@
 // Service Worker for Preisradio PWA
-const CACHE_NAME = 'preisradio-v3';
-const RUNTIME_CACHE = 'preisradio-runtime-v3';
-const API_CACHE = 'preisradio-api-v3';
-
-// API domain for cross-origin caching
-const API_ORIGIN = 'https://api.preisradio.de';
+const CACHE_NAME = 'preisradio-v4';
+const RUNTIME_CACHE = 'preisradio-runtime-v4';
 
 // Assets to cache on install
 const PRECACHE_URLS = [
@@ -29,7 +25,7 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  const currentCaches = [CACHE_NAME, RUNTIME_CACHE, API_CACHE];
+  const currentCaches = [CACHE_NAME, RUNTIME_CACHE];
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
@@ -56,27 +52,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Handle cross-origin API requests (preisradio.de)
-  if (url.origin === API_ORIGIN && url.pathname.startsWith('/api/')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          if (response.ok) {
-            const responseClone = response.clone();
-            caches.open(API_CACHE).then((cache) => {
-              cache.put(request, responseClone);
-            });
-          }
-          return response;
-        })
-        .catch(() => {
-          return caches.match(request);
-        })
-    );
-    return;
-  }
-
-  // Skip other cross-origin requests
+  // Skip all cross-origin requests (let the browser handle CORS natively)
   if (url.origin !== location.origin) {
     return;
   }
