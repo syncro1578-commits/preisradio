@@ -28,7 +28,7 @@ export default function ProductDetailClient({
   const [isSaved, setIsSaved] = useState(false);
   const [descExpanded, setDescExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [viewers] = useState(() => Math.floor(Math.random() * 9) + 4);
+
 
   useEffect(() => {
     if (!initialProduct) loadProduct();
@@ -156,7 +156,7 @@ export default function ProductDetailClient({
           {/* LEFT — Image */}
           <div className="lg:col-span-2">
             <div className="sticky top-4 overflow-hidden rounded-2xl bg-white dark:bg-zinc-900 shadow-lg border border-gray-100 dark:border-zinc-800">
-              <div className="relative h-72 md:h-96 bg-gray-50 dark:bg-zinc-800 rounded-t-2xl overflow-hidden">
+              <div className="relative h-56 md:h-72 bg-gray-50 dark:bg-zinc-800 rounded-t-2xl overflow-hidden">
                 {hasDiscount && (
                   <div className="absolute top-3 left-3 z-10 rounded-full bg-red-500 px-3 py-1.5 text-xs font-bold text-white shadow-lg">
                     -{discountPercent.toFixed(0)}%
@@ -254,21 +254,14 @@ export default function ProductDetailClient({
               {product.title}
             </h1>
 
-            {/* Social proof — viewers + freshness */}
-            <div className="flex items-center gap-4 text-xs">
-              <span className="flex items-center gap-1.5 text-orange-600 dark:text-orange-400 font-medium">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
-                </span>
-                {viewers} Personen schauen sich das gerade an
-              </span>
-              {hasDiscount && (
+            {/* Freshness indicator */}
+            {hasDiscount && (
+              <div className="flex items-center gap-4 text-xs">
                 <span className="text-green-600 dark:text-green-400 font-medium">
                   ✓ Preis heute gesunken
                 </span>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Description — 4 lines clamp, expandable */}
             {allParagraphs.length > 0 && (
