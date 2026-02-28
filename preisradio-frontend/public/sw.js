@@ -52,33 +52,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Skip all cross-origin requests (let the browser handle CORS natively)
-  if (url.origin !== location.origin) {
-    return;
-  }
-
-  // Local API requests - network first
-  if (url.pathname.startsWith('/api/')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Clone the response
-          const responseClone = response.clone();
-
-          // Cache successful responses
-          if (response.ok) {
-            caches.open(RUNTIME_CACHE).then((cache) => {
-              cache.put(request, responseClone);
-            });
-          }
-
-          return response;
-        })
-        .catch(() => {
-          // Return cached version if available
-          return caches.match(request);
-        })
-    );
+  // Skip cross-origin and API requests entirely
+  if (url.origin !== location.origin || url.pathname.startsWith('/api/')) {
     return;
   }
 
