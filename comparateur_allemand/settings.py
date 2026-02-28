@@ -285,9 +285,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:3000,http://localhost:3001',
+    default='https://preisradio.de,https://www.preisradio.de,https://preisradio.vercel.app,http://localhost:3000',
     cast=Csv()
 )
+CORS_ALLOW_METHODS = ['GET', 'HEAD', 'OPTIONS']
+CORS_ALLOW_HEADERS = ['accept', 'content-type', 'origin']
 
 # Django REST Framework Configuration
 REST_FRAMEWORK = {
