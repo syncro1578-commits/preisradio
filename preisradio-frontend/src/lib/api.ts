@@ -2,7 +2,7 @@
 
 import { Product, Retailer, ApiResponse, HealthResponse, StatusResponse, CategoriesResponse, BrandsResponse } from './types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://preisradio.de';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.preisradio.de';
 const API_PATH = process.env.NEXT_PUBLIC_API_BASE || '/api';
 
 const API_URL = `${API_BASE_URL}${API_PATH}`;
