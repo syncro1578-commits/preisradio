@@ -2,11 +2,10 @@
 
 import { Product, Retailer, ApiResponse, HealthResponse, StatusResponse, CategoriesResponse, BrandsResponse } from './types';
 
-// Client-side: relative URL /api → handled by vercel.json rewrite (same-origin, no CORS)
-// Server-side: direct call to Django backend
-const API_URL = typeof window === 'undefined'
-  ? `${process.env.NEXT_PUBLIC_API_URL || 'https://api.preisradio.de'}/api`
-  : '/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://preisradio.de';
+const API_PATH = process.env.NEXT_PUBLIC_API_BASE || '/api';
+
+const API_URL = `${API_BASE_URL}${API_PATH}`;
 
 class ApiClient {
   private baseUrl: string;

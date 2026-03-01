@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Prevent Vercel from stripping trailing slashes (308) which conflicts
-  // with Django's APPEND_SLASH (301), causing infinite redirect loops on /api/
-  skipTrailingSlashRedirect: true,
   images: {
     remotePatterns: [
       {
@@ -15,14 +12,6 @@ const nextConfig: NextConfig = {
         hostname: '**',
       },
     ],
-  },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'https://api.preisradio.de/api/:path*',
-      },
-    ];
   },
   async headers() {
     return [

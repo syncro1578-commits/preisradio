@@ -112,12 +112,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           </>
         )}
 
-        {/* Google AdSense - plain script to avoid data-nscript attribute */}
+        {/* Google AdSense - Load only in production */}
         {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID && (
-          <script
+          <Script
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}`}
             crossOrigin="anonymous"
+            strategy="afterInteractive"
           />
         )}
 

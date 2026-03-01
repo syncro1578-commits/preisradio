@@ -1,6 +1,10 @@
 // Service Worker for Preisradio PWA
-const CACHE_NAME = 'preisradio-v5';
-const RUNTIME_CACHE = 'preisradio-runtime-v5';
+const CACHE_NAME = 'preisradio-v3';
+const RUNTIME_CACHE = 'preisradio-runtime-v3';
+const API_CACHE = 'preisradio-api-v3';
+
+// API domain for cross-origin caching
+const API_ORIGIN = 'https://api.preisradio.de';
 
 // Assets to cache on install
 const PRECACHE_URLS = [
@@ -25,7 +29,7 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  const currentCaches = [CACHE_NAME, RUNTIME_CACHE];
+  const currentCaches = [CACHE_NAME, RUNTIME_CACHE, API_CACHE];
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
@@ -47,13 +51,58 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests
+  // Skip POST requests and non-GET methods
   if (request.method !== 'GET') {
     return;
   }
 
-  // Skip cross-origin and API requests entirely — let the browser handle them
-  if (url.origin !== location.origin || url.pathname.startsWith('/api/')) {
+  // Handle cross-origin API requests (preisradio.de)
+  if (url.origin === API_ORIGIN && url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const responseClone = response.clone();
+            caches.open(API_CACHE).then((cache) => {
+              cache.put(request, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          return caches.match(request);
+        })
+    );
+    return;
+  }
+
+  // Skip other cross-origin requests
+  if (url.origin !== location.origin) {
+    return;
+  }
+
+  // Local API requests - network first
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Clone the response
+          const responseClone = response.clone();
+
+          // Cache successful responses
+          if (response.ok) {
+            caches.open(RUNTIME_CACHE).then((cache) => {
+              cache.put(request, responseClone);
+            });
+          }
+
+          return response;
+        })
+        .catch(() => {
+          // Return cached version if available
+          return caches.match(request);
+        })
+    );
     return;
   }
 
@@ -69,6 +118,7 @@ self.addEventListener('fetch', (event) => {
           }
 
           return fetch(request).then((response) => {
+            // Cache the fetched response
             if (response.ok) {
               const responseClone = response.clone();
               caches.open(CACHE_NAME).then((cache) => {
@@ -86,6 +136,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(request)
       .then((response) => {
+        // Cache successful page responses
         if (response.ok) {
           const responseClone = response.clone();
           caches.open(RUNTIME_CACHE).then((cache) => {
@@ -95,11 +146,13 @@ self.addEventListener('fetch', (event) => {
         return response;
       })
       .catch(() => {
+        // Return cached page or offline page
         return caches.match(request)
           .then((cachedResponse) => {
             if (cachedResponse) {
               return cachedResponse;
             }
+            // Return offline page for navigation requests
             if (request.mode === 'navigate') {
               return caches.match('/offline');
             }
@@ -115,6 +168,7 @@ self.addEventListener('fetch', (event) => {
 // Background sync for offline actions (future feature)
 self.addEventListener('sync', (event) => {
   console.log('[SW] Background sync:', event.tag);
+  // Handle background sync events here
 });
 
 // Push notifications (future feature)
