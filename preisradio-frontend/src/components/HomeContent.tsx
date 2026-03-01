@@ -71,17 +71,30 @@ export default function HomeContent() {
         return discountB - discountA;
       });
 
-      // Show discount products first, fill remaining slots with other products
+      // Round-robin deals by retailer, then fill remaining slots
       const targetCount = 20;
-      const deals = sortedByDiscount.slice(0, targetCount);
-      if (deals.length < targetCount) {
-        const dealIds = new Set(deals.map(p => p.id));
-        const fillers = allProducts
-          .filter(p => !dealIds.has(p.id))
-          .slice(0, targetCount - deals.length);
-        deals.push(...fillers);
+      const dealsByRetailer: Record<string, Product[]> = {};
+      for (const p of sortedByDiscount) {
+        const r = p.retailer || 'other';
+        if (!dealsByRetailer[r]) dealsByRetailer[r] = [];
+        dealsByRetailer[r].push(p);
       }
-      setTopDeals(deals);
+      const mixedDeals = roundRobin(Object.values(dealsByRetailer)).slice(0, targetCount);
+
+      if (mixedDeals.length < targetCount) {
+        const dealIds = new Set(mixedDeals.map(p => p.id));
+        const fillersByRetailer: Record<string, Product[]> = {};
+        for (const p of allProducts) {
+          if (dealIds.has(p.id)) continue;
+          const r = p.retailer || 'other';
+          if (!fillersByRetailer[r]) fillersByRetailer[r] = [];
+          fillersByRetailer[r].push(p);
+        }
+        const fillers = roundRobin(Object.values(fillersByRetailer))
+          .slice(0, targetCount - mixedDeals.length);
+        mixedDeals.push(...fillers);
+      }
+      setTopDeals(mixedDeals);
 
       // Load products for each top category from all retailers mixed (in parallel)
       const sectionPromises = categories.map(async (category) => {
@@ -109,6 +122,23 @@ export default function HomeContent() {
     }
   };
 
+  // Round-robin: alternate products from different retailers
+  const roundRobin = (groups: Product[][]): Product[] => {
+    const result: Product[] = [];
+    const seen = new Set<string>();
+    let maxLen = 0;
+    for (const g of groups) if (g.length > maxLen) maxLen = g.length;
+    for (let i = 0; i < maxLen; i++) {
+      for (const g of groups) {
+        if (i < g.length && !seen.has(g[i].id)) {
+          seen.add(g[i].id);
+          result.push(g[i]);
+        }
+      }
+    }
+    return result;
+  };
+
   const simplifyGermanName = (categoryName: string): string => {
     // If the name contains " - ", keep only the German part (before the dash)
     if (categoryName.includes(' - ')) {
@@ -122,6 +152,22 @@ export default function HomeContent() {
     };
 
     return translations[categoryName] || categoryName;
+  };
+
+  const getCategoryDescription = (categoryName: string, index: number): string => {
+    const descriptions = [
+      `Top-Angebote in ${categoryName} vergleichen`,
+      `${categoryName} zum besten Preis finden`,
+      `Aktuelle ${categoryName}-Deals entdecken`,
+      `${categoryName} günstig online kaufen`,
+      `Die besten ${categoryName}-Schnäppchen`,
+      `${categoryName} im Preisvergleich`,
+      `Jetzt ${categoryName} vergleichen & sparen`,
+      `Beliebte ${categoryName} im Angebot`,
+      `${categoryName}-Highlights der Woche`,
+      `Günstige ${categoryName} sofort vergleichen`,
+    ];
+    return descriptions[index % descriptions.length];
   };
 
   const getCategoryIcon = (categoryName: string): string => {
@@ -203,7 +249,7 @@ export default function HomeContent() {
           <h2 id="top-angebote-heading" className="sr-only">Aktuelle Top Angebote</h2>
           <ProductSection
             title="Aktuelle Deals"
-            description="Die besten Rabatte von Saturn, MediaMarkt, Otto & Kaufland"
+            description="Die besten Rabatte und Schnäppchen für Sie"
             products={topDeals}
             viewAllLink="/search?sort=discount"
           />
@@ -222,15 +268,15 @@ export default function HomeContent() {
       {/* ── Kategorien ─────────────────────────────────────────────── */}
       <h2 className="sr-only">Produkte nach Kategorien</h2>
 
-      {categorySections.map((section) => {
+      {categorySections.map((section, index) => {
         if (!section.category || typeof section.category !== 'string') return null;
 
-        const allProducts = [
-          ...section.saturnProducts,
-          ...section.mediamarktProducts,
-          ...section.ottoProducts,
-          ...section.kauflandProducts
-        ];
+        const allProducts = roundRobin([
+          section.saturnProducts,
+          section.mediamarktProducts,
+          section.ottoProducts,
+          section.kauflandProducts
+        ]);
 
         const categoryName = section.category;
         const translatedName = simplifyGermanName(categoryName);
@@ -240,7 +286,7 @@ export default function HomeContent() {
           <ProductSection
             key={section.category}
             title={translatedName}
-            description={`Produkte von Saturn, MediaMarkt, Otto & Kaufland`}
+            description={getCategoryDescription(translatedName, index)}
             products={allProducts}
             viewAllLink={`/kategorien/${categorySlug}`}
           />
