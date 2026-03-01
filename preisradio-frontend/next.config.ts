@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Prevent Vercel from stripping trailing slashes (308) which conflicts
+  // with Django's APPEND_SLASH (301), causing infinite redirect loops on /api/
+  skipTrailingSlashRedirect: true,
   images: {
     remotePatterns: [
       {
