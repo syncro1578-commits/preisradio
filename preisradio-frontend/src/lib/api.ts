@@ -2,9 +2,11 @@
 
 import { Product, Retailer, ApiResponse, HealthResponse, StatusResponse, CategoriesResponse, BrandsResponse } from './types';
 
-// Always use the full API URL (CORS is configured on the backend)
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.preisradio.de';
-const API_URL = `${API_BASE_URL}/api`;
+// Client-side: use relative URL → Next.js API route handler (no CORS)
+// Server-side: call Django backend directly
+const API_URL = typeof window === 'undefined'
+  ? `${process.env.NEXT_PUBLIC_API_URL || 'https://api.preisradio.de'}/api`
+  : '/api';
 
 class ApiClient {
   private baseUrl: string;
