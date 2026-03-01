@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  skipTrailingSlashRedirect: true,
   images: {
     remotePatterns: [
       {
@@ -13,14 +12,6 @@ const nextConfig: NextConfig = {
         hostname: '**',
       },
     ],
-  },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'https://api.preisradio.de/api/:path*',
-      },
-    ];
   },
   async headers() {
     return [

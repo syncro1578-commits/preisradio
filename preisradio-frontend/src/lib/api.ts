@@ -2,14 +2,9 @@
 
 import { Product, Retailer, ApiResponse, HealthResponse, StatusResponse, CategoriesResponse, BrandsResponse } from './types';
 
-// Use relative URL so requests go through Vercel rewrites (same origin, no CORS)
-// Server-side (SSR/ISR) needs absolute URL, client-side uses relative
-const API_BASE_URL = typeof window === 'undefined'
-  ? (process.env.NEXT_PUBLIC_API_URL || 'https://api.preisradio.de')
-  : '';
-const API_PATH = '/api';
-
-const API_URL = `${API_BASE_URL}${API_PATH}`;
+// Always use the full API URL (CORS is configured on the backend)
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.preisradio.de';
+const API_URL = `${API_BASE_URL}/api`;
 
 class ApiClient {
   private baseUrl: string;
