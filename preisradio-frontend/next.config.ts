@@ -16,6 +16,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://api.preisradio.de/api/:path*',
+      },
+    ];
+  },
   async headers() {
     return [
       {

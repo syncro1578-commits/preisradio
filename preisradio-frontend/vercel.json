@@ -71,11 +71,5 @@
         }
       ]
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://api.preisradio.de/api/:path*"
-    }
   ]
 }
