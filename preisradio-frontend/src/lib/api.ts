@@ -2,8 +2,8 @@
 
 import { Product, Retailer, ApiResponse, HealthResponse, StatusResponse, CategoriesResponse, BrandsResponse } from './types';
 
-// Client-side: use relative URL → Next.js API route handler (no CORS)
-// Server-side: call Django backend directly
+// Client-side: relative URL /api → handled by vercel.json rewrite (same-origin, no CORS)
+// Server-side: direct call to Django backend
 const API_URL = typeof window === 'undefined'
   ? `${process.env.NEXT_PUBLIC_API_URL || 'https://api.preisradio.de'}/api`
   : '/api';
@@ -21,6 +21,10 @@ class ApiClient {
     try {
       const response = await fetch(url, {
         ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options?.headers,
+        },
       });
 
       if (!response.ok) {

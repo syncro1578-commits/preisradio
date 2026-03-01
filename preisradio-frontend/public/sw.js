@@ -1,6 +1,6 @@
 // Service Worker for Preisradio PWA
-const CACHE_NAME = 'preisradio-v4';
-const RUNTIME_CACHE = 'preisradio-runtime-v4';
+const CACHE_NAME = 'preisradio-v5';
+const RUNTIME_CACHE = 'preisradio-runtime-v5';
 
 // Assets to cache on install
 const PRECACHE_URLS = [
@@ -47,12 +47,12 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip POST requests and non-GET methods
+  // Skip non-GET requests
   if (request.method !== 'GET') {
     return;
   }
 
-  // Skip cross-origin and API requests entirely
+  // Skip cross-origin and API requests entirely — let the browser handle them
   if (url.origin !== location.origin || url.pathname.startsWith('/api/')) {
     return;
   }
@@ -69,7 +69,6 @@ self.addEventListener('fetch', (event) => {
           }
 
           return fetch(request).then((response) => {
-            // Cache the fetched response
             if (response.ok) {
               const responseClone = response.clone();
               caches.open(CACHE_NAME).then((cache) => {
@@ -87,7 +86,6 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(request)
       .then((response) => {
-        // Cache successful page responses
         if (response.ok) {
           const responseClone = response.clone();
           caches.open(RUNTIME_CACHE).then((cache) => {
@@ -97,13 +95,11 @@ self.addEventListener('fetch', (event) => {
         return response;
       })
       .catch(() => {
-        // Return cached page or offline page
         return caches.match(request)
           .then((cachedResponse) => {
             if (cachedResponse) {
               return cachedResponse;
             }
-            // Return offline page for navigation requests
             if (request.mode === 'navigate') {
               return caches.match('/offline');
             }
@@ -119,7 +115,6 @@ self.addEventListener('fetch', (event) => {
 // Background sync for offline actions (future feature)
 self.addEventListener('sync', (event) => {
   console.log('[SW] Background sync:', event.tag);
-  // Handle background sync events here
 });
 
 // Push notifications (future feature)
