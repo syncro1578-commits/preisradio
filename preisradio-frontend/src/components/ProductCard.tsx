@@ -89,6 +89,19 @@ export default function ProductCard({ product, isBestPrice }: ProductCardProps) 
               </p>
             )}
           </div>
+          {/* Amazon affiliate link */}
+          {process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG && (
+            <a
+              href={`https://www.amazon.de/s?k=${encodeURIComponent(product.title || '')}&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG}`}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              onClick={(e) => e.stopPropagation()}
+              className="mt-1 flex items-center justify-center gap-1 rounded-md bg-[#FF9900] px-2 py-1 text-[8px] sm:text-[10px] font-semibold text-white hover:bg-[#e68a00] transition-colors"
+            >
+              <Image src="/retailers/amazon.png" alt="Amazon" width={14} height={14} className="h-3 w-3 object-contain" />
+              Auf Amazon vergleichen
+            </a>
+          )}
         </div>
 
         {/* Badge "Meilleur Prix" */}
