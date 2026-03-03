@@ -128,53 +128,14 @@ export default function BrandDetailClient({
 
         {/* Hero Header */}
         <div className="mb-6 md:mb-10 mt-4">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-8 md:p-12 shadow-2xl">
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 -mt-8 -mr-8 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 -mb-8 -ml-8 h-48 w-48 rounded-full bg-white/10 blur-3xl"></div>
-
-            <div className="relative">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur-sm px-4 py-1.5 border border-white/30">
-                <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                </svg>
-                <span className="text-xs md:text-sm font-bold text-white">
-                  Premium Marke
-                </span>
-              </div>
-
-              <h1 className="mb-3 text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg">
-                {brandName || 'Marke'}{totalProductsCount > 0 ? ` (${totalProductsCount} Produkte)` : ''}
-              </h1>
-              <p className="text-base md:text-lg text-white/90 mb-6 max-w-2xl">
-                Entdecken Sie alle Produkte von {brandName} bei unseren Partner-Händlern und finden Sie die besten Angebote
-              </p>
-
-              {/* Quick Actions */}
-              {products.length > 0 && (
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    onClick={() => setSortBy('price_asc')}
-                    className="inline-flex items-center gap-2 rounded-xl bg-white/20 backdrop-blur-sm px-4 py-2 border border-white/30 text-sm font-semibold text-white hover:bg-white/30 transition-colors"
-                  >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Günstigste zuerst
-                  </button>
-                  <button
-                    onClick={() => setSortBy('newest')}
-                    className="inline-flex items-center gap-2 rounded-xl bg-white/20 backdrop-blur-sm px-4 py-2 border border-white/30 text-sm font-semibold text-white hover:bg-white/30 transition-colors"
-                  >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Neueste zuerst
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+            {brandName || 'Marke'}
+          </h1>
+          {totalProductsCount > 0 && (
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {totalProductsCount} Produkte im Preisvergleich
+            </p>
+          )}
         </div>
 
         {loading ? (
@@ -317,65 +278,53 @@ export default function BrandDetailClient({
             <div className="lg:grid lg:grid-cols-4 lg:gap-8">
               {/* Sidebar Filters */}
               <aside className="mb-6 lg:col-span-1 lg:mb-0">
-                <div className="rounded-2xl bg-white p-5 md:p-6 shadow-xl dark:bg-zinc-900 border-2 border-gray-100 dark:border-zinc-800 sticky top-20">
-                  <div className="mb-6 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <svg className="h-5 w-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                      </svg>
-                      <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-                        Filter
-                      </h2>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setSelectedCategory('');
-                        setSelectedRetailer('');
-                        setSortBy('newest');
-                      }}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors"
-                    >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      Zurücksetzen
-                    </button>
+                <div className="rounded-xl bg-white p-5 shadow-sm dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 sticky top-20">
+                  <div className="mb-5 flex items-center justify-between">
+                    <h2 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide">
+                      Filter
+                    </h2>
+                    {(selectedCategory || selectedRetailer || sortBy !== 'newest') && (
+                      <button
+                        onClick={() => {
+                          setSelectedCategory('');
+                          setSelectedRetailer('');
+                          setSortBy('newest');
+                        }}
+                        className="text-xs text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+                      >
+                        Zurucksetzen
+                      </button>
+                    )}
                   </div>
 
                   {/* Sort */}
-                  <div className="mb-5 pb-5 border-b border-gray-200 dark:border-zinc-800">
-                    <label className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white">
-                      <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
-                      </svg>
-                      Sortieren nach
+                  <div className="mb-4 pb-4 border-b border-gray-100 dark:border-zinc-800">
+                    <label className="mb-2 block text-xs font-medium text-gray-500 dark:text-gray-400">
+                      Sortierung
                     </label>
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as any)}
-                      className="w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 font-medium focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white transition-all cursor-pointer"
+                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white cursor-pointer"
                     >
-                      <option value="newest">⏰ Neueste zuerst</option>
-                      <option value="price_asc">💰 Preis: Niedrig → Hoch</option>
-                      <option value="price_desc">💎 Preis: Hoch → Niedrig</option>
+                      <option value="newest">Neueste zuerst</option>
+                      <option value="price_asc">Preis aufsteigend</option>
+                      <option value="price_desc">Preis absteigend</option>
                     </select>
                   </div>
 
                   {/* Category Filter */}
                   {categories.length > 1 && (
-                    <div className="mb-5 pb-5 border-b border-gray-200 dark:border-zinc-800">
-                      <label className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white">
-                        <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                        </svg>
+                    <div className="mb-4 pb-4 border-b border-gray-100 dark:border-zinc-800">
+                      <label className="mb-2 block text-xs font-medium text-gray-500 dark:text-gray-400">
                         Kategorie
                       </label>
                       <select
                         value={selectedCategory}
                         onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 font-medium focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white transition-all cursor-pointer"
+                        className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white cursor-pointer"
                       >
-                        <option value="">📦 Alle Kategorien</option>
+                        <option value="">Alle Kategorien</option>
                         {categories.map((category) => (
                           <option key={category} value={category}>
                             {category}
@@ -387,26 +336,21 @@ export default function BrandDetailClient({
 
                   {/* Retailer Filter */}
                   {retailers.length > 1 && (
-                    <div className="mb-0">
-                      <label className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white">
-                        <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
-                        Händler
+                    <div>
+                      <label className="mb-2 block text-xs font-medium text-gray-500 dark:text-gray-400">
+                        Handler
                       </label>
-                      <div className="space-y-2">
-                        <label className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer group">
+                      <div className="space-y-1">
+                        <label className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
                           <input
                             type="radio"
                             name="retailer"
                             value=""
                             checked={selectedRetailer === ''}
                             onChange={(e) => setSelectedRetailer(e.target.value)}
-                            className="h-4 w-4 text-purple-600 focus:ring-2 focus:ring-purple-500"
+                            className="h-3.5 w-3.5 text-blue-600 focus:ring-1 focus:ring-blue-500"
                           />
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">
-                            Alle Händler
-                          </span>
+                          <span className="text-sm text-gray-700 dark:text-gray-300">Alle</span>
                         </label>
                         {retailers.map((retailer) => {
                           const retailerNames: Record<string, string> = {
@@ -415,34 +359,18 @@ export default function BrandDetailClient({
                             'otto': 'Otto',
                             'kaufland': 'Kaufland'
                           };
-                          const retailerColors: Record<string, string> = {
-                            'saturn': 'red-500',
-                            'mediamarkt': 'red-600',
-                            'otto': 'blue-500',
-                            'kaufland': 'green-600'
-                          };
                           const displayName = retailer ? (retailerNames[retailer] || retailer) : retailer;
-                          const color = retailer ? (retailerColors[retailer] || 'gray-400') : 'gray-400';
-                          const hoverBg = retailer === 'saturn' || retailer === 'mediamarkt' ? 'red-50 dark:hover:bg-red-900/10' :
-                                         retailer === 'otto' ? 'blue-50 dark:hover:bg-blue-900/10' :
-                                         retailer === 'kaufland' ? 'green-50 dark:hover:bg-green-900/10' :
-                                         'gray-50 dark:hover:bg-zinc-800/50';
                           return (
-                            <label key={retailer} className={`flex items-center gap-3 p-2.5 rounded-lg hover:bg-${hoverBg} transition-colors cursor-pointer group`}>
+                            <label key={retailer} className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
                               <input
                                 type="radio"
                                 name="retailer"
                                 value={retailer}
                                 checked={selectedRetailer === retailer}
                                 onChange={(e) => setSelectedRetailer(e.target.value)}
-                                className="h-4 w-4 text-purple-600 focus:ring-2 focus:ring-purple-500"
+                                className="h-3.5 w-3.5 text-blue-600 focus:ring-1 focus:ring-blue-500"
                               />
-                              <div className="flex items-center gap-2">
-                                <div className={`h-2 w-2 rounded-full bg-${color}`}></div>
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">
-                                  {displayName}
-                                </span>
-                              </div>
+                              <span className="text-sm text-gray-700 dark:text-gray-300">{displayName}</span>
                             </label>
                           );
                         })}
@@ -454,17 +382,9 @@ export default function BrandDetailClient({
 
               {/* Products Grid */}
               <div className="lg:col-span-3">
-                <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
-                  <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
-                    {sortedProducts.length} {sortedProducts.length === 1 ? 'Produkt' : 'Produkte'} gefunden
-                  </h2>
-                  <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                    </svg>
-                    <span>Rasteransicht</span>
-                  </div>
-                </div>
+                <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                  {sortedProducts.length} {sortedProducts.length === 1 ? 'Produkt' : 'Produkte'}
+                </p>
 
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-4">
                   {sortedProducts.map((product, index) => (
