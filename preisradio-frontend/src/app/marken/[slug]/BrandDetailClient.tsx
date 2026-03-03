@@ -31,6 +31,7 @@ export default function BrandDetailClient({
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedRetailer, setSelectedRetailer] = useState<string>('');
   const [sortBy, setSortBy] = useState<'price_asc' | 'price_desc' | 'newest'>('newest');
+  const [pageSize, setPageSize] = useState<number>(24);
 
   // Only fetch if no initial data
   useEffect(() => {
@@ -126,15 +127,35 @@ export default function BrandDetailClient({
           />
         )}
 
-        {/* Hero Header */}
-        <div className="mb-6 md:mb-10 mt-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+        {/* Hero Banner */}
+        <div className="mt-4 mb-6 md:mb-10 rounded-xl bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-zinc-800 dark:via-zinc-900 dark:to-zinc-800 px-5 md:px-8 py-4 md:py-5 flex items-center justify-between gap-4 overflow-x-auto">
+          <h1 className="flex-none text-xl md:text-2xl font-bold text-white tracking-tight">
             {brandName || 'Marke'}
           </h1>
-          {totalProductsCount > 0 && (
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {totalProductsCount} Produkte im Preisvergleich
-            </p>
+          {categories.length > 0 && (
+            <nav className="flex items-center gap-1 md:gap-2 overflow-x-auto scrollbar-hide">
+              {categories.slice(0, 6).map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(selectedCategory === cat ? '' : cat)}
+                  className={`flex-none rounded-md px-3 py-1.5 text-xs md:text-sm font-medium uppercase tracking-wide transition-colors whitespace-nowrap ${
+                    selectedCategory === cat
+                      ? 'bg-white text-gray-900'
+                      : 'text-gray-300 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+              {categories.length > 6 && (
+                <button
+                  onClick={() => setSelectedCategory('')}
+                  className="flex-none rounded-md px-3 py-1.5 text-xs md:text-sm font-medium uppercase tracking-wide text-gray-300 hover:text-white hover:bg-white/10 whitespace-nowrap transition-colors"
+                >
+                  Alle ({categories.length})
+                </button>
+              )}
+            </nav>
           )}
         </div>
 
@@ -185,225 +206,70 @@ export default function BrandDetailClient({
           </div>
         ) : (
           <>
-            {/* Stats Cards - Responsive Grid */}
-            <div className="mb-8 md:mb-12 grid gap-3 md:gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-              <div className="group rounded-2xl bg-white p-4 md:p-5 shadow-lg dark:bg-zinc-900 border-2 border-gray-100 dark:border-zinc-800 hover:border-blue-300 dark:hover:border-blue-700 transition-all hover:shadow-xl">
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                  </svg>
-                  <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                    Produkte
-                  </p>
-                </div>
-                <p className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-400">
-                  {stats.totalProducts}
-                </p>
+            <AdSenseDisplay adSlot="1502312871" className="mb-6" />
+
+            {/* Inline Filter Bar */}
+            <div className="mb-5 flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Sortierung:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 focus:border-blue-500 focus:outline-none dark:border-zinc-600 dark:bg-zinc-800 dark:text-gray-300 cursor-pointer"
+                >
+                  <option value="newest">Beliebtheit</option>
+                  <option value="price_asc">Preis aufsteigend</option>
+                  <option value="price_desc">Preis absteigend</option>
+                </select>
               </div>
 
-              <div className="group rounded-2xl bg-white p-4 md:p-5 shadow-lg dark:bg-zinc-900 border-2 border-gray-100 dark:border-zinc-800 hover:border-purple-300 dark:hover:border-purple-700 transition-all hover:shadow-xl">
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="h-4 w-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                  </svg>
-                  <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                    Kategorien
-                  </p>
-                </div>
-                <p className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400">
-                  {stats.categories}
-                </p>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Artikel pro Seite:</span>
+                <select
+                  value={pageSize}
+                  onChange={(e) => setPageSize(Number(e.target.value))}
+                  className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 focus:border-blue-500 focus:outline-none dark:border-zinc-600 dark:bg-zinc-800 dark:text-gray-300 cursor-pointer"
+                >
+                  <option value={12}>12</option>
+                  <option value={24}>24</option>
+                  <option value={48}>48</option>
+                  <option value={96}>96</option>
+                </select>
               </div>
 
-              <div className="group rounded-2xl bg-white p-4 md:p-5 shadow-lg dark:bg-zinc-900 border-2 border-gray-100 dark:border-zinc-800 hover:border-green-300 dark:hover:border-green-700 transition-all hover:shadow-xl">
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="h-4 w-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                  <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                    Händler
-                  </p>
-                </div>
-                <p className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-green-400">
-                  {stats.retailers}
-                </p>
-              </div>
-
-              <div className="group rounded-2xl bg-white p-4 md:p-5 shadow-lg dark:bg-zinc-900 border-2 border-gray-100 dark:border-zinc-800 hover:border-pink-300 dark:hover:border-pink-700 transition-all hover:shadow-xl">
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="h-4 w-4 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                  <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                    Ø Preis
-                  </p>
-                </div>
-                <p className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-pink-400">
-                  {stats.avgPrice.toFixed(0)}€
-                </p>
-              </div>
-
-              <div className="group rounded-2xl bg-white p-4 md:p-5 shadow-lg dark:bg-zinc-900 border-2 border-gray-100 dark:border-zinc-800 hover:border-orange-300 dark:hover:border-orange-700 transition-all hover:shadow-xl">
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="h-4 w-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-                  </svg>
-                  <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                    Minimum
-                  </p>
-                </div>
-                <p className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-orange-400">
-                  {stats.minPrice.toFixed(0)}€
-                </p>
-              </div>
-
-              <div className="group rounded-2xl bg-white p-4 md:p-5 shadow-lg dark:bg-zinc-900 border-2 border-gray-100 dark:border-zinc-800 hover:border-red-300 dark:hover:border-red-700 transition-all hover:shadow-xl">
-                <div className="flex items-center gap-2 mb-2">
-                  <svg className="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
-                  <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                    Maximum
-                  </p>
-                </div>
-                <p className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400">
-                  {stats.maxPrice.toFixed(0)}€
-                </p>
-              </div>
+              <span className="ml-auto text-sm text-gray-500 dark:text-gray-400">
+                {sortedProducts.length} {sortedProducts.length === 1 ? 'Produkt' : 'Produkte'}
+              </span>
             </div>
 
-            {/* AdSense Display - After Stats */}
-            <AdSenseDisplay adSlot="1502312871" className="my-6" />
-
-            <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-              {/* Sidebar Filters */}
-              <aside className="mb-6 lg:col-span-1 lg:mb-0">
-                <div className="rounded-xl bg-white p-5 shadow-sm dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 sticky top-20">
-                  <div className="mb-5 flex items-center justify-between">
-                    <h2 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide">
-                      Filter
-                    </h2>
-                    {(selectedCategory || selectedRetailer || sortBy !== 'newest') && (
-                      <button
-                        onClick={() => {
-                          setSelectedCategory('');
-                          setSelectedRetailer('');
-                          setSortBy('newest');
-                        }}
-                        className="text-xs text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
-                      >
-                        Zurucksetzen
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Sort */}
-                  <div className="mb-4 pb-4 border-b border-gray-100 dark:border-zinc-800">
-                    <label className="mb-2 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                      Sortierung
-                    </label>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as any)}
-                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white cursor-pointer"
-                    >
-                      <option value="newest">Neueste zuerst</option>
-                      <option value="price_asc">Preis aufsteigend</option>
-                      <option value="price_desc">Preis absteigend</option>
-                    </select>
-                  </div>
-
-                  {/* Category Filter */}
-                  {categories.length > 1 && (
-                    <div className="mb-4 pb-4 border-b border-gray-100 dark:border-zinc-800">
-                      <label className="mb-2 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                        Kategorie
-                      </label>
-                      <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white cursor-pointer"
-                      >
-                        <option value="">Alle Kategorien</option>
-                        {categories.map((category) => (
-                          <option key={category} value={category}>
-                            {category}
-                          </option>
-                        ))}
-                      </select>
+            {/* Products Grid */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {sortedProducts.slice(0, pageSize).map((product, index) => (
+                <>
+                  <ProductCard key={product.id} product={product} />
+                  {(index + 1) % 8 === 0 && index < sortedProducts.length - 1 && (
+                    <div key={`ad-${index}`} className="col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5">
+                      <AdSenseInFeed
+                        adSlot="6399181253"
+                        layoutKey="-fb+5w+4e-db+86"
+                      />
                     </div>
                   )}
-
-                  {/* Retailer Filter */}
-                  {retailers.length > 1 && (
-                    <div>
-                      <label className="mb-2 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                        Handler
-                      </label>
-                      <div className="space-y-1">
-                        <label className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
-                          <input
-                            type="radio"
-                            name="retailer"
-                            value=""
-                            checked={selectedRetailer === ''}
-                            onChange={(e) => setSelectedRetailer(e.target.value)}
-                            className="h-3.5 w-3.5 text-blue-600 focus:ring-1 focus:ring-blue-500"
-                          />
-                          <span className="text-sm text-gray-700 dark:text-gray-300">Alle</span>
-                        </label>
-                        {retailers.map((retailer) => {
-                          const retailerNames: Record<string, string> = {
-                            'saturn': 'Saturn',
-                            'mediamarkt': 'MediaMarkt',
-                            'otto': 'Otto',
-                            'kaufland': 'Kaufland'
-                          };
-                          const displayName = retailer ? (retailerNames[retailer] || retailer) : retailer;
-                          return (
-                            <label key={retailer} className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
-                              <input
-                                type="radio"
-                                name="retailer"
-                                value={retailer}
-                                checked={selectedRetailer === retailer}
-                                onChange={(e) => setSelectedRetailer(e.target.value)}
-                                className="h-3.5 w-3.5 text-blue-600 focus:ring-1 focus:ring-blue-500"
-                              />
-                              <span className="text-sm text-gray-700 dark:text-gray-300">{displayName}</span>
-                            </label>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </aside>
-
-              {/* Products Grid */}
-              <div className="lg:col-span-3">
-                <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
-                  {sortedProducts.length} {sortedProducts.length === 1 ? 'Produkt' : 'Produkte'}
-                </p>
-
-                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-4">
-                  {sortedProducts.map((product, index) => (
-                    <>
-                      <ProductCard key={product.id} product={product} />
-                      {/* Insert In-Feed ad after every 6th product */}
-                      {(index + 1) % 6 === 0 && index < sortedProducts.length - 1 && (
-                        <div key={`ad-${index}`} className="col-span-2 lg:col-span-3">
-                          <AdSenseInFeed
-                            adSlot="6399181253"
-                            layoutKey="-fb+5w+4e-db+86"
-                          />
-                        </div>
-                      )}
-                    </>
-                  ))}
-                </div>
-              </div>
+                </>
+              ))}
             </div>
+
+            {/* Show more button */}
+            {sortedProducts.length > pageSize && (
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => setPageSize(pageSize + 24)}
+                  className="rounded-lg border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-zinc-600 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-zinc-700 transition-colors"
+                >
+                  Mehr anzeigen ({sortedProducts.length - pageSize} weitere)
+                </button>
+              </div>
+            )}
 
             {/* Editorial SEO content */}
             {brandName && (
