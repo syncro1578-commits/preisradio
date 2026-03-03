@@ -127,34 +127,36 @@ export default function BrandDetailClient({
           />
         )}
 
-        {/* Hero Banner */}
-        <div className="mt-4 mb-6 md:mb-10 rounded-xl bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-zinc-800 dark:via-zinc-900 dark:to-zinc-800 px-5 md:px-8 py-4 md:py-5 flex items-center justify-between gap-4 overflow-x-auto">
-          <h1 className="flex-none text-xl md:text-2xl font-bold text-white tracking-tight">
+        {/* Brand Header */}
+        <div className="mt-4 mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
             {brandName || 'Marke'}
           </h1>
           {categories.length > 0 && (
-            <nav className="flex items-center gap-1 md:gap-2 overflow-x-auto scrollbar-hide">
-              {categories.slice(0, 6).map((cat) => (
+            <nav className="mt-3 flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => setSelectedCategory('')}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  selectedCategory === ''
+                    ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-zinc-800 dark:text-gray-400 dark:hover:bg-zinc-700'
+                }`}
+              >
+                Alle
+              </button>
+              {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(selectedCategory === cat ? '' : cat)}
-                  className={`flex-none rounded-md px-3 py-1.5 text-xs md:text-sm font-medium uppercase tracking-wide transition-colors whitespace-nowrap ${
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                     selectedCategory === cat
-                      ? 'bg-white text-gray-900'
-                      : 'text-gray-300 hover:text-white hover:bg-white/10'
+                      ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-zinc-800 dark:text-gray-400 dark:hover:bg-zinc-700'
                   }`}
                 >
                   {cat}
                 </button>
               ))}
-              {categories.length > 6 && (
-                <button
-                  onClick={() => setSelectedCategory('')}
-                  className="flex-none rounded-md px-3 py-1.5 text-xs md:text-sm font-medium uppercase tracking-wide text-gray-300 hover:text-white hover:bg-white/10 whitespace-nowrap transition-colors"
-                >
-                  Alle ({categories.length})
-                </button>
-              )}
             </nav>
           )}
         </div>
@@ -209,13 +211,14 @@ export default function BrandDetailClient({
             <AdSenseDisplay adSlot="1502312871" className="mb-6" />
 
             {/* Inline Filter Bar */}
-            <div className="mb-5 flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Sortierung:</span>
+            <div className="mb-5 flex flex-wrap items-center gap-4 border-b border-gray-200 dark:border-zinc-700 pb-3">
+              <div className="flex items-center gap-1">
+                <span className="text-[13px] font-semibold tracking-wide text-gray-900 dark:text-gray-200">Sortierung:</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 focus:border-blue-500 focus:outline-none dark:border-zinc-600 dark:bg-zinc-800 dark:text-gray-300 cursor-pointer"
+                  className="appearance-none border-none bg-transparent text-[13px] font-medium text-blue-600 dark:text-blue-400 focus:outline-none cursor-pointer pr-4"
+                  style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'6\' viewBox=\'0 0 10 6\'%3E%3Cpath d=\'M1 1l4 4 4-4\' stroke=\'%232563eb\' fill=\'none\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right center' }}
                 >
                   <option value="newest">Beliebtheit</option>
                   <option value="price_asc">Preis aufsteigend</option>
@@ -223,12 +226,13 @@ export default function BrandDetailClient({
                 </select>
               </div>
 
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Artikel pro Seite:</span>
+              <div className="flex items-center gap-1">
+                <span className="text-[13px] font-semibold tracking-wide text-gray-900 dark:text-gray-200">Artikel pro Seite:</span>
                 <select
                   value={pageSize}
                   onChange={(e) => setPageSize(Number(e.target.value))}
-                  className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 focus:border-blue-500 focus:outline-none dark:border-zinc-600 dark:bg-zinc-800 dark:text-gray-300 cursor-pointer"
+                  className="appearance-none border-none bg-transparent text-[13px] font-medium text-blue-600 dark:text-blue-400 focus:outline-none cursor-pointer pr-4"
+                  style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'6\' viewBox=\'0 0 10 6\'%3E%3Cpath d=\'M1 1l4 4 4-4\' stroke=\'%232563eb\' fill=\'none\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right center' }}
                 >
                   <option value={12}>12</option>
                   <option value={24}>24</option>
@@ -237,7 +241,7 @@ export default function BrandDetailClient({
                 </select>
               </div>
 
-              <span className="ml-auto text-sm text-gray-500 dark:text-gray-400">
+              <span className="ml-auto text-[13px] text-gray-500 dark:text-gray-400">
                 {sortedProducts.length} {sortedProducts.length === 1 ? 'Produkt' : 'Produkte'}
               </span>
             </div>
