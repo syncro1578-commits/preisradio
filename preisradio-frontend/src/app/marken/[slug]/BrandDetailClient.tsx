@@ -97,7 +97,7 @@ export default function BrandDetailClient({
 
   // Extraire les catégories et retailers uniques
   const categories = Array.from(new Set(products.map((p) => p.category))).sort();
-  const retailers = Array.from(new Set(products.map((p) => p.retailer).filter(Boolean))).sort();
+  const retailers = Array.from(new Set(products.map((p) => p.retailer).filter((r): r is string => Boolean(r)))).sort();
 
   // Calculer les stats
   const stats = {
