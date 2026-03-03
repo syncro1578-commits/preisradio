@@ -407,25 +407,112 @@ export default function BrandDetailClient({
 
             {/* Editorial SEO content */}
             {brandName && (
-              <div className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-8 shadow-sm">
-                <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
-                  {brandName} Produkte günstig kaufen – Kaufberater & Tipps
-                </h2>
-                <p className="mb-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                  Bei Preisradio vergleichen Sie alle {brandName} Produkte von Saturn, MediaMarkt, Otto und Kaufland auf einen Blick. Ob Smartphones, Laptops, Haushaltsgeräte oder Unterhaltungselektronik – wir zeigen Ihnen täglich den günstigsten Preis für jedes {brandName} Gerät.
-                </p>
-                <h3 className="mb-2 text-base font-semibold text-gray-800 dark:text-gray-200">
-                  Worauf sollten Sie beim Kauf von {brandName} Produkten achten?
-                </h3>
-                <p className="mb-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                  Achten Sie neben dem Preis auch auf Garantiezeit, Lieferbedingungen und den jeweiligen Händler. {brandName} Produkte sind bei mehreren deutschen Händlern erhältlich – ein Preisvergleich lohnt sich fast immer.
-                </p>
-                <h3 className="mb-2 text-base font-semibold text-gray-800 dark:text-gray-200">
-                  Wann gibt es die besten {brandName} Angebote?
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                  Preisradio aktualisiert die {brandName} Preise täglich. Besonders günstige Angebote gibt es häufig zu Black Friday, Cyber Monday und den großen Saisonverkäufen. Nutzen Sie unseren Preisvergleich, um keine Aktion zu verpassen.
-                </p>
+              <div className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-6 md:p-8 shadow-sm">
+                <div className="max-w-3xl text-sm text-gray-600 dark:text-gray-400 leading-relaxed space-y-4">
+
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                    {brandName} im Preisvergleich {new Date().getFullYear()} — Kaufberatung, Preise & Tipps
+                  </h2>
+
+                  <p>
+                    {brandName} gehort zu den gefragtesten Marken im deutschen Elektronikmarkt. Auf Preisradio finden Sie aktuell{' '}
+                    <strong>{stats.totalProducts} {brandName}-Produkte</strong> aus{' '}
+                    {categories.length > 0 ? (
+                      <>
+                        {categories.length} {categories.length === 1 ? 'Kategorie' : 'Kategorien'}
+                        {categories.length <= 6 && (
+                          <> — darunter {categories.slice(0, 5).join(', ')}{categories.length > 5 ? ' und weitere' : ''}</>
+                        )}
+                      </>
+                    ) : (
+                      'verschiedenen Kategorien'
+                    )}
+                    . Die Preise reichen von <strong>{stats.minPrice.toFixed(2)}&nbsp;€</strong> bis <strong>{stats.maxPrice.toFixed(2)}&nbsp;€</strong>,
+                    bei einem Durchschnittspreis von {stats.avgPrice.toFixed(2)}&nbsp;€.
+                  </p>
+
+                  <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
+                    Warum lohnt sich ein {brandName} Preisvergleich?
+                  </h3>
+
+                  <p>
+                    Der gleiche {brandName}-Artikel kann je nach Handler deutlich im Preis variieren. Preisunterschiede von 10 bis 30 Prozent zwischen
+                    {' '}{retailers.length > 0 ? (
+                      retailers.map((r, i) => {
+                        const names: Record<string, string> = { saturn: 'Saturn', mediamarkt: 'MediaMarkt', otto: 'Otto', kaufland: 'Kaufland' };
+                        const name = names[r] || r;
+                        if (i === retailers.length - 1 && retailers.length > 1) return ` und ${name}`;
+                        if (i > 0) return `, ${name}`;
+                        return name;
+                      }).join('')
+                    ) : 'den grossen deutschen Online-Handlern'}{' '}
+                    sind keine Seltenheit. Ein schneller Vergleich auf Preisradio zeigt Ihnen sofort, wo Sie am wenigsten bezahlen — ohne jeden Shop einzeln besuchen zu mussen.
+                  </p>
+
+                  <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
+                    Welche {brandName}-Produkte gibt es bei Preisradio?
+                  </h3>
+
+                  <p>
+                    Unser Sortiment umfasst das gesamte {brandName}-Angebot der fuhrenden deutschen Handler.
+                    {categories.length > 0 ? (
+                      <> Besonders stark vertreten {categories.length === 1 ? 'ist die Kategorie' : 'sind die Kategorien'}{' '}
+                        <strong>{categories.slice(0, 4).join(', ')}</strong>
+                        {categories.length > 4 ? ` sowie ${categories.length - 4} weitere Bereiche` : ''}.
+                      </>
+                    ) : null}
+                    {' '}Egal ob Sie ein gunstiges Einsteigermodell oder ein High-End-Gerat suchen — mit den Filtern auf dieser Seite grenzen Sie Ihre Suche nach
+                    Kategorie, Handler und Preis gezielt ein.
+                  </p>
+
+                  <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
+                    Worauf sollten Sie beim Kauf von {brandName}-Produkten achten?
+                  </h3>
+
+                  <p>
+                    Neben dem Preis spielen mehrere Faktoren eine Rolle bei der Kaufentscheidung:
+                  </p>
+
+                  <ul className="list-disc pl-5 space-y-1.5">
+                    <li><strong>Garantie und Gewahrleistung:</strong> Prufen Sie, ob der Handler die volle Herstellergarantie von {brandName} bietet. Bei autorisierten Handlern wie Saturn oder MediaMarkt ist dies in der Regel der Fall.</li>
+                    <li><strong>Lieferzeit und Versandkosten:</strong> Manche Handler liefern kostenlos ab einem bestimmten Bestellwert. Vergleichen Sie neben dem Produktpreis auch die Gesamtkosten.</li>
+                    <li><strong>Ruckgaberecht:</strong> Alle auf Preisradio gelisteten Handler bieten das gesetzliche 14-tagige Widerrufsrecht. Einige gewahren daruber hinaus verlangerte Ruckgabefristen.</li>
+                    <li><strong>Kundenbewertungen:</strong> Lesen Sie vor dem Kauf die Erfahrungsberichte anderer Kaufer, insbesondere bei hochpreisigen {brandName}-Geraten.</li>
+                    <li><strong>Technische Spezifikationen:</strong> Achten Sie auf Modellnummer und Ausstattungsvariante. Verschiedene Handler fuhren teilweise unterschiedliche Konfigurationen desselben {brandName}-Produkts.</li>
+                  </ul>
+
+                  <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
+                    Wann gibt es die besten {brandName}-Angebote?
+                  </h3>
+
+                  <p>
+                    Preisradio aktualisiert die {brandName}-Preise taglich. Erfahrungsgemass gibt es die grossten Rabatte zu folgenden Zeitraumen:
+                  </p>
+
+                  <ul className="list-disc pl-5 space-y-1.5">
+                    <li><strong>Black Friday & Cyber Monday</strong> (Ende November) — haufig die tiefsten Preise des Jahres fur Elektronik</li>
+                    <li><strong>Amazon Prime Day</strong> (Juli) — auch andere Handler ziehen mit Gegenangeboten nach</li>
+                    <li><strong>Saisonwechsel</strong> (Januar, Juli) — Lagerraumung und Modellwechsel fuhren zu Preissenkungen</li>
+                    <li><strong>Produktneuheiten:</strong> Wenn {brandName} ein neues Modell vorstellt, sinken die Preise der Vorgangergeneration oft deutlich</li>
+                  </ul>
+
+                  <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
+                    So nutzen Sie Preisradio optimal fur {brandName}
+                  </h3>
+
+                  <p>
+                    Verwenden Sie die Filter auf dieser Seite, um {brandName}-Produkte nach Kategorie oder Handler einzugrenzen.
+                    Die Sortierfunktion hilft Ihnen, sofort das gunstigste Angebot zu finden. Alle Preise werden direkt von den Handler-Websites
+                    ubernommen und regelmasssig aktualisiert, damit Sie stets den aktuellen Stand sehen.
+                  </p>
+
+                  <p>
+                    Preisradio ist und bleibt <strong>kostenlos und unabhangig</strong>. Wir erhalten keine Zahlungen von Handlern fur bessere Platzierungen.
+                    Die Reihenfolge der Produkte richtet sich ausschliesslich nach Aktualitat und Preis — damit Sie eine ehrliche und transparente
+                    Kaufentscheidung treffen konnen.
+                  </p>
+
+                </div>
               </div>
             )}
 
