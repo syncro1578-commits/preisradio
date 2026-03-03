@@ -128,12 +128,12 @@ export default function BrandDetailClient({
         )}
 
         {/* Brand Header */}
-        <div className="mt-4 mb-6">
+        <div className="mt-4 mb-6 flex flex-wrap items-center gap-3">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
             {brandName || 'Marke'}
           </h1>
           {categories.length > 0 && (
-            <nav className="mt-3 flex flex-wrap items-center gap-2">
+            <nav className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setSelectedCategory('')}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
@@ -210,57 +210,109 @@ export default function BrandDetailClient({
           <>
             <AdSenseDisplay adSlot="1502312871" className="mb-6" />
 
-            {/* Inline Filter Bar */}
-            <div className="mb-5 flex flex-wrap items-center gap-4 border-b border-gray-200 dark:border-zinc-700 pb-3">
-              <div className="flex items-center gap-1">
-                <span className="text-[13px] font-semibold tracking-wide text-gray-900 dark:text-gray-200">Sortierung:</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="appearance-none border-none bg-transparent text-[13px] font-medium text-blue-600 dark:text-blue-400 focus:outline-none cursor-pointer pr-4"
-                  style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'6\' viewBox=\'0 0 10 6\'%3E%3Cpath d=\'M1 1l4 4 4-4\' stroke=\'%232563eb\' fill=\'none\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right center' }}
-                >
-                  <option value="newest">Beliebtheit</option>
-                  <option value="price_asc">Preis aufsteigend</option>
-                  <option value="price_desc">Preis absteigend</option>
-                </select>
-              </div>
+            <div className="lg:grid lg:grid-cols-4 lg:gap-8">
+              {/* Sidebar Filters */}
+              <aside className="mb-6 lg:col-span-1 lg:mb-0">
+                <div className="rounded-xl bg-white p-5 shadow-sm dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 sticky top-20">
+                  <div className="mb-5 flex items-center justify-between">
+                    <h2 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide">
+                      Filter
+                    </h2>
+                    {(selectedCategory || selectedRetailer || sortBy !== 'newest') && (
+                      <button
+                        onClick={() => {
+                          setSelectedCategory('');
+                          setSelectedRetailer('');
+                          setSortBy('newest');
+                        }}
+                        className="text-xs text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+                      >
+                        Zurucksetzen
+                      </button>
+                    )}
+                  </div>
 
-              <div className="flex items-center gap-1">
-                <span className="text-[13px] font-semibold tracking-wide text-gray-900 dark:text-gray-200">Artikel pro Seite:</span>
-                <select
-                  value={pageSize}
-                  onChange={(e) => setPageSize(Number(e.target.value))}
-                  className="appearance-none border-none bg-transparent text-[13px] font-medium text-blue-600 dark:text-blue-400 focus:outline-none cursor-pointer pr-4"
-                  style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'6\' viewBox=\'0 0 10 6\'%3E%3Cpath d=\'M1 1l4 4 4-4\' stroke=\'%232563eb\' fill=\'none\' stroke-width=\'1.5\' stroke-linecap=\'round\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right center' }}
-                >
-                  <option value={12}>12</option>
-                  <option value={24}>24</option>
-                  <option value={48}>48</option>
-                  <option value={96}>96</option>
-                </select>
-              </div>
+                  {/* Sort */}
+                  <div className="mb-4 pb-4 border-b border-gray-100 dark:border-zinc-800">
+                    <label className="mb-2 block text-xs font-medium text-gray-500 dark:text-gray-400">
+                      Sortierung
+                    </label>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as any)}
+                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white cursor-pointer"
+                    >
+                      <option value="newest">Beliebtheit</option>
+                      <option value="price_asc">Preis aufsteigend</option>
+                      <option value="price_desc">Preis absteigend</option>
+                    </select>
+                  </div>
 
-              <span className="ml-auto text-[13px] text-gray-500 dark:text-gray-400">
-                {sortedProducts.length} {sortedProducts.length === 1 ? 'Produkt' : 'Produkte'}
-              </span>
-            </div>
+                  {/* Artikel pro Seite */}
+                  <div className="mb-4 pb-4 border-b border-gray-100 dark:border-zinc-800">
+                    <label className="mb-2 block text-xs font-medium text-gray-500 dark:text-gray-400">
+                      Artikel pro Seite
+                    </label>
+                    <select
+                      value={pageSize}
+                      onChange={(e) => setPageSize(Number(e.target.value))}
+                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white cursor-pointer"
+                    >
+                      <option value={12}>12</option>
+                      <option value={24}>24</option>
+                      <option value={48}>48</option>
+                      <option value={96}>96</option>
+                    </select>
+                  </div>
 
-            {/* Products Grid */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {sortedProducts.slice(0, pageSize).map((product, index) => (
-                <>
-                  <ProductCard key={product.id} product={product} />
-                  {(index + 1) % 8 === 0 && index < sortedProducts.length - 1 && (
-                    <div key={`ad-${index}`} className="col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5">
-                      <AdSenseInFeed
-                        adSlot="6399181253"
-                        layoutKey="-fb+5w+4e-db+86"
-                      />
+                  {/* Retailer Filter */}
+                  {retailers.length > 1 && (
+                    <div>
+                      <label className="mb-2 block text-xs font-medium text-gray-500 dark:text-gray-400">
+                        Handler
+                      </label>
+                      <select
+                        value={selectedRetailer}
+                        onChange={(e) => setSelectedRetailer(e.target.value)}
+                        className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white cursor-pointer"
+                      >
+                        <option value="">Alle Handler</option>
+                        {retailers.map((retailer) => {
+                          const names: Record<string, string> = { saturn: 'Saturn', mediamarkt: 'MediaMarkt', otto: 'Otto', kaufland: 'Kaufland' };
+                          return (
+                            <option key={retailer} value={retailer}>
+                              {names[retailer] || retailer}
+                            </option>
+                          );
+                        })}
+                      </select>
                     </div>
                   )}
-                </>
-              ))}
+                </div>
+              </aside>
+
+              {/* Products Grid */}
+              <div className="lg:col-span-3">
+                <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                  {sortedProducts.length} {sortedProducts.length === 1 ? 'Produkt' : 'Produkte'}
+                </p>
+
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-3">
+                  {sortedProducts.slice(0, pageSize).map((product, index) => (
+                    <>
+                      <ProductCard key={product.id} product={product} />
+                      {(index + 1) % 6 === 0 && index < sortedProducts.length - 1 && (
+                        <div key={`ad-${index}`} className="col-span-2 md:col-span-3">
+                          <AdSenseInFeed
+                            adSlot="6399181253"
+                            layoutKey="-fb+5w+4e-db+86"
+                          />
+                        </div>
+                      )}
+                    </>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Show more button */}
