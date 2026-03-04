@@ -1,0 +1,53 @@
+# Preisradio
+
+> Preisradio.de ist ein deutsches Preisvergleichsportal fuer Elektronik, Haushaltsgeraete und Konsumgueter. Wir vergleichen Preise von Saturn, MediaMarkt, Otto und Kaufland in Echtzeit.
+
+## Uebersicht
+
+- [Startseite](https://preisradio.de/): Aktuelle Trendprodukte, Kategorien und beste Angebote
+- [Kategorien](https://preisradio.de/kategorien/): Alle Produktkategorien im Ueberblick
+- [Marken](https://preisradio.de/marken/): Produkte nach Hersteller durchsuchen
+- [Suche](https://preisradio.de/search): Produktsuche ueber alle Haendler
+
+## Beliebte Kategorien
+
+- [Smartphones](https://preisradio.de/kategorien/smartphones/): Preisvergleich fuer Smartphones und Handys
+- [Laptops](https://preisradio.de/kategorien/laptops/): Notebooks und Laptops guenstig kaufen
+- [Kopfhoerer](https://preisradio.de/kategorien/kopfh-rer/): Kabellose und kabelgebundene Kopfhoerer
+- [Fernseher](https://preisradio.de/kategorien/fernseher/): LED, OLED und QLED Fernseher
+- [Tablets](https://preisradio.de/kategorien/tablets/): Tablets und iPads im Preisvergleich
+- [Kuehlschraenke](https://preisradio.de/kategorien/k-hlschr-nke/): Kuehlschraenke und Gefrierschraenke
+- [Waschmaschinen](https://preisradio.de/kategorien/waschmaschinen/): Waschmaschinen und Trockner
+
+## Vergleichene Haendler
+
+- Saturn (saturn.de)
+- MediaMarkt (mediamarkt.de)
+- Otto (otto.de)
+- Kaufland (kaufland.de)
+- Amazon (amazon.de)
+
+## Beliebte Marken
+
+- [Samsung](https://preisradio.de/marken/samsung/): Smartphones, Fernseher, Haushaltsgeraete
+- [Apple](https://preisradio.de/marken/apple/): iPhones, iPads, MacBooks
+- [Sony](https://preisradio.de/marken/sony/): Kopfhoerer, Fernseher, Kameras
+- [Bosch](https://preisradio.de/marken/bosch/): Haushaltsgeraete und Werkzeuge
+- [Siemens](https://preisradio.de/marken/siemens/): Kuechen- und Haushaltsgeraete
+- [LG](https://preisradio.de/marken/lg/): Fernseher und Haushaltsgeraete
+- [Lenovo](https://preisradio.de/marken/lenovo/): Laptops und Tablets
+- [HP](https://preisradio.de/marken/hp/): Laptops, Drucker und Zubehoer
+
+## Funktionen
+
+- Tagesaktuelle Preise von allen grossen deutschen Haendlern
+- Preisvergleich ueber mehrere Shops auf einer Seite
+- Filterung nach Kategorie, Marke, Preis und Haendler
+- Sortierung nach Preis, Beliebtheit und Aktualitaet
+- Kostenlos und ohne Registrierung
+
+## Ueber uns
+
+- [Impressum](https://preisradio.de/impressum): Rechtliche Informationen
+- [Datenschutz](https://preisradio.de/datenschutz): Datenschutzerklaerung
+- [Kontakt](mailto:contact@preisradio.de): E-Mail an das Team

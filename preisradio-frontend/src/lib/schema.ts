@@ -324,15 +324,10 @@ export function generateOrganizationSchema(baseUrl: string): Organization {
     url: baseUrl,
     logo: `${baseUrl}/favicon.ico`,
     description: 'Online-Preisvergleich für Elektronikprodukte in Deutschland. Vergleichen Sie Preise von Saturn, MediaMarkt und Otto in Echtzeit und finden Sie die besten Angebote.',
-    sameAs: [
-      'https://www.facebook.com/preisradio',
-      'https://www.twitter.com/preisradio',
-      'https://www.instagram.com/preisradio',
-    ],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'Customer Service',
-      url: `${baseUrl}/kontakt`,
+      email: 'contact@preisradio.de',
     },
   } as any;
 }
