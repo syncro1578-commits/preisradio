@@ -26,7 +26,7 @@ export default function ImpressumPage() {
                 Angaben gemäß § 5 TMG
               </h2>
               <div className="space-y-2 text-gray-700 dark:text-gray-300">
-                <p><span className="font-semibold">Name:</span> Gas Gh</p>
+                <p><span className="font-semibold">Name:</span> Lukas Weber</p>
                 <p><span className="font-semibold">Projektname:</span> PreisRadio</p>
                 <p className="pt-2"><span className="font-semibold">Anschrift:</span></p>
                 <p>Musterstraße 123</p>
@@ -35,10 +35,10 @@ export default function ImpressumPage() {
                 <p className="pt-2">
                   <span className="font-semibold">E-Mail:</span>{' '}
                   <a
-                    href="mailto:team_preisradio@wael.serv00.net"
+                    href="mailto:contact@preisradio.de"
                     className="text-blue-600 hover:underline dark:text-blue-400"
                   >
-                    team_preisradio@wael.serv00.net
+                    contact@preisradio.de
                   </a>
                 </p>
               </div>
@@ -50,7 +50,7 @@ export default function ImpressumPage() {
                 Inhaltlich verantwortlich gemäß § 18 MStV
               </h2>
               <div className="space-y-2 text-gray-700 dark:text-gray-300">
-                <p>Gas Gh</p>
+                <p>Lukas Weber</p>
                 <p>Musterstraße 123</p>
                 <p>12247 Berlin</p>
                 <p>Deutschland</p>
@@ -101,10 +101,10 @@ export default function ImpressumPage() {
                 <p>
                   📧{' '}
                   <a
-                    href="mailto:team_preisradio@wael.serv00.net"
+                    href="mailto:contact@preisradio.de"
                     className="text-blue-600 hover:underline dark:text-blue-400"
                   >
-                    team_preisradio@wael.serv00.net
+                    contact@preisradio.de
                   </a>
                 </p>
                 <p className="pt-2">

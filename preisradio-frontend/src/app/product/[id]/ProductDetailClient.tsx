@@ -30,6 +30,7 @@ export default function ProductDetailClient({
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (!initialProduct) loadProduct();
   }, [productId, initialProduct]);
 
