@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Product } from '@/lib/types';
 import api from '@/lib/api';
 import Navigation from '@/components/Navigation';
@@ -32,6 +33,8 @@ export default function BrandDetailClient({
   const [selectedRetailer, setSelectedRetailer] = useState<string>('');
   const [sortBy, setSortBy] = useState<'price_asc' | 'price_desc' | 'newest'>('newest');
   const [pageSize, setPageSize] = useState<number>(24);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
+  const [priceInited, setPriceInited] = useState(false);
 
   // Only fetch if no initial data
   useEffect(() => {
@@ -78,10 +81,24 @@ export default function BrandDetailClient({
     }
   };
 
+  // Calculer min/max prix globaux
+  const globalMinPrice = products.length > 0 ? Math.floor(Math.min(...products.map(p => p.price))) : 0;
+  const globalMaxPrice = products.length > 0 ? Math.ceil(Math.max(...products.map(p => p.price))) : 1000;
+
+  // Init price range once
+  useEffect(() => {
+    if (products.length > 0 && !priceInited) {
+      setPriceRange([globalMinPrice, globalMaxPrice]);
+      setPriceInited(true);
+    }
+  }, [products, priceInited, globalMinPrice, globalMaxPrice]);
+
   // Filtrer et trier les produits
   const filteredProducts = products.filter((product) => {
     if (selectedCategory && product.category !== selectedCategory) return false;
     if (selectedRetailer && product.retailer !== selectedRetailer) return false;
+    if (priceInited && product.price < priceRange[0]) return false;
+    if (priceInited && product.price > priceRange[1]) return false;
     return true;
   });
 
@@ -128,7 +145,7 @@ export default function BrandDetailClient({
         )}
 
         {/* Brand Header */}
-        <div className="mt-4 mb-6 flex flex-wrap items-center gap-3">
+        <div className="mt-4 mb-4 flex flex-wrap items-center gap-3">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
             {brandName || 'Marke'}
           </h1>
@@ -159,6 +176,18 @@ export default function BrandDetailClient({
               ))}
             </nav>
           )}
+          <div className="ml-auto flex items-center gap-1.5">
+            <span className="text-[13px] font-semibold text-gray-700 dark:text-gray-300">Sortierung:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="rounded-md border border-gray-200 bg-white px-2 py-1 text-[13px] text-gray-700 focus:border-blue-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 cursor-pointer"
+            >
+              <option value="newest">Beliebtheit</option>
+              <option value="price_asc">Preis aufsteigend</option>
+              <option value="price_desc">Preis absteigend</option>
+            </select>
+          </div>
         </div>
 
         {loading ? (
@@ -218,12 +247,12 @@ export default function BrandDetailClient({
                     <h2 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide">
                       Filter
                     </h2>
-                    {(selectedCategory || selectedRetailer || sortBy !== 'newest') && (
+                    {(selectedCategory || selectedRetailer || (priceInited && (priceRange[0] > globalMinPrice || priceRange[1] < globalMaxPrice))) && (
                       <button
                         onClick={() => {
                           setSelectedCategory('');
                           setSelectedRetailer('');
-                          setSortBy('newest');
+                          setPriceRange([globalMinPrice, globalMaxPrice]);
                         }}
                         className="text-xs text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
                       >
@@ -232,20 +261,47 @@ export default function BrandDetailClient({
                     )}
                   </div>
 
-                  {/* Sort */}
+                  {/* Price Filter — Range Slider */}
                   <div className="mb-4 pb-4 border-b border-gray-100 dark:border-zinc-800">
-                    <label className="mb-2 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                      Sortierung
+                    <label className="mb-3 block text-xs font-medium text-gray-500 dark:text-gray-400">
+                      Preis
                     </label>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as any)}
-                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white cursor-pointer"
-                    >
-                      <option value="newest">Beliebtheit</option>
-                      <option value="price_asc">Preis aufsteigend</option>
-                      <option value="price_desc">Preis absteigend</option>
-                    </select>
+                    <div className="flex items-center justify-between mb-3 text-sm font-medium text-gray-900 dark:text-white">
+                      <span>{priceRange[0]} €</span>
+                      <span>{priceRange[1]} €</span>
+                    </div>
+                    <div className="relative h-2">
+                      <div className="absolute inset-0 rounded-full bg-gray-200 dark:bg-zinc-700" />
+                      <div
+                        className="absolute h-full rounded-full bg-blue-500"
+                        style={{
+                          left: `${globalMaxPrice > globalMinPrice ? ((priceRange[0] - globalMinPrice) / (globalMaxPrice - globalMinPrice)) * 100 : 0}%`,
+                          right: `${globalMaxPrice > globalMinPrice ? ((globalMaxPrice - priceRange[1]) / (globalMaxPrice - globalMinPrice)) * 100 : 0}%`,
+                        }}
+                      />
+                      <input
+                        type="range"
+                        min={globalMinPrice}
+                        max={globalMaxPrice}
+                        value={priceRange[0]}
+                        onChange={(e) => {
+                          const v = Number(e.target.value);
+                          if (v <= priceRange[1]) setPriceRange([v, priceRange[1]]);
+                        }}
+                        className="absolute inset-0 w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-500 [&::-webkit-slider-thumb]:shadow [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-500 [&::-moz-range-thumb]:shadow [&::-moz-range-thumb]:cursor-pointer"
+                      />
+                      <input
+                        type="range"
+                        min={globalMinPrice}
+                        max={globalMaxPrice}
+                        value={priceRange[1]}
+                        onChange={(e) => {
+                          const v = Number(e.target.value);
+                          if (v >= priceRange[0]) setPriceRange([priceRange[0], v]);
+                        }}
+                        className="absolute inset-0 w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-500 [&::-webkit-slider-thumb]:shadow [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-500 [&::-moz-range-thumb]:shadow [&::-moz-range-thumb]:cursor-pointer"
+                      />
+                    </div>
                   </div>
 
                   {/* Artikel pro Seite */}
@@ -265,27 +321,46 @@ export default function BrandDetailClient({
                     </select>
                   </div>
 
-                  {/* Retailer Filter */}
-                  {retailers.length > 1 && (
+                  {/* Retailer Filter with Icons */}
+                  {retailers.length > 0 && (
                     <div>
                       <label className="mb-2 block text-xs font-medium text-gray-500 dark:text-gray-400">
                         Handler
                       </label>
-                      <select
-                        value={selectedRetailer}
-                        onChange={(e) => setSelectedRetailer(e.target.value)}
-                        className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white cursor-pointer"
-                      >
-                        <option value="">Alle Handler</option>
+                      <div className="space-y-1">
                         {retailers.map((retailer) => {
-                          const names: Record<string, string> = { saturn: 'Saturn', mediamarkt: 'MediaMarkt', otto: 'Otto', kaufland: 'Kaufland' };
+                          const names: Record<string, string> = { saturn: 'Saturn', mediamarkt: 'MediaMarkt', otto: 'Otto', kaufland: 'Kaufland', amazon: 'Amazon' };
+                          const icons: Record<string, string> = { saturn: '/retailers/saturn.png', mediamarkt: '/retailers/mediamarkt.png', otto: '/retailers/otto.png', kaufland: '/retailers/kaufland.png', amazon: '/retailers/amazon.png' };
                           return (
-                            <option key={retailer} value={retailer}>
-                              {names[retailer] || retailer}
-                            </option>
+                            <button
+                              key={retailer}
+                              onClick={() => setSelectedRetailer(selectedRetailer === retailer ? '' : retailer)}
+                              className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors ${
+                                selectedRetailer === retailer
+                                  ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
+                                  : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-zinc-800'
+                              }`}
+                            >
+                              {icons[retailer] && (
+                                <Image
+                                  src={icons[retailer]}
+                                  alt={names[retailer] || retailer}
+                                  width={20}
+                                  height={20}
+                                  className="h-5 w-5 object-contain"
+                                  unoptimized
+                                />
+                              )}
+                              <span className="font-medium">{names[retailer] || retailer}</span>
+                              {selectedRetailer === retailer && (
+                                <svg className="ml-auto h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </button>
                           );
                         })}
-                      </select>
+                      </div>
                     </div>
                   )}
                 </div>
