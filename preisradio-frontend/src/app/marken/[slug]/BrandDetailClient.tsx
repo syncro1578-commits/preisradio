@@ -372,12 +372,12 @@ export default function BrandDetailClient({
                   {sortedProducts.length} {sortedProducts.length === 1 ? 'Produkt' : 'Produkte'}
                 </p>
 
-                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-3">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-4">
                   {sortedProducts.slice(0, pageSize).map((product, index) => (
                     <>
                       <ProductCard key={product.id} product={product} />
-                      {(index + 1) % 6 === 0 && index < sortedProducts.length - 1 && (
-                        <div key={`ad-${index}`} className="col-span-2 md:col-span-3">
+                      {(index + 1) % 8 === 0 && index < sortedProducts.length - 1 && (
+                        <div key={`ad-${index}`} className="col-span-2 md:col-span-3 lg:col-span-4">
                           <AdSenseInFeed
                             adSlot="6399181253"
                             layoutKey="-fb+5w+4e-db+86"
