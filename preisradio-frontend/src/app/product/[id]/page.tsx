@@ -107,22 +107,30 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
     redirect('/');
   }
 
+  // Combine schemas into single @graph
+  const graphItems: any[] = [];
+  if (productSchema) {
+    const { '@context': _ps, ...productRest } = productSchema as any;
+    graphItems.push(productRest);
+  }
+  if (breadcrumbSchema) {
+    const { '@context': _bc, ...breadcrumbRest } = breadcrumbSchema as any;
+    graphItems.push(breadcrumbRest);
+  }
+  const combinedSchema = graphItems.length > 0
+    ? { '@context': 'https://schema.org', '@graph': graphItems }
+    : null;
+
   return (
     <>
       {/* Preload LCP image — produit principal */}
       {product?.image && (
         <link rel="preload" as="image" href={product.image} />
       )}
-      {productSchema && (
+      {combinedSchema && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
-        />
-      )}
-      {breadcrumbSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(combinedSchema) }}
         />
       )}
       <ProductDetailClient
