@@ -316,21 +316,6 @@ export default function ProductDetailClient({
               </div>
             </div>
 
-            {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { icon: '🔒', label: 'Sicherer Kauf', sub: 'SSL-verschlüsselt' },
-                { icon: '↩️', label: 'Rückgabe', sub: '14 Tage Widerrufsrecht' },
-                { icon: '⚡', label: 'Aktuell', sub: 'Echtzeit-Preise' },
-              ].map((badge) => (
-                <div key={badge.label} className="flex flex-col items-center rounded-xl bg-white dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 p-2.5 text-center shadow-sm">
-                  <span className="text-lg mb-0.5">{badge.icon}</span>
-                  <p className="text-xs font-semibold text-gray-800 dark:text-white leading-tight">{badge.label}</p>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 leading-tight mt-0.5">{badge.sub}</p>
-                </div>
-              ))}
-            </div>
-
             {/* Primary CTA */}
             <a
               href={product.url}
