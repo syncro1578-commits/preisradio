@@ -298,7 +298,7 @@ export default function ProductDetailClient({
               <div className="flex items-end justify-between flex-wrap gap-3">
                 <div>
                   <div className="flex items-baseline gap-3 flex-wrap">
-                    <span className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+                    <span className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
                       {currentPrice.toFixed(2)} €
                     </span>
                     {hasDiscount && oldPrice && (

@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import api from '@/lib/api';
 import CategoryDetailClient from './CategoryDetailClient';
 import { Product } from '@/lib/types';
-import { generateItemListSchema, generateCategoryBreadcrumbSchema, generateCategoryFAQSchema } from '@/lib/schema';
+import { generateCategoryBreadcrumbSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 const PAGE_SIZE = 100;
@@ -143,13 +143,6 @@ export default async function CategoryDetailPage({
   const canonicalBase = `${baseUrl}/kategorien/${slug}`;
 
   const breadcrumbSchema = generateCategoryBreadcrumbSchema(categoryName, slug, baseUrl);
-  const itemListSchema = products.length > 0
-    ? generateItemListSchema(products, categoryName, baseUrl)
-    : null;
-  const lowestPrice = products.length > 0
-    ? Math.min(...products.map(p => p.price))
-    : undefined;
-  const faqSchema = generateCategoryFAQSchema(categoryName, totalProductsCount, lowestPrice);
 
   return (
     <>
@@ -167,16 +160,6 @@ export default async function CategoryDetailPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      {itemListSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
-        />
-      )}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       <CategoryDetailClient
