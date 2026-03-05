@@ -309,42 +309,37 @@ export default function ProductDetailClient({
               </div>
             </div>
 
-            {/* CTA Buttons — side by side on desktop */}
-            <div className="flex flex-col md:flex-row gap-2.5">
+            {/* CTA Buttons — 50/50 grid */}
+            <div className="grid grid-cols-2 gap-2.5">
               <a
                 href={product.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:shadow-md hover:scale-[1.01] active:scale-95"
+                className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-3 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:shadow-md hover:scale-[1.01] active:scale-95"
               >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 21h18M3 10h18M5 6l1-3h12l1 3M4 10l1-4h14l1 4M5 10v11M19 10v11M9 21v-6h6v6" />
                 </svg>
-                Jetzt bei {retailerInfo.name} kaufen
+                Zu {retailerInfo.name}
                 <svg className="h-3.5 w-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
               </a>
 
-              {process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG && (
-                <div className="flex flex-col items-center">
-                  <a
-                    href={`https://www.amazon.de/s?k=${encodeURIComponent(product.title)}&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG}`}
-                    target="_blank"
-                    rel="noopener noreferrer sponsored"
-                    className="flex w-full md:w-auto items-center justify-center gap-2 rounded-xl bg-[#FF9900] px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#e68a00] hover:shadow-md hover:scale-[1.01] active:scale-95"
-                  >
-                    <Image src="/retailers/amazon.png" alt="Amazon" width={18} height={18} className="h-4 w-4 object-contain" />
-                    Auf Amazon suchen
-                    <svg className="h-3.5 w-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">
-                    * Affiliate-Link
-                  </p>
-                </div>
-              )}
+              {process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG ? (
+                <a
+                  href={`https://www.amazon.de/s?k=${encodeURIComponent(product.title)}&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG}`}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-[#FF9900] px-3 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#e68a00] hover:shadow-md hover:scale-[1.01] active:scale-95"
+                >
+                  <Image src="/retailers/amazon.png" alt="Amazon" width={18} height={18} className="h-4 w-4 object-contain" />
+                  Auf Amazon suchen
+                  <svg className="h-3.5 w-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              ) : <div />}
             </div>
 
             {/* Meta info compact */}
