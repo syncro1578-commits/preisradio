@@ -189,6 +189,9 @@ export default function BrandDetailClient({
             </select>
           </div>
         </div>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
+          Stand: {new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric' }).format(new Date())} · Preise taeglich aktualisiert
+        </p>
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
@@ -404,7 +407,7 @@ export default function BrandDetailClient({
 
             {/* Top 5 Preisvergleich — HTML table for AI citation */}
             {sortedProducts.length > 0 && (
-              <div className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+              <section aria-label={`Top 5 ${brandName} im Preisvergleich`} className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                   Top 5 {brandName} Produkte im Preisvergleich
                 </h2>
@@ -445,12 +448,12 @@ export default function BrandDetailClient({
                     </tbody>
                   </table>
                 </div>
-              </div>
+              </section>
             )}
 
             {/* FAQ — visible HTML matching FAQPage schema */}
             {brandName && (
-              <section className="mt-8 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+              <section aria-label={`FAQ zu ${brandName}`} className="mt-8 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                   Haeufig gestellte Fragen zu {brandName}
                 </h2>
@@ -492,7 +495,7 @@ export default function BrandDetailClient({
 
             {/* Editorial SEO content */}
             {brandName && (
-              <div className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-6 md:p-8 shadow-sm">
+              <section aria-label={`Kaufberatung ${brandName}`} className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-6 md:p-8 shadow-sm">
                 <div className="max-w-3xl text-sm text-gray-600 dark:text-gray-400 leading-relaxed space-y-4">
 
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -598,7 +601,7 @@ export default function BrandDetailClient({
                   </p>
 
                 </div>
-              </div>
+              </section>
             )}
 
             {/* AdSense Multiplex - Before Footer */}

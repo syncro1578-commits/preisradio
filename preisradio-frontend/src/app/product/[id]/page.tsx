@@ -66,9 +66,10 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
           ? [{ url: product.image, alt: product.title }]
           : [{ url: `${baseUrl}/og-image.webp`, width: 1200, height: 630 }],
         url: `${baseUrl}/product/${resolvedParams.id}`,
-        type: 'website',
+        type: 'article',
         locale: 'de_DE',
         siteName: 'Preisradio',
+        modifiedTime: new Date().toISOString(),
       },
       twitter: {
         card: 'summary_large_image',
@@ -82,6 +83,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
           'de-DE': `${baseUrl}/product/${resolvedParams.id}`,
           'x-default': `${baseUrl}/product/${resolvedParams.id}`,
         },
+      },
+      other: {
+        'article:modified_time': new Date().toISOString(),
       },
     };
   } catch (error) {

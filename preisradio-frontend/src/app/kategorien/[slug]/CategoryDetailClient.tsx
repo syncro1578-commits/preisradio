@@ -160,8 +160,11 @@ export default function CategoryDetailClient({
               <h1 className="mb-3 text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg">
                 {categoryName}{totalCount > 0 ? ` (${totalCount} Produkte)` : ''}
               </h1>
-              <p className="text-base md:text-lg text-white/90 mb-6">
+              <p className="text-base md:text-lg text-white/90 mb-1">
                 Entdecken Sie die besten Angebote in dieser Kategorie
+              </p>
+              <p className="text-xs text-white/60 mb-5">
+                Stand: {new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric' }).format(new Date())} · Preise taeglich aktualisiert
               </p>
 
               {/* Quick Stats */}
@@ -472,7 +475,7 @@ export default function CategoryDetailClient({
 
         {/* Top 5 Preisvergleich — HTML table for AI citation */}
         {filteredProducts.length > 0 && (
-          <div className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+          <section aria-label={`Top 5 ${categoryName} im Preisvergleich`} className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
               Top 5 {categoryName} im Preisvergleich
             </h2>
@@ -513,12 +516,12 @@ export default function CategoryDetailClient({
                 </tbody>
               </table>
             </div>
-          </div>
+          </section>
         )}
 
         {/* FAQ — visible HTML matching FAQPage schema */}
         {categoryName && (
-          <section className="mt-8 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+          <section aria-label={`FAQ zu ${categoryName}`} className="mt-8 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
               Haeufig gestellte Fragen zu {categoryName}
             </h2>
@@ -560,7 +563,7 @@ export default function CategoryDetailClient({
 
         {/* Contenu editorial SEO */}
         {categoryName && (
-          <div className="mt-8 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+          <section aria-label={`Kaufberater ${categoryName}`} className="mt-8 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               {categoryName} guenstig kaufen – Kaufberater & Tipps
             </h2>
@@ -590,7 +593,7 @@ export default function CategoryDetailClient({
                 Nutzen Sie unsere Filter, um schnell das beste Angebot fuer Ihr Budget zu finden.
               </p>
             </div>
-          </div>
+          </section>
         )}
 
         {/* AdSense Multiplex - Before Footer */}

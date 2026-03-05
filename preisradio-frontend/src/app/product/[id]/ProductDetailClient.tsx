@@ -151,7 +151,7 @@ export default function ProductDetailClient({
         </nav>
 
         {/* Product Hero */}
-        <div className="mb-8 grid gap-6 lg:grid-cols-5">
+        <article aria-label={product.title} className="mb-8 grid gap-6 lg:grid-cols-5">
 
           {/* LEFT — Image */}
           <div className="lg:col-span-2">
@@ -359,10 +359,12 @@ export default function ProductDetailClient({
               </span>
             </div>
           </div>
-        </div>
+        </article>
 
         {/* Price Comparison */}
-        <PriceComparison currentProduct={product} />
+        <section aria-label="Preisvergleich">
+          <PriceComparison currentProduct={product} />
+        </section>
 
         {/* AdSense */}
         <div className="my-8">
@@ -370,15 +372,15 @@ export default function ProductDetailClient({
         </div>
 
         {/* Similar Products */}
-        <div className="mt-8">
+        <section aria-label="Ähnliche Produkte" className="mt-8">
           <h2 className="mb-6 text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
             Ähnliche Produkte
           </h2>
           <ProductSimilar productId={productId} />
-        </div>
+        </section>
 
         {/* Quick Links */}
-        <div className="mt-8 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-5 shadow-sm">
+        <nav aria-label="Verwandte Seiten" className="mt-8 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-5 shadow-sm">
           <h3 className="mb-3 text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Verwandte Seiten</h3>
           <div className="flex flex-wrap gap-2">
             <Link href={`/kategorien/${categorySlug}`} className="inline-flex items-center gap-1.5 rounded-lg bg-gray-50 dark:bg-zinc-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-zinc-700 transition-colors">
@@ -396,7 +398,7 @@ export default function ProductDetailClient({
               Alle {retailerInfo.name} Angebote
             </Link>
           </div>
-        </div>
+        </nav>
 
         {/* AdSense Multiplex */}
         <AdSenseMultiplex className="mt-12" />

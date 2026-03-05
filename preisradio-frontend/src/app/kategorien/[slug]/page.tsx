@@ -64,9 +64,10 @@ export async function generateMetadata({
         title,
         description,
         url: canonical,
-        type: 'website',
+        type: 'article',
         locale: 'de_DE',
         siteName: 'Preisradio',
+        modifiedTime: new Date().toISOString(),
       },
       twitter: {
         card: 'summary_large_image',
@@ -79,6 +80,9 @@ export async function generateMetadata({
           'de-DE': canonical,
           'x-default': canonical,
         },
+      },
+      other: {
+        'article:modified_time': new Date().toISOString(),
       },
     };
   } catch (error) {
