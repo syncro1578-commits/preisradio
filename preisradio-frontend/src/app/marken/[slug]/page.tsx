@@ -151,16 +151,6 @@ export default async function BrandDetailPage({
     : undefined;
   const faqSchema = generateBrandFAQSchema(brandName, totalProductsCount, lowestPrice);
 
-  // Combine all schemas into a single @graph to avoid "duplicate ListItem" errors
-  const { '@context': _bc, ...breadcrumbRest } = breadcrumbSchema;
-  const { '@context': _fq, ...faqRest } = faqSchema;
-  const graphItems: any[] = [breadcrumbRest, faqRest];
-  if (itemListSchema) {
-    const { '@context': _il, ...itemListRest } = itemListSchema;
-    graphItems.push(itemListRest);
-  }
-  const combinedSchema = { '@context': 'https://schema.org', '@graph': graphItems };
-
   return (
     <>
       {/* Pagination rel=prev/next */}
@@ -174,10 +164,19 @@ export default async function BrandDetailPage({
         <link rel="next" href={`${canonicalBase}?page=${currentPage + 1}`} />
       )}
 
-      {/* Combined JSON-LD: BreadcrumbList + ItemList + FAQPage */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(combinedSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      {itemListSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+        />
+      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       <BrandDetailClient

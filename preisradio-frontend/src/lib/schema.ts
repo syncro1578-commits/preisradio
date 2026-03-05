@@ -298,14 +298,11 @@ export function generateItemListSchema(
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: `${categoryName} – Preisvergleich`,
-    description: `Die besten Angebote für ${categoryName} bei Saturn, MediaMarkt, Otto und Kaufland`,
-    url: `${baseUrl}/kategorien/${categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
     numberOfItems: products.length,
     itemListElement: products.slice(0, 20).map((product, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       url: `${baseUrl}/product/${product.id}`,
-      name: product.title,
     })),
   };
 }
