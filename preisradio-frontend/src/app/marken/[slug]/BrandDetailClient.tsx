@@ -402,6 +402,94 @@ export default function BrandDetailClient({
               </div>
             )}
 
+            {/* Top 5 Preisvergleich — HTML table for AI citation */}
+            {sortedProducts.length > 0 && (
+              <div className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                  Top 5 {brandName} Produkte im Preisvergleich
+                </h2>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead>
+                      <tr className="border-b border-gray-200 dark:border-zinc-700">
+                        <th className="pb-3 font-semibold text-gray-900 dark:text-white">Produkt</th>
+                        <th className="pb-3 font-semibold text-gray-900 dark:text-white">Preis</th>
+                        <th className="pb-3 font-semibold text-gray-900 dark:text-white hidden sm:table-cell">Haendler</th>
+                        <th className="pb-3 font-semibold text-gray-900 dark:text-white hidden md:table-cell">Rabatt</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...sortedProducts]
+                        .sort((a, b) => a.price - b.price)
+                        .slice(0, 5)
+                        .map((p) => (
+                          <tr key={p.id} className="border-b border-gray-100 dark:border-zinc-800">
+                            <td className="py-3 pr-4">
+                              <Link href={`/product/${p.id}`} className="text-blue-600 hover:underline dark:text-blue-400 line-clamp-2">
+                                {p.title}
+                              </Link>
+                            </td>
+                            <td className="py-3 pr-4 font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+                              {p.price.toFixed(2)} EUR
+                            </td>
+                            <td className="py-3 pr-4 text-gray-600 dark:text-gray-400 hidden sm:table-cell capitalize">
+                              {p.retailer || '–'}
+                            </td>
+                            <td className="py-3 text-green-600 dark:text-green-400 hidden md:table-cell">
+                              {p.old_price && p.old_price > p.price
+                                ? `-${Math.round(((p.old_price - p.price) / p.old_price) * 100)}%`
+                                : '–'}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* FAQ — visible HTML matching FAQPage schema */}
+            {brandName && (
+              <section className="mt-8 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                  Haeufig gestellte Fragen zu {brandName}
+                </h2>
+                <div className="space-y-3">
+                  <details className="group border-b border-gray-100 dark:border-zinc-800 pb-3">
+                    <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                      Wo kann ich {brandName} Produkte am guenstigsten kaufen?
+                      <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                    </summary>
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                      Preisradio vergleicht taeglich Preise fuer {brandName} bei Saturn, MediaMarkt, Otto und Kaufland.
+                      Aktuell finden Sie {totalProductsCount > 0 ? totalProductsCount : 'zahlreiche'} {brandName}-Produkte{sortedProducts.length > 0 ? ` ab ${Math.min(...sortedProducts.map(p => p.price)).toFixed(2)} EUR` : ''}.
+                      Alle Preise werden direkt von den Haendlern uebernommen.
+                    </p>
+                  </details>
+                  <details className="group border-b border-gray-100 dark:border-zinc-800 pb-3">
+                    <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                      Wie viele {brandName} Produkte werden verglichen?
+                      <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                    </summary>
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                      Aktuell vergleicht Preisradio {totalProductsCount > 0 ? totalProductsCount : 'zahlreiche'} {brandName}-Produkte aus verschiedenen Kategorien.
+                      Der Preisvergleich umfasst Saturn, MediaMarkt, Otto und Kaufland.
+                    </p>
+                  </details>
+                  <details className="group pb-3">
+                    <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                      Ist der {brandName} Preisvergleich auf Preisradio kostenlos?
+                      <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                    </summary>
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                      Ja, der Preisvergleich fuer {brandName} auf Preisradio ist vollstaendig kostenlos und ohne Registrierung nutzbar.
+                      Wir sind unabhaengig und erhalten keine Zahlungen von Haendlern fuer bessere Platzierungen.
+                    </p>
+                  </details>
+                </div>
+              </section>
+            )}
+
             {/* Editorial SEO content */}
             {brandName && (
               <div className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-6 md:p-8 shadow-sm">

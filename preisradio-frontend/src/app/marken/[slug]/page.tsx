@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import api from '@/lib/api';
 import BrandDetailClient from './BrandDetailClient';
 import { Product } from '@/lib/types';
-import { generateItemListSchema, generateBrandBreadcrumbSchema } from '@/lib/schema';
+import { generateItemListSchema, generateBrandBreadcrumbSchema, generateBrandFAQSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 const PAGE_SIZE = 100;
@@ -146,6 +146,10 @@ export default async function BrandDetailPage({
   const itemListSchema = products.length > 0
     ? generateItemListSchema(products, brandName, baseUrl)
     : null;
+  const lowestPrice = products.length > 0
+    ? Math.min(...products.map(p => p.price))
+    : undefined;
+  const faqSchema = generateBrandFAQSchema(brandName, totalProductsCount, lowestPrice);
 
   return (
     <>
@@ -172,6 +176,13 @@ export default async function BrandDetailPage({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
         />
       )}
+
+      {/* FAQPage JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       <BrandDetailClient
         slug={slug}
         initialProducts={products}

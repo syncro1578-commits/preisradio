@@ -311,6 +311,80 @@ export function generateItemListSchema(
 }
 
 /**
+ * Génère le schéma FAQPage pour une page catégorie
+ */
+export function generateCategoryFAQSchema(categoryName: string, productCount: number, lowestPrice?: number): any {
+  const priceInfo = lowestPrice ? ` ab ${lowestPrice.toFixed(2)} EUR` : '';
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `Wo kann ich ${categoryName} am guenstigsten kaufen?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Preisradio vergleicht taeglich Preise fuer ${categoryName} bei Saturn, MediaMarkt, Otto und Kaufland. Aktuell finden Sie ${productCount > 0 ? productCount : 'zahlreiche'} ${categoryName}-Angebote${priceInfo}. Nutzen Sie die Filter, um das guenstigste Angebot zu finden.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `Wie viele ${categoryName} werden bei Preisradio verglichen?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Aktuell vergleicht Preisradio ${productCount > 0 ? productCount : 'zahlreiche'} ${categoryName} von Saturn, MediaMarkt, Otto und Kaufland. Die Preise werden taeglich aktualisiert.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `Wann gibt es die besten Angebote fuer ${categoryName}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Besonders guenstige ${categoryName}-Angebote finden Sie zu Black Friday, Cyber Monday und im Sommerausverkauf. Preisradio aktualisiert die Preise taeglich, damit Sie keine Rabattaktion verpassen.`,
+        },
+      },
+    ],
+  };
+}
+
+/**
+ * Génère le schéma FAQPage pour une page marque
+ */
+export function generateBrandFAQSchema(brandName: string, productCount: number, lowestPrice?: number): any {
+  const priceInfo = lowestPrice ? ` ab ${lowestPrice.toFixed(2)} EUR` : '';
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `Wo kann ich ${brandName} Produkte am guenstigsten kaufen?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Preisradio vergleicht taeglich Preise fuer ${brandName} bei Saturn, MediaMarkt, Otto und Kaufland. Aktuell finden Sie ${productCount > 0 ? productCount : 'zahlreiche'} ${brandName}-Produkte${priceInfo}. Alle Preise werden direkt von den Haendlern uebernommen.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `Wie viele ${brandName} Produkte werden verglichen?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Aktuell vergleicht Preisradio ${productCount > 0 ? productCount : 'zahlreiche'} ${brandName}-Produkte aus verschiedenen Kategorien. Der Preisvergleich umfasst Saturn, MediaMarkt, Otto und Kaufland.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `Ist der ${brandName} Preisvergleich auf Preisradio kostenlos?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Ja, der Preisvergleich fuer ${brandName} auf Preisradio ist vollstaendig kostenlos und ohne Registrierung nutzbar. Wir sind unabhaengig und erhalten keine Zahlungen von Haendlern fuer bessere Platzierungen.`,
+        },
+      },
+    ],
+  };
+}
+
+/**
  * Génère le schéma Organization pour le site
  * Améliore la reconnaissance de la marque par Google
  * @param baseUrl - L'URL de base du site

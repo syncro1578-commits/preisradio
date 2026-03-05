@@ -470,17 +470,105 @@ export default function CategoryDetailClient({
           </div>
         </div>
 
-        {/* Contenu éditorial SEO — généré dynamiquement depuis le nom de catégorie */}
+        {/* Top 5 Preisvergleich — HTML table for AI citation */}
+        {filteredProducts.length > 0 && (
+          <div className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+              Top 5 {categoryName} im Preisvergleich
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-zinc-700">
+                    <th className="pb-3 font-semibold text-gray-900 dark:text-white">Produkt</th>
+                    <th className="pb-3 font-semibold text-gray-900 dark:text-white">Preis</th>
+                    <th className="pb-3 font-semibold text-gray-900 dark:text-white hidden sm:table-cell">Haendler</th>
+                    <th className="pb-3 font-semibold text-gray-900 dark:text-white hidden md:table-cell">Rabatt</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...filteredProducts]
+                    .sort((a, b) => a.price - b.price)
+                    .slice(0, 5)
+                    .map((p) => (
+                      <tr key={p.id} className="border-b border-gray-100 dark:border-zinc-800">
+                        <td className="py-3 pr-4">
+                          <Link href={`/product/${p.id}`} className="text-blue-600 hover:underline dark:text-blue-400 line-clamp-2">
+                            {p.title}
+                          </Link>
+                        </td>
+                        <td className="py-3 pr-4 font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+                          {p.price.toFixed(2)} EUR
+                        </td>
+                        <td className="py-3 pr-4 text-gray-600 dark:text-gray-400 hidden sm:table-cell capitalize">
+                          {p.retailer || '–'}
+                        </td>
+                        <td className="py-3 text-green-600 dark:text-green-400 hidden md:table-cell">
+                          {p.old_price && p.old_price > p.price
+                            ? `-${Math.round(((p.old_price - p.price) / p.old_price) * 100)}%`
+                            : '–'}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* FAQ — visible HTML matching FAQPage schema */}
         {categoryName && (
-          <div className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+          <section className="mt-8 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+              Haeufig gestellte Fragen zu {categoryName}
+            </h2>
+            <div className="space-y-3">
+              <details className="group border-b border-gray-100 dark:border-zinc-800 pb-3">
+                <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                  Wo kann ich {categoryName} am guenstigsten kaufen?
+                  <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                </summary>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  Preisradio vergleicht taeglich Preise fuer {categoryName} bei Saturn, MediaMarkt, Otto und Kaufland.
+                  Aktuell finden Sie {totalCount > 0 ? totalCount : 'zahlreiche'} {categoryName}-Angebote{filteredProducts.length > 0 ? ` ab ${Math.min(...filteredProducts.map(p => p.price)).toFixed(2)} EUR` : ''}.
+                  Nutzen Sie die Filter, um das guenstigste Angebot zu finden.
+                </p>
+              </details>
+              <details className="group border-b border-gray-100 dark:border-zinc-800 pb-3">
+                <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                  Wie viele {categoryName} werden bei Preisradio verglichen?
+                  <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                </summary>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  Aktuell vergleicht Preisradio {totalCount > 0 ? totalCount : 'zahlreiche'} {categoryName} von Saturn, MediaMarkt, Otto und Kaufland.
+                  Die Preise werden taeglich aktualisiert.
+                </p>
+              </details>
+              <details className="group pb-3">
+                <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                  Wann gibt es die besten Angebote fuer {categoryName}?
+                  <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                </summary>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  Besonders guenstige {categoryName}-Angebote finden Sie zu Black Friday, Cyber Monday und im Sommerausverkauf.
+                  Preisradio aktualisiert die Preise taeglich, damit Sie keine Rabattaktion verpassen.
+                </p>
+              </details>
+            </div>
+          </section>
+        )}
+
+        {/* Contenu editorial SEO */}
+        {categoryName && (
+          <div className="mt-8 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              {categoryName} günstig kaufen – Kaufberater & Tipps
+              {categoryName} guenstig kaufen – Kaufberater & Tipps
             </h2>
             <div className="space-y-4 text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
               <p>
-                Bei Preisradio vergleichen Sie Preise für <strong className="text-gray-800 dark:text-gray-200">{categoryName}</strong> von
-                Saturn, MediaMarkt, Otto und Kaufland – den größten Elektronik- und Online-Händlern in Deutschland.
-                Unser täglicher Preisvergleich zeigt Ihnen auf einen Blick, wo Sie {categoryName} am günstigsten kaufen können.
+                Bei Preisradio vergleichen Sie Preise fuer <strong className="text-gray-800 dark:text-gray-200">{categoryName}</strong> von
+                Saturn, MediaMarkt, Otto und Kaufland – den groessten Elektronik- und Online-Haendlern in Deutschland.
+                Unser taeglicher Preisvergleich zeigt Ihnen auf einen Blick, wo Sie {categoryName} am guenstigsten kaufen koennen.
               </p>
 
               <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
@@ -488,18 +576,18 @@ export default function CategoryDetailClient({
               </h3>
               <p>
                 Achten Sie neben dem Preis auch auf Garantiezeit, Versandkosten und Lieferdauer.
-                Alle bei Preisradio gelisteten Händler bieten sichere Zahlungsmethoden, gesetzliches Widerrufsrecht
-                und zuverlässigen Versand innerhalb Deutschlands.
+                Alle bei Preisradio gelisteten Haendler bieten sichere Zahlungsmethoden, gesetzliches Widerrufsrecht
+                und zuverlaessigen Versand innerhalb Deutschlands.
               </p>
 
               <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
-                Wann gibt es die besten Angebote für {categoryName}?
+                Wann gibt es die besten Angebote fuer {categoryName}?
               </h3>
               <p>
-                Preisradio aktualisiert die Preise täglich – so verpassen Sie keine Rabattaktion.
-                Besonders günstige {categoryName}-Angebote finden Sie regelmäßig zu Black Friday,
+                Preisradio aktualisiert die Preise taeglich – so verpassen Sie keine Rabattaktion.
+                Besonders guenstige {categoryName}-Angebote finden Sie regelmaessig zu Black Friday,
                 Cyber Monday, Weihnachten und im Sommerausverkauf.
-                Nutzen Sie unsere Filter, um schnell das beste Angebot für Ihr Budget zu finden.
+                Nutzen Sie unsere Filter, um schnell das beste Angebot fuer Ihr Budget zu finden.
               </p>
             </div>
           </div>
