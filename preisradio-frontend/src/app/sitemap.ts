@@ -60,12 +60,20 @@ async function fetchAllProducts() {
   return allProducts;
 }
 
-// Reject garbage data (CSS injection, HTML, overly long names)
+// Reject garbage data (CSS injection, HTML, product descriptions as brand names)
 function isValidName(name: string): boolean {
-  if (!name || name.length > 100) return false;
-  if (/[{}:;#()@]/.test(name)) return false; // CSS/HTML chars
+  if (!name || name.length > 60) return false;
+  if (/[{}:;#()@<>"]/.test(name)) return false; // CSS/HTML chars
   if (name.startsWith('*') || name.startsWith('.') || name.startsWith('-')) return false;
+  // Reject names with too many hyphens/spaces (likely product descriptions not brands)
+  const words = name.split(/[\s-]+/).filter(Boolean);
+  if (words.length > 5) return false;
   return true;
+}
+
+// Clean slug: trim leading/trailing dashes
+function cleanSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
 export default async function sitemap({
@@ -151,8 +159,8 @@ export default async function sitemap({
 
       allProducts.forEach((product: any) => {
         if (product.brand && isValidName(product.brand)) {
-          const slug = product.brand.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-          if (!uniqueBrands.has(slug)) {
+          const slug = cleanSlug(product.brand);
+          if (slug && !uniqueBrands.has(slug)) {
             uniqueBrands.set(slug, {
               slug,
               name: product.brand,
@@ -185,8 +193,8 @@ export default async function sitemap({
 
       allProducts.forEach((product: any) => {
         if (product.category && isValidName(product.category)) {
-          const slug = product.category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-          if (!uniqueCategories.has(slug)) {
+          const slug = cleanSlug(product.category);
+          if (slug && !uniqueCategories.has(slug)) {
             uniqueCategories.set(slug, {
               slug,
               name: product.category,
