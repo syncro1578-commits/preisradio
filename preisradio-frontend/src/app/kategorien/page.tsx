@@ -146,89 +146,73 @@ export default async function KategorienPage() {
           </p>
         </div>
 
-        {/* Featured Categories Grid — 3 cols */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {/* Featured Categories Grid — 2 mobile / 3 tablet / 4 desktop */}
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
           {featuredData.map((cat) => (
             <Link
               key={cat.slug}
               href={`/kategorien/${cat.slug}`}
-              className="group rounded-2xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
+              className="group relative overflow-hidden rounded-2xl bg-gradient-to-b from-white to-gray-50 dark:from-zinc-900 dark:to-zinc-900/80 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             >
-              {/* Category Image */}
-              <div className="relative h-40 bg-gray-100 dark:bg-zinc-800 overflow-hidden">
+              {/* Image area with gradient overlay */}
+              <div className="relative aspect-square overflow-hidden">
                 {cat.image ? (
                   <Image
                     src={cat.image}
                     alt={cat.name}
                     fill
-                    className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-contain p-6 group-hover:scale-110 transition-transform duration-500"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
                     unoptimized
                   />
                 ) : (
-                  <div className="flex items-center justify-center h-full text-5xl text-gray-300 dark:text-zinc-600">
+                  <div className="flex items-center justify-center h-full text-6xl text-gray-200 dark:text-zinc-700">
                     📦
                   </div>
                 )}
-                {/* Count badge */}
-                <span className="absolute top-3 right-3 rounded-full bg-blue-600 px-2.5 py-0.5 text-xs font-bold text-white shadow">
-                  {cat.count.toLocaleString('de-DE')} Produkte
-                </span>
-              </div>
+                {/* Bottom gradient fade */}
+                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-white via-white/90 to-transparent dark:from-zinc-900 dark:via-zinc-900/90" />
 
-              {/* Content */}
-              <div className="p-4">
-                {/* Title */}
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  {cat.name}
-                </h2>
+                {/* Category name overlay */}
+                <div className="absolute inset-x-0 bottom-0 p-3 md:p-4">
+                  <h2 className="text-base md:text-lg font-bold text-gray-900 dark:text-white leading-tight">
+                    {cat.name}
+                  </h2>
 
-                {/* Top 3 Products */}
-                {cat.topProducts.length > 0 && (
-                  <div className="mt-3">
-                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">
-                      Top Produkte
+                  {/* Top Brands as inline text */}
+                  {cat.topBrands.length > 0 && (
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 truncate">
+                      {cat.topBrands.join(' · ')}
                     </p>
-                    <ul className="space-y-1">
-                      {cat.topProducts.map((product, i) => (
-                        <li key={i} className="flex items-center justify-between text-sm">
-                          <span className="text-gray-700 dark:text-gray-300 truncate mr-2">
-                            {product.title}
-                          </span>
-                          <span className="font-semibold text-blue-600 dark:text-blue-400 whitespace-nowrap">
-                            {product.price.toFixed(0)} €
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Top Brands */}
-                {cat.topBrands.length > 0 && (
-                  <div className="mt-3 flex items-center gap-1.5 flex-wrap">
-                    <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                      Marken:
-                    </span>
-                    {cat.topBrands.map((brand, i) => (
-                      <span
-                        key={brand}
-                        className="rounded-full bg-gray-100 dark:bg-zinc-800 px-2 py-0.5 text-xs font-medium text-gray-700 dark:text-gray-300"
-                      >
-                        {brand}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* CTA */}
-                <div className="mt-3 flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Alle Produkte ansehen
-                  <svg className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  )}
                 </div>
               </div>
+
+              {/* Top products — visible below image */}
+              {cat.topProducts.length > 0 && (
+                <div className="px-3 md:px-4 pb-3 md:pb-4 -mt-1">
+                  <ul className="space-y-1">
+                    {cat.topProducts.map((product, i) => (
+                      <li key={i} className="flex items-center justify-between text-xs md:text-sm">
+                        <span className="text-gray-600 dark:text-gray-400 truncate mr-2">
+                          {product.title}
+                        </span>
+                        <span className="font-bold text-gray-900 dark:text-white whitespace-nowrap">
+                          ab {product.price.toFixed(0)} €
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Hover arrow */}
+                  <div className="mt-2 flex items-center text-xs font-semibold text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Vergleichen
+                    <svg className="ml-1 h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              )}
             </Link>
           ))}
         </div>
