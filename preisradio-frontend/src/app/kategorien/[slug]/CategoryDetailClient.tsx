@@ -103,7 +103,7 @@ export default function CategoryDetailClient({
   });
 
   // Extract unique brands and retailers
-  const brands = Array.from(new Set(products.map((p) => p.brand).filter(Boolean))).sort();
+  const brands = Array.from(new Set(products.map((p) => p.brand).filter((b): b is string => Boolean(b)))).sort();
   const retailers = Array.from(new Set(products.map((p) => p.retailer).filter((r): r is string => Boolean(r)))).sort();
 
   // Stats
