@@ -231,6 +231,146 @@ export default async function KategorienPage() {
             </div>
           ))}
         </div>
+
+        {/* FAQ — visible HTML only (no FAQPage JSON-LD) */}
+        <section aria-label="Häufig gestellte Fragen zum Preisvergleich" className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+            Häufig gestellte Fragen
+          </h2>
+          <div className="space-y-3">
+            <details className="group border-b border-gray-100 dark:border-zinc-800 pb-3">
+              <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                Was ist ein Preisvergleich und wie funktioniert er?
+                <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+              </summary>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                Ein Preisvergleich zeigt Ihnen auf einen Blick, bei welchem Händler ein Produkt am günstigsten ist.
+                Preisradio durchsucht täglich die Angebote von Saturn, MediaMarkt, Otto und Kaufland und listet
+                die aktuellen Preise übersichtlich auf — so finden Sie schnell das beste Angebot, ohne jeden Shop
+                einzeln besuchen zu müssen.
+              </p>
+            </details>
+            <details className="group border-b border-gray-100 dark:border-zinc-800 pb-3">
+              <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                Welche Shops werden bei Preisradio verglichen?
+                <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+              </summary>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                Aktuell vergleicht Preisradio die Preise von vier großen deutschen Händlern: Saturn, MediaMarkt,
+                Otto und Kaufland. Diese Shops decken ein breites Sortiment ab — von Smartphones und Laptops über
+                Haushaltsgeräte bis hin zu Gaming-Zubehör. Weitere Händler werden in Zukunft hinzugefügt.
+              </p>
+            </details>
+            <details className="group border-b border-gray-100 dark:border-zinc-800 pb-3">
+              <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                Wie oft werden die Preise aktualisiert?
+                <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+              </summary>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                Die Preise bei Preisradio werden täglich aktualisiert. Unser System überprüft regelmäßig die
+                Angebote aller Händler, damit Sie stets die aktuellsten Preise sehen. Besonders bei
+                zeitlich begrenzten Aktionen wie Black Friday oder Cyber Monday lohnt sich ein häufiger Blick.
+              </p>
+            </details>
+            <details className="group border-b border-gray-100 dark:border-zinc-800 pb-3">
+              <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                Ist der Preisvergleich bei Preisradio kostenlos?
+                <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+              </summary>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                Ja, Preisradio ist für alle Nutzer vollständig kostenlos. Sie können beliebig viele Produkte
+                vergleichen, Filter nutzen und direkt zum günstigsten Angebot weitergeleitet werden —
+                ohne Registrierung und ohne versteckte Kosten.
+              </p>
+            </details>
+            <details className="group pb-3">
+              <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                Wie finde ich das günstigste Angebot für ein Produkt?
+                <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+              </summary>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                Wählen Sie zunächst eine Kategorie aus, die Sie interessiert. Auf der Kategorieseite können Sie
+                nach Marke, Preis und Händler filtern. Die Produkte werden mit dem günstigsten Preis angezeigt,
+                sodass Sie sofort sehen, wo Sie am meisten sparen. Mit einem Klick gelangen Sie direkt zum Shop.
+              </p>
+            </details>
+          </div>
+        </section>
+
+        {/* SEO Editorial Content — Kaufberatung & Trends */}
+        <section aria-label="Kaufberatung und Trends" className="mt-8 rounded-2xl bg-white dark:bg-zinc-900 p-6 md:p-8 shadow-sm border border-gray-100 dark:border-zinc-800">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            Elektronik & Haushaltsgeräte kaufen — worauf es 2026 ankommt
+          </h2>
+          <div className="space-y-4 text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p>
+              Der Markt für Elektronik und Haushaltsgeräte verändert sich 2026 spürbar. KI-gestützte Smartphones,
+              RGB-Mini-LED-Fernseher und smarte Haushaltsgeräte mit Matter-Standard setzen neue Maßstäbe.
+              Wer vor einer Anschaffung steht, profitiert von einem gezielten Preisvergleich — denn die
+              Preisunterschiede zwischen den Händlern betragen bei größeren Geräten oft über 100 Euro.
+            </p>
+
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
+              Smartphones 2026: KI wird zum Standard
+            </h3>
+            <p>
+              Samsung Galaxy S26 Ultra, Xiaomi 17 Ultra, Google Pixel 11 und iPhone 18 — die Smartphone-Neuheiten
+              2026 setzen massiv auf KI-Funktionen. Von der automatischen Bildbearbeitung über Echtzeit-Übersetzung
+              bis zur intelligenten Akku-Optimierung: KI ist nicht mehr nur ein Feature, sondern das zentrale
+              Verkaufsargument. Erstmals bringt Samsung zudem faltbare Smartphones unter 1.000 Euro auf den Markt.
+              Tipp: Vorjahresmodelle wie das Galaxy S25 oder iPhone 17 werden nach dem Launch der Nachfolger
+              deutlich günstiger — oft 30 bis 40 % unter dem Einführungspreis.
+            </p>
+
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
+              Fernseher: RGB-Mini-LED und OLED ab 999 Euro
+            </h3>
+            <p>
+              Die größte Neuheit der CES 2026 sind RGB-Mini-LED-Fernseher, die erstmals in den Verkauf kommen
+              und besonders hohe Helligkeit bieten. OLED ist 2026 keine reine Premium-Technologie mehr:
+              55-Zoll-OLED-Fernseher starten ab 999 Euro, 65-Zoll-Modelle mit 120 Hz und 4K liegen zwischen
+              1.500 und 2.000 Euro. Für Gaming sollten Sie auf HDMI 2.1 und eine variable Bildwiederholrate (VRR) achten.
+              Der Trend geht klar zu größeren Bildschirmen ab 65 Zoll — ideal für das Kino-Erlebnis zu Hause.
+            </p>
+
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
+              Haushaltsgeräte: Neues EU-Energielabel beachten
+            </h3>
+            <p>
+              Das neue EU-Energielabel (A bis G statt A+++ bis D) macht Effizienzvergleiche endlich transparent.
+              Seit 2025 gilt es auch für Wäschetrockner, 2026 folgen Heizungen und Warmwasserbereiter.
+              Bei Kühlgeräten wird der Verbrauch pro Jahr angegeben, bei Waschmaschinen pro 100 Waschgänge.
+              Praktisch: Jedes Label enthält einen QR-Code zur EU-Datenbank EPREL mit offiziellen Verbrauchsdaten.
+              Laut Finanztip spart eine Waschmaschine der Klasse A in fünf Jahren fast 200 Euro an Stromkosten.
+              Moderne Geräte wie die AEG 7000 erkennen automatisch Textilart und Beladung und wählen
+              selbstständig das passende Programm.
+            </p>
+
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
+              Smart Home: Matter-Standard vereinfacht alles
+            </h3>
+            <p>
+              2026 wird der Matter-Standard zum Gamechanger: Geräte verschiedener Hersteller — ob Philips Hue,
+              Sonos oder Bosch — lassen sich endlich über eine zentrale Plattform steuern. Das bedeutet
+              weniger Apps, weniger Kompatibilitätsprobleme und eine einfachere Einrichtung. Wer jetzt
+              Smart-Home-Geräte kauft, sollte auf Matter-Kompatibilität achten.
+            </p>
+
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">
+              Beste Kaufzeitpunkte 2026
+            </h3>
+            <p>
+              Der <strong className="text-gray-800 dark:text-gray-200">Black Friday 2026</strong> fällt auf den 27. November,
+              der <strong className="text-gray-800 dark:text-gray-200">Cyber Monday</strong> auf den 30. November.
+              Laut Analysen entstehen die besten Technik-Schnäppchen oft in den 72 Stunden vor dem Black Friday
+              oder am Cyber Monday selbst — nicht am Freitag im Trubel. Durchschnittliche Rabatte liegen bei
+              6 Prozent, einzelne Deals bei Kopfhörern, Gaming-Peripherie und Vorjahres-Smartphones
+              erreichen 20 bis 30 Prozent. Im Januar-Ausverkauf und beim Saisonwechsel werden Haushaltsgeräte
+              ebenfalls stark reduziert. Neue Smartphone-Modelle erscheinen meist im Frühjahr — dann sinken
+              die Preise der Vorgänger erheblich.
+            </p>
+          </div>
+        </section>
       </main>
 
       <Footer />

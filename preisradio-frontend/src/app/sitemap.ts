@@ -60,6 +60,14 @@ async function fetchAllProducts() {
   return allProducts;
 }
 
+// Reject garbage data (CSS injection, HTML, overly long names)
+function isValidName(name: string): boolean {
+  if (!name || name.length > 100) return false;
+  if (/[{}:;#()@]/.test(name)) return false; // CSS/HTML chars
+  if (name.startsWith('*') || name.startsWith('.') || name.startsWith('-')) return false;
+  return true;
+}
+
 export default async function sitemap({
   id,
 }: {
@@ -142,7 +150,7 @@ export default async function sitemap({
       const uniqueBrands = new Map<string, any>();
 
       allProducts.forEach((product: any) => {
-        if (product.brand) {
+        if (product.brand && isValidName(product.brand)) {
           const slug = product.brand.toLowerCase().replace(/[^a-z0-9]+/g, '-');
           if (!uniqueBrands.has(slug)) {
             uniqueBrands.set(slug, {
@@ -176,7 +184,7 @@ export default async function sitemap({
       const uniqueCategories = new Map<string, any>();
 
       allProducts.forEach((product: any) => {
-        if (product.category) {
+        if (product.category && isValidName(product.category)) {
           const slug = product.category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
           if (!uniqueCategories.has(slug)) {
             uniqueCategories.set(slug, {
