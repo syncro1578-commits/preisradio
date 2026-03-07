@@ -353,18 +353,6 @@ export default function ProductDetailClient({
               ) : <div />}
             </div>
 
-            {/* Contextual internal links */}
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
-              {product.brand && (
-                <Link href={`/marken/${brandSlug}`} className="text-blue-600 hover:underline dark:text-blue-400">
-                  Alle {product.brand} Produkte vergleichen
-                </Link>
-              )}
-              <Link href={`/kategorien/${categorySlug}`} className="text-blue-600 hover:underline dark:text-blue-400">
-                Alle {product.category} ab {currentPrice > 50 ? Math.floor(currentPrice * 0.5) : currentPrice.toFixed(0)} € vergleichen
-              </Link>
-            </div>
-
             {/* Meta info compact */}
             <div className="flex flex-wrap gap-2">
               {product.sku && (
@@ -391,14 +379,9 @@ export default function ProductDetailClient({
 
         {/* Similar Products */}
         <section aria-label="Ähnliche Produkte" className="mt-8">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-              Aehnliche {product.category}
-            </h2>
-            <Link href={`/kategorien/${categorySlug}`} className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">
-              Alle {product.category} ansehen
-            </Link>
-          </div>
+          <h2 className="mb-6 text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+            Ähnliche Produkte
+          </h2>
           <ProductSimilar productId={productId} />
         </section>
 
