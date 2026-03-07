@@ -146,6 +146,14 @@ export default function ProductDetailClient({
           <Link href={`/kategorien/${categorySlug}`} className="text-gray-500 hover:text-blue-600 dark:text-gray-400 transition-colors">
             {product.category}
           </Link>
+          {product.brand && (
+            <>
+              <span className="text-gray-300 dark:text-gray-600">/</span>
+              <Link href={`/marken/${brandSlug}`} className="text-gray-500 hover:text-blue-600 dark:text-gray-400 transition-colors">
+                {product.brand}
+              </Link>
+            </>
+          )}
           <span className="text-gray-300 dark:text-gray-600">/</span>
           <span className="truncate max-w-[160px] text-gray-700 dark:text-gray-300">{product.title}</span>
         </nav>
@@ -345,6 +353,18 @@ export default function ProductDetailClient({
               ) : <div />}
             </div>
 
+            {/* Contextual internal links */}
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+              {product.brand && (
+                <Link href={`/marken/${brandSlug}`} className="text-blue-600 hover:underline dark:text-blue-400">
+                  Alle {product.brand} Produkte vergleichen
+                </Link>
+              )}
+              <Link href={`/kategorien/${categorySlug}`} className="text-blue-600 hover:underline dark:text-blue-400">
+                Alle {product.category} ab {currentPrice > 50 ? Math.floor(currentPrice * 0.5) : currentPrice.toFixed(0)} € vergleichen
+              </Link>
+            </div>
+
             {/* Meta info compact */}
             <div className="flex flex-wrap gap-2">
               {product.sku && (
@@ -371,9 +391,14 @@ export default function ProductDetailClient({
 
         {/* Similar Products */}
         <section aria-label="Ähnliche Produkte" className="mt-8">
-          <h2 className="mb-6 text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-            Ähnliche Produkte
-          </h2>
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+              Aehnliche {product.category}
+            </h2>
+            <Link href={`/kategorien/${categorySlug}`} className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">
+              Alle {product.category} ansehen
+            </Link>
+          </div>
           <ProductSimilar productId={productId} />
         </section>
 
