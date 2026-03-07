@@ -25,7 +25,6 @@ export default function ProductDetailClient({
   const [product, setProduct] = useState<Product | null>(initialProduct);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isSaved, setIsSaved] = useState(false);
   const [descExpanded, setDescExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -33,13 +32,6 @@ export default function ProductDetailClient({
     window.scrollTo(0, 0);
     if (!initialProduct) loadProduct();
   }, [productId, initialProduct]);
-
-  useEffect(() => {
-    if (productId) {
-      const saved = localStorage.getItem(`saved_${productId}`);
-      setIsSaved(!!saved);
-    }
-  }, [productId]);
 
   const loadProduct = async () => {
     try {
@@ -53,15 +45,6 @@ export default function ProductDetailClient({
     } finally {
       setLoading(false);
     }
-  };
-
-  const toggleSave = () => {
-    if (isSaved) {
-      localStorage.removeItem(`saved_${productId}`);
-    } else {
-      localStorage.setItem(`saved_${productId}`, '1');
-    }
-    setIsSaved(!isSaved);
   };
 
   const handleShare = async () => {
@@ -171,15 +154,6 @@ export default function ProductDetailClient({
                   </div>
                 )}
                 <div className="absolute top-3 right-3 z-10 flex gap-2">
-                  <button
-                    onClick={toggleSave}
-                    className={`flex h-9 w-9 items-center justify-center rounded-full shadow-md transition-all ${isSaved ? 'bg-red-500 text-white' : 'bg-white dark:bg-zinc-700 text-gray-600 dark:text-gray-300 hover:bg-red-50'}`}
-                    title={isSaved ? 'Gespeichert' : 'Merken'}
-                  >
-                    <svg className="h-4 w-4" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                  </button>
                   <button
                     onClick={handleShare}
                     className="flex h-9 w-9 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-gray-600 dark:text-gray-300 shadow-md hover:bg-blue-50 transition-all"
@@ -409,37 +383,6 @@ export default function ProductDetailClient({
         {/* AdSense Multiplex */}
         <AdSenseMultiplex className="mt-12" />
       </main>
-
-      {/* Mobile Sticky CTA Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm border-t border-gray-200 dark:border-zinc-700 px-4 py-3 shadow-2xl">
-        <div className="flex items-center gap-3">
-          <div className="min-w-0">
-            <p className="text-[10px] text-gray-400 dark:text-gray-500 leading-none">Aktueller Preis</p>
-            <p className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-              {currentPrice.toFixed(2)} €
-            </p>
-          </div>
-          <a
-            href={product.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 py-3 text-sm font-bold text-white shadow-lg active:scale-95 transition-transform"
-          >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-            Jetzt kaufen
-          </a>
-          <button
-            onClick={toggleSave}
-            className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-all ${isSaved ? 'bg-red-50 border-red-200 text-red-500 dark:bg-red-900/20 dark:border-red-800' : 'bg-gray-50 border-gray-200 text-gray-500 dark:bg-zinc-800 dark:border-zinc-700'}`}
-          >
-            <svg className="h-5 w-5" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
-        </div>
-      </div>
 
       <Footer />
     </div>
