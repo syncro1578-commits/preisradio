@@ -317,7 +317,7 @@ export default function ProductDetailClient({
                     className="flex items-center justify-center gap-2 rounded-xl bg-[#FF9900] px-3 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#e68a00] hover:shadow-md hover:scale-[1.01] active:scale-95"
                   >
                     <Image src="/retailers/amazon.png" alt="Amazon" width={18} height={18} className="h-4 w-4 object-contain" />
-                    Auf Amazon suchen
+                    Bei Amazon
                     <svg className="h-3.5 w-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
