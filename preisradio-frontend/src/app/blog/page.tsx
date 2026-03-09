@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { blogArticles } from '@/lib/blog';
+import { blogArticles, BLOG_CATEGORIES } from '@/lib/blog';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
@@ -33,7 +33,15 @@ function formatDate(dateStr: string): string {
 }
 
 export default function BlogPage() {
-  const [featured, ...rest] = blogArticles;
+  const [hero, ...rest] = blogArticles;
+  const gridArticles = rest.slice(0, 4);
+  const remaining = rest.slice(4);
+  const categories = Object.keys(BLOG_CATEGORIES);
+
+  // "Meistgelesen" — simulated top articles (shortest readTime = most accessible)
+  const meistgelesen = [...blogArticles]
+    .sort((a, b) => a.readTime - b.readTime)
+    .slice(0, 5);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -54,85 +62,250 @@ export default function BlogPage() {
       />
 
       <main className="container mx-auto px-4 py-8 md:py-12">
-        {/* Header */}
-        <div className="mb-10 md:mb-14 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+        {/* Header + Category Pills */}
+        <div className="mb-8 md:mb-10">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
             Ratgeber & News
           </h1>
-          <p className="mt-3 text-gray-500 dark:text-gray-400 max-w-xl mx-auto">
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             Kaufberatung, Spartipps und Technik-Trends — damit du immer den besten Deal findest.
           </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-gray-900 text-white dark:bg-white dark:text-gray-900 cursor-default">
+              Alle
+            </span>
+            {categories.map((cat) => (
+              <span
+                key={cat}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium cursor-default ${BLOG_CATEGORIES[cat]}`}
+              >
+                {cat}
+              </span>
+            ))}
+          </div>
         </div>
 
-        {/* Featured Article — Hero */}
-        {featured && (
+        {/* ── Hero Article — full width ── */}
+        {hero && (
           <Link
-            href={`/blog/${featured.slug}`}
-            className="group block mb-10 md:mb-14 rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-zinc-800"
+            href={`/blog/${hero.slug}`}
+            className="group block mb-8 rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-zinc-800"
           >
-            <div className="grid md:grid-cols-2">
-              <div className="relative aspect-[16/10] md:aspect-auto overflow-hidden">
-                <img
-                  src={featured.image}
-                  alt={featured.title}
-                  className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="flex flex-col justify-center p-6 md:p-10">
-                <span className={`self-start px-3 py-1 rounded-full text-xs font-medium ${featured.categoryColor}`}>
-                  {featured.category}
+            <div className="relative aspect-[21/9] overflow-hidden">
+              <img
+                src={hero.image}
+                alt={hero.title}
+                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute bottom-0 inset-x-0 p-6 md:p-10">
+                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${hero.categoryColor}`}>
+                  {hero.category}
                 </span>
-                <h2 className="mt-4 text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  {featured.title}
+                <h2 className="mt-3 text-xl md:text-3xl font-bold text-white leading-snug max-w-3xl">
+                  {hero.title}
                 </h2>
-                <p className="mt-3 text-gray-500 dark:text-gray-400 text-sm md:text-base leading-relaxed line-clamp-3">
-                  {featured.excerpt}
+                <p className="mt-2 text-sm md:text-base text-gray-300 max-w-2xl line-clamp-2">
+                  {hero.excerpt}
                 </p>
-                <div className="mt-5 flex items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
-                  <time dateTime={featured.date}>{formatDate(featured.date)}</time>
-                  <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
-                  <span>{featured.readTime} Min. Lesezeit</span>
+                <div className="mt-3 flex items-center gap-3 text-xs text-gray-400">
+                  <time dateTime={hero.date}>{formatDate(hero.date)}</time>
+                  <span className="w-1 h-1 rounded-full bg-gray-500" />
+                  <span>{hero.readTime} Min. Lesezeit</span>
                 </div>
               </div>
             </div>
           </Link>
         )}
 
-        {/* Articles Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {rest.map((article) => (
-            <Link
-              key={article.slug}
-              href={`/blog/${article.slug}`}
-              className="group flex flex-col rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-zinc-800 hover:-translate-y-1"
-            >
-              {/* Image */}
-              <div className="relative aspect-[16/10] overflow-hidden">
-                <img
-                  src={article.image}
-                  alt={article.title}
-                  className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <span className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-medium ${article.categoryColor}`}>
-                  {article.category}
-                </span>
-              </div>
+        {/* ── Main content: Grid + Sidebar ── */}
+        <div className="grid lg:grid-cols-3 gap-8">
 
-              {/* Content */}
-              <div className="flex flex-col flex-1 p-5">
-                <h2 className="text-base md:text-lg font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
-                  {article.title}
-                </h2>
-                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-2 flex-1">
-                  {article.excerpt}
-                </p>
-                <div className="mt-4 flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
-                  <time dateTime={article.date}>{formatDate(article.date)}</time>
-                  <span>{article.readTime} Min.</span>
+          {/* Left: 2×2 Article Grid */}
+          <div className="lg:col-span-2">
+            <div className="grid gap-5 sm:grid-cols-2">
+              {gridArticles.map((article) => (
+                <Link
+                  key={article.slug}
+                  href={`/blog/${article.slug}`}
+                  className="group flex flex-col rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-zinc-800 hover:-translate-y-1"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <img
+                      src={article.image}
+                      alt={article.title}
+                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <span className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-medium ${article.categoryColor}`}>
+                      {article.category}
+                    </span>
+                  </div>
+                  <div className="flex flex-col flex-1 p-4">
+                    <h2 className="text-sm md:text-base font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                      {article.title}
+                    </h2>
+                    <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-2 flex-1">
+                      {article.excerpt}
+                    </p>
+                    <div className="mt-3 flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
+                      <time dateTime={article.date}>{formatDate(article.date)}</time>
+                      <span>{article.readTime} Min.</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Newsletter CTA between sections */}
+            <div className="mt-8 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 p-6 md:p-8 text-white">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-bold">Die besten Deals direkt ins Postfach</h3>
+                  <p className="mt-1 text-sm text-blue-100">
+                    Kaufberatung, Spartipps und exklusive Angebote — kostenlos und jederzeit kündbar.
+                  </p>
                 </div>
+                <form className="flex gap-2 w-full md:w-auto">
+                  <input
+                    type="email"
+                    placeholder="E-Mail-Adresse"
+                    className="flex-1 md:w-56 rounded-lg border-0 bg-white/20 px-4 py-2.5 text-sm text-white placeholder-blue-200 focus:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  />
+                  <button
+                    type="submit"
+                    className="rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-blue-700 hover:bg-blue-50 transition-colors whitespace-nowrap"
+                  >
+                    Abonnieren
+                  </button>
+                </form>
               </div>
-            </Link>
-          ))}
+            </div>
+
+            {/* Remaining articles — compact list */}
+            {remaining.length > 0 && (
+              <div className="mt-8 space-y-4">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Weitere Artikel</h2>
+                {remaining.map((article) => (
+                  <Link
+                    key={article.slug}
+                    href={`/blog/${article.slug}`}
+                    className="group flex gap-4 rounded-xl bg-white dark:bg-zinc-900 p-3 shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-zinc-800"
+                  >
+                    <div className="relative w-28 h-20 flex-shrink-0 rounded-lg overflow-hidden">
+                      <img
+                        src={article.image}
+                        alt={article.title}
+                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="flex flex-col justify-center flex-1 min-w-0">
+                      <span className={`self-start px-2 py-0.5 rounded-full text-[10px] font-medium ${article.categoryColor}`}>
+                        {article.category}
+                      </span>
+                      <h3 className="mt-1 text-sm font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">
+                        {article.title}
+                      </h3>
+                      <div className="mt-1 flex items-center gap-2 text-xs text-gray-400">
+                        <time dateTime={article.date}>{formatDate(article.date)}</time>
+                        <span>{article.readTime} Min.</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Right: Sidebar */}
+          <aside className="lg:col-span-1 space-y-6">
+            {/* Meistgelesen */}
+            <div className="rounded-2xl bg-white dark:bg-zinc-900 p-5 shadow-sm border border-gray-100 dark:border-zinc-800">
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide mb-4">
+                Meistgelesen
+              </h3>
+              <ol className="space-y-4">
+                {meistgelesen.map((article, idx) => (
+                  <li key={article.slug}>
+                    <Link
+                      href={`/blog/${article.slug}`}
+                      className="group flex gap-3"
+                    >
+                      <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold text-gray-500 dark:text-gray-400 group-hover:bg-blue-100 group-hover:text-blue-600 dark:group-hover:bg-blue-900/40 dark:group-hover:text-blue-400 transition-colors">
+                        {idx + 1}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-medium text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                          {article.title}
+                        </h4>
+                        <span className="text-xs text-gray-400">{article.readTime} Min.</span>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            {/* Kategorien */}
+            <div className="rounded-2xl bg-white dark:bg-zinc-900 p-5 shadow-sm border border-gray-100 dark:border-zinc-800">
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide mb-4">
+                Themen
+              </h3>
+              <div className="space-y-2">
+                {categories.map((cat) => {
+                  const count = blogArticles.filter(a => a.category === cat).length;
+                  return (
+                    <div
+                      key={cat}
+                      className="flex items-center justify-between py-1.5 border-b border-gray-50 dark:border-zinc-800 last:border-0"
+                    >
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{cat}</span>
+                      <span className="text-xs text-gray-400 bg-gray-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full">
+                        {count}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Quick Links — internal linking */}
+            <div className="rounded-2xl bg-white dark:bg-zinc-900 p-5 shadow-sm border border-gray-100 dark:border-zinc-800">
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide mb-4">
+                Preisvergleich
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/kategorien/smartphones" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                    Smartphones vergleichen
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/kategorien/laptops" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                    Laptops vergleichen
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/kategorien/fernseher" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                    Fernseher vergleichen
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/kategorien/waschmaschinen" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                    Waschmaschinen vergleichen
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/kategorien" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors">
+                    Alle Kategorien &rarr;
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </aside>
         </div>
       </main>
 
