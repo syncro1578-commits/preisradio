@@ -496,3 +496,92 @@ div[class*="fc-"][class*="overlay"] {
 .dark .prose strong { color: #e5e7eb; }
 .dark .prose a { color: #60a5fa; }
 .dark .prose a:hover { color: #93c5fd; }
+
+/* ===== Blog Prose — tables, images, FAQs ===== */
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9375rem;
+}
+.prose thead {
+  background-color: #f3f4f6;
+}
+.prose th {
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #1f2937;
+  border-bottom: 2px solid #e5e7eb;
+}
+.prose td {
+  padding: 0.5rem 0.75rem;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+}
+.prose tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.prose figure {
+  margin: 1.5rem 0;
+}
+.prose figure img {
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: 0.75rem;
+}
+.prose figcaption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: #9ca3af;
+}
+
+.prose details {
+  margin-bottom: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.prose summary {
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  cursor: pointer;
+  background-color: #f9fafb;
+}
+.prose summary:hover {
+  background-color: #f3f4f6;
+}
+.prose details[open] summary {
+  border-bottom: 1px solid #e5e7eb;
+}
+.prose details > div,
+.prose details > p {
+  padding: 0.75rem 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose thead { background-color: #27272a; }
+  .prose th { color: #e5e7eb; border-bottom-color: #3f3f46; }
+  .prose td { color: #9ca3af; border-bottom-color: #3f3f46; }
+  .prose tbody tr:hover { background-color: #1c1c1f; }
+  .prose figcaption { color: #6b7280; }
+  .prose details { border-color: #3f3f46; }
+  .prose summary { color: #e5e7eb; background-color: #27272a; }
+  .prose summary:hover { background-color: #333338; }
+  .prose details[open] summary { border-bottom-color: #3f3f46; }
+}
+.dark .prose thead { background-color: #27272a; }
+.dark .prose th { color: #e5e7eb; border-bottom-color: #3f3f46; }
+.dark .prose td { color: #9ca3af; border-bottom-color: #3f3f46; }
+.dark .prose tbody tr:hover { background-color: #1c1c1f; }
+.dark .prose figcaption { color: #6b7280; }
+.dark .prose details { border-color: #3f3f46; }
+.dark .prose summary { color: #e5e7eb; background-color: #27272a; }
+.dark .prose summary:hover { background-color: #333338; }
+.dark .prose details[open] summary { border-bottom-color: #3f3f46; }
