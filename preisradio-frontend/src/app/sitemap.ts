@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { blogArticles } from '@/lib/blog';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
   ? `${process.env.NEXT_PUBLIC_API_URL}/api`
@@ -129,6 +130,18 @@ export default async function sitemap({
         changeFrequency: 'monthly' as const,
         priority: 0.3,
       },
+      {
+        url: `${baseUrl}/blog`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+      },
+      ...blogArticles.map((article) => ({
+        url: `${baseUrl}/blog/${article.slug}`,
+        lastModified: new Date(article.date),
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+      })),
     ];
   }
 

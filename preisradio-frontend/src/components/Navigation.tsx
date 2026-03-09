@@ -42,6 +42,15 @@ function IconStore({ className = 'h-4 w-4' }: { className?: string }) {
   );
 }
 
+function IconBlog({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+    </svg>
+  );
+}
+
 function IconMail({ className = 'h-4 w-4' }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
@@ -66,6 +75,7 @@ const navLinks = [
   { href: '/kategorien', label: 'Kategorien', icon: IconGrid },
   { href: '/marken', label: 'Marken', icon: IconTag },
   { href: '/haendler', label: 'Handler', icon: IconStore },
+  { href: '/blog', label: 'Blog', icon: IconBlog },
   { href: '/kontakt', label: 'Kontakt', icon: IconMail },
 ];
 

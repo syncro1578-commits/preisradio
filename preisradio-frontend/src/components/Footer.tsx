@@ -9,6 +9,7 @@ export default function Footer() {
       title: 'Über Preisradio',
       links: [
         { href: '/', label: 'Startseite' },
+        { href: '/blog', label: 'Blog' },
         { href: '/impressum', label: 'Impressum' },
         { href: '/datenschutz', label: 'Datenschutz' },
         { href: '/kontakt', label: 'Kontakt' },
