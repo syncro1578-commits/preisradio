@@ -397,6 +397,8 @@ export function generateOrganizationSchema(baseUrl: string): Organization {
     description: 'Online-Preisvergleich für Elektronikprodukte in Deutschland. Vergleichen Sie Preise von Saturn, MediaMarkt und Otto in Echtzeit und finden Sie die besten Angebote.',
     sameAs: [
       'https://www.linkedin.com/company/preisradio',
+      'https://www.youtube.com/@PreisRadio',
+      'https://www.crunchbase.com/organization/preisradio',
     ],
     contactPoint: {
       '@type': 'ContactPoint',
