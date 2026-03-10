@@ -2,11 +2,11 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { blogArticles, BLOG_CATEGORIES } from '@/lib/blog';
+import { getPublishedArticles, BLOG_CATEGORIES } from '@/lib/blog-db';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
-export const revalidate = 43200; // 12h ISR
+export const revalidate = 3600; // 1h ISR
 
 export const metadata: Metadata = {
   title: 'Blog — Ratgeber, Kaufberatung & Spartipps',
@@ -32,14 +32,28 @@ function formatDate(dateStr: string): string {
   });
 }
 
-export default function BlogPage() {
-  const [hero, ...rest] = blogArticles;
+export default async function BlogPage() {
+  const allArticles = await getPublishedArticles();
+
+  if (allArticles.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-zinc-950">
+        <Navigation />
+        <main className="container mx-auto px-4 py-16 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Blog</h1>
+          <p className="text-gray-500 dark:text-gray-400">Bald erscheinen hier spannende Artikel.</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  const [hero, ...rest] = allArticles;
   const gridArticles = rest.slice(0, 4);
   const remaining = rest.slice(4);
   const categories = Object.keys(BLOG_CATEGORIES);
 
-  // "Meistgelesen" — simulated top articles (shortest readTime = most accessible)
-  const meistgelesen = [...blogArticles]
+  const meistgelesen = [...allArticles]
     .sort((a, b) => a.readTime - b.readTime)
     .slice(0, 5);
 
@@ -85,43 +99,39 @@ export default function BlogPage() {
           </div>
         </div>
 
-        {/* ── Hero Article — full width ── */}
-        {hero && (
-          <Link
-            href={`/blog/${hero.slug}`}
-            className="group block mb-8 rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-zinc-800"
-          >
-            <div className="relative aspect-[21/9] overflow-hidden">
-              <img
-                src={hero.image}
-                alt={hero.title}
-                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-              <div className="absolute bottom-0 inset-x-0 p-6 md:p-10">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${hero.categoryColor}`}>
-                  {hero.category}
-                </span>
-                <h2 className="mt-3 text-xl md:text-3xl font-bold text-white leading-snug max-w-3xl">
-                  {hero.title}
-                </h2>
-                <p className="mt-2 text-sm md:text-base text-gray-300 max-w-2xl line-clamp-2">
-                  {hero.excerpt}
-                </p>
-                <div className="mt-3 flex items-center gap-3 text-xs text-gray-400">
-                  <time dateTime={hero.date}>{formatDate(hero.date)}</time>
-                  <span className="w-1 h-1 rounded-full bg-gray-500" />
-                  <span>{hero.readTime} Min. Lesezeit</span>
-                </div>
+        {/* Hero Article */}
+        <Link
+          href={`/blog/${hero.slug}`}
+          className="group block mb-8 rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-zinc-800"
+        >
+          <div className="relative aspect-[21/9] overflow-hidden">
+            <img
+              src={hero.image}
+              alt={hero.title}
+              className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            <div className="absolute bottom-0 inset-x-0 p-6 md:p-10">
+              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${hero.categoryColor}`}>
+                {hero.category}
+              </span>
+              <h2 className="mt-3 text-xl md:text-3xl font-bold text-white leading-snug max-w-3xl">
+                {hero.title}
+              </h2>
+              <p className="mt-2 text-sm md:text-base text-gray-300 max-w-2xl line-clamp-2">
+                {hero.excerpt}
+              </p>
+              <div className="mt-3 flex items-center gap-3 text-xs text-gray-400">
+                <time dateTime={hero.date}>{formatDate(hero.date)}</time>
+                <span className="w-1 h-1 rounded-full bg-gray-500" />
+                <span>{hero.readTime} Min. Lesezeit</span>
               </div>
             </div>
-          </Link>
-        )}
+          </div>
+        </Link>
 
-        {/* ── Main content: Grid + Sidebar ── */}
+        {/* Main content: Grid + Sidebar */}
         <div className="grid lg:grid-cols-3 gap-8">
-
-          {/* Left: 2×2 Article Grid */}
           <div className="lg:col-span-2">
             <div className="grid gap-5 sm:grid-cols-2">
               {gridArticles.map((article) => (
@@ -156,7 +166,7 @@ export default function BlogPage() {
               ))}
             </div>
 
-            {/* Newsletter CTA between sections */}
+            {/* Newsletter CTA */}
             <div className="mt-8 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 p-6 md:p-8 text-white">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
@@ -181,7 +191,7 @@ export default function BlogPage() {
               </div>
             </div>
 
-            {/* Remaining articles — compact list */}
+            {/* Remaining articles */}
             {remaining.length > 0 && (
               <div className="mt-8 space-y-4">
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white">Weitere Artikel</h2>
@@ -216,9 +226,8 @@ export default function BlogPage() {
             )}
           </div>
 
-          {/* Right: Sidebar */}
+          {/* Sidebar */}
           <aside className="lg:col-span-1 space-y-6">
-            {/* Meistgelesen */}
             <div className="rounded-2xl bg-white dark:bg-zinc-900 p-5 shadow-sm border border-gray-100 dark:border-zinc-800">
               <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide mb-4">
                 Meistgelesen
@@ -226,10 +235,7 @@ export default function BlogPage() {
               <ol className="space-y-4">
                 {meistgelesen.map((article, idx) => (
                   <li key={article.slug}>
-                    <Link
-                      href={`/blog/${article.slug}`}
-                      className="group flex gap-3"
-                    >
+                    <Link href={`/blog/${article.slug}`} className="group flex gap-3">
                       <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold text-gray-500 dark:text-gray-400 group-hover:bg-blue-100 group-hover:text-blue-600 dark:group-hover:bg-blue-900/40 dark:group-hover:text-blue-400 transition-colors">
                         {idx + 1}
                       </span>
@@ -245,14 +251,13 @@ export default function BlogPage() {
               </ol>
             </div>
 
-            {/* Kategorien */}
             <div className="rounded-2xl bg-white dark:bg-zinc-900 p-5 shadow-sm border border-gray-100 dark:border-zinc-800">
               <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide mb-4">
                 Themen
               </h3>
               <div className="space-y-2">
                 {categories.map((cat) => {
-                  const count = blogArticles.filter(a => a.category === cat).length;
+                  const count = allArticles.filter((a) => a.category === cat).length;
                   return (
                     <div
                       key={cat}
@@ -268,7 +273,6 @@ export default function BlogPage() {
               </div>
             </div>
 
-            {/* Quick Links — internal linking */}
             <div className="rounded-2xl bg-white dark:bg-zinc-900 p-5 shadow-sm border border-gray-100 dark:border-zinc-800">
               <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide mb-4">
                 Preisvergleich
@@ -290,12 +294,6 @@ export default function BlogPage() {
                   <Link href="/kategorien/fernseher" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                     Fernseher vergleichen
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/kategorien/waschmaschinen" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                    Waschmaschinen vergleichen
                   </Link>
                 </li>
                 <li>

@@ -3,14 +3,19 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { blogArticles, getArticleBySlug, getRelatedArticles } from '@/lib/blog';
+import { getArticleBySlug, getRelatedArticles, getAllSlugs } from '@/lib/blog-db';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
-export const revalidate = 43200;
+export const revalidate = 3600; // 1h ISR
 
-export function generateStaticParams() {
-  return blogArticles.map((article) => ({ slug: article.slug }));
+export async function generateStaticParams() {
+  try {
+    const slugs = await getAllSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({
@@ -19,7 +24,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
   if (!article) return { title: 'Artikel nicht gefunden' };
 
   return {
@@ -34,7 +39,7 @@ export async function generateMetadata({
       siteName: 'Preisradio',
       publishedTime: article.date,
       modifiedTime: article.date,
-      images: [{ url: article.image, width: 800, height: 500, alt: article.title }],
+      images: article.image ? [{ url: article.image, width: 800, height: 450, alt: article.title }] : [],
     },
     alternates: {
       canonical: `${baseUrl}/blog/${article.slug}`,
@@ -56,10 +61,10 @@ export default async function BlogArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
-  const related = getRelatedArticles(slug, 3);
+  const related = await getRelatedArticles(slug, 3);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -92,6 +97,8 @@ export default async function BlogArticlePage({
     mainEntityOfPage: `${baseUrl}/blog/${article.slug}`,
   };
 
+  const amazonTag = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'bestprice2109-21';
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-950">
       <Navigation />
@@ -116,29 +123,31 @@ export default async function BlogArticlePage({
         </nav>
 
         {/* Hero Image */}
-        <div className="relative rounded-2xl overflow-hidden mb-8 aspect-[21/9]">
-          <img
-            src={article.image}
-            alt={article.title}
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-          <div className="absolute bottom-0 inset-x-0 p-6 md:p-10">
-            <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${article.categoryColor}`}>
-              {article.category}
-            </span>
-            <h1 className="mt-3 text-2xl md:text-4xl font-bold text-white leading-tight max-w-3xl">
-              {article.title}
-            </h1>
-            <div className="mt-3 flex items-center gap-3 text-sm text-gray-300">
-              <span>{article.author}</span>
-              <span className="w-1 h-1 rounded-full bg-gray-400" />
-              <time dateTime={article.date}>{formatDate(article.date)}</time>
-              <span className="w-1 h-1 rounded-full bg-gray-400" />
-              <span>{article.readTime} Min. Lesezeit</span>
+        {article.image && (
+          <div className="relative rounded-2xl overflow-hidden mb-8 aspect-[21/9]">
+            <img
+              src={article.image}
+              alt={article.title}
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+            <div className="absolute bottom-0 inset-x-0 p-6 md:p-10">
+              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${article.categoryColor}`}>
+                {article.category}
+              </span>
+              <h1 className="mt-3 text-2xl md:text-4xl font-bold text-white leading-tight max-w-3xl">
+                {article.title}
+              </h1>
+              <div className="mt-3 flex items-center gap-3 text-sm text-gray-300">
+                <span>{article.author}</span>
+                <span className="w-1 h-1 rounded-full bg-gray-400" />
+                <time dateTime={article.date}>{formatDate(article.date)}</time>
+                <span className="w-1 h-1 rounded-full bg-gray-400" />
+                <span>{article.readTime} Min. Lesezeit</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Content */}
         <div className="max-w-3xl mx-auto">
@@ -162,33 +171,29 @@ export default async function BlogArticlePage({
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
-                {article.amazonKeywords.map((keyword) => {
-                  const tag = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'bestprice2109-21';
-                  const href = `https://www.amazon.de/s?k=${encodeURIComponent(keyword)}&tag=${tag}`;
-                  return (
-                    <a
-                      key={keyword}
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer nofollow sponsored"
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-gray-800 dark:text-gray-200 hover:bg-amber-100 dark:hover:bg-amber-900/30 hover:border-amber-400 transition-colors shadow-sm"
-                    >
-                      <svg className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M.045 18.02c.07-.116.36-.31.53-.31.13 0 .27.04.39.13 1.15.87 2.38 1.55 3.69 2.04 1.31.49 2.64.74 3.97.74 1.52 0 2.97-.35 4.35-1.04 1.38-.69 2.53-1.66 3.44-2.9l.1.08c.12.09.19.22.19.37 0 .11-.04.21-.12.3C14.54 20.05 11.62 21 8.65 21c-1.54 0-3.04-.31-4.47-.94C2.75 19.43 1.35 18.64.045 18.02zM6.27 7.39c0-1.32.54-2.44 1.6-3.36 1.07-.92 2.42-1.38 4.06-1.38.92 0 1.77.16 2.56.49.79.33 1.4.74 1.81 1.24.42.49.62.97.62 1.42 0 .35-.13.65-.4.89-.27.24-.59.36-.97.36-.32 0-.6-.1-.84-.3-.26-.24-.52-.6-.79-1.07-.34-.59-.7-1.02-1.07-1.28-.37-.27-.87-.4-1.49-.4-.86 0-1.56.3-2.12.89-.55.6-.83 1.33-.83 2.19 0 .69.14 1.3.42 1.84.28.54.66.97 1.14 1.29.48.32 1.01.54 1.58.67.57.13 1.25.2 2.05.33.8.14 1.58.31 2.34.52.76.21 1.47.51 2.14.89.67.38 1.21.91 1.61 1.59.4.68.6 1.53.6 2.55 0 1.09-.29 2.1-.87 3.04-.58.94-1.49 1.7-2.71 2.27-1.23.57-2.71.86-4.44.86-1.33 0-2.55-.19-3.66-.57a8.8 8.8 0 01-2.89-1.61c-.5-.44-.75-.93-.75-1.47 0-.35.13-.66.4-.91.27-.26.6-.39.99-.39.3 0 .56.09.79.26.42.37.81.76 1.18 1.18.36.42.82.78 1.37 1.07.55.3 1.28.44 2.19.44 1.05 0 1.93-.28 2.62-.85.7-.57 1.04-1.26 1.04-2.07 0-.57-.13-1.04-.39-1.39-.26-.36-.61-.65-1.04-.87-.44-.22-.88-.39-1.34-.5-.46-.11-1.1-.24-1.93-.38-1.23-.22-2.28-.52-3.14-.9-.87-.38-1.55-.92-2.05-1.61-.5-.69-.74-1.57-.74-2.64z" />
-                      </svg>
-                      {keyword}
-                      <svg className="h-3 w-3 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                      </svg>
-                    </a>
-                  );
-                })}
+                {article.amazonKeywords.map((keyword) => (
+                  <a
+                    key={keyword}
+                    href={`https://www.amazon.de/s?k=${encodeURIComponent(keyword)}&tag=${amazonTag}`}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow sponsored"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-gray-800 dark:text-gray-200 hover:bg-amber-100 dark:hover:bg-amber-900/30 hover:border-amber-400 transition-colors shadow-sm"
+                  >
+                    <svg className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M.045 18.02c.07-.116.36-.31.53-.31.13 0 .27.04.39.13 1.15.87 2.38 1.55 3.69 2.04 1.31.49 2.64.74 3.97.74 1.52 0 2.97-.35 4.35-1.04 1.38-.69 2.53-1.66 3.44-2.9l.1.08c.12.09.19.22.19.37 0 .11-.04.21-.12.3C14.54 20.05 11.62 21 8.65 21c-1.54 0-3.04-.31-4.47-.94C2.75 19.43 1.35 18.64.045 18.02zM6.27 7.39c0-1.32.54-2.44 1.6-3.36 1.07-.92 2.42-1.38 4.06-1.38.92 0 1.77.16 2.56.49.79.33 1.4.74 1.81 1.24.42.49.62.97.62 1.42 0 .35-.13.65-.4.89-.27.24-.59.36-.97.36-.32 0-.6-.1-.84-.3-.26-.24-.52-.6-.79-1.07-.34-.59-.7-1.02-1.07-1.28-.37-.27-.87-.4-1.49-.4-.86 0-1.56.3-2.12.89-.55.6-.83 1.33-.83 2.19 0 .69.14 1.3.42 1.84.28.54.66.97 1.14 1.29.48.32 1.01.54 1.58.67.57.13 1.25.2 2.05.33.8.14 1.58.31 2.34.52.76.21 1.47.51 2.14.89.67.38 1.21.91 1.61 1.59.4.68.6 1.53.6 2.55 0 1.09-.29 2.1-.87 3.04-.58.94-1.49 1.7-2.71 2.27-1.23.57-2.71.86-4.44.86-1.33 0-2.55-.19-3.66-.57a8.8 8.8 0 01-2.89-1.61c-.5-.44-.75-.93-.75-1.47 0-.35.13-.66.4-.91.27-.26.6-.39.99-.39.3 0 .56.09.79.26.42.37.81.76 1.18 1.18.36.42.82.78 1.37 1.07.55.3 1.28.44 2.19.44 1.05 0 1.93-.28 2.62-.85.7-.57 1.04-1.26 1.04-2.07 0-.57-.13-1.04-.39-1.39-.26-.36-.61-.65-1.04-.87-.44-.22-.88-.39-1.34-.5-.46-.11-1.1-.24-1.93-.38-1.23-.22-2.28-.52-3.14-.9-.87-.38-1.55-.92-2.05-1.61-.5-.69-.74-1.57-.74-2.64z" />
+                    </svg>
+                    {keyword}
+                    <svg className="h-3 w-3 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                    </svg>
+                  </a>
+                ))}
               </div>
               <p className="mt-3 text-[11px] text-gray-400 dark:text-gray-500">* Affiliate-Links — bei einem Kauf erhalten wir eine kleine Provision, für dich ändert sich der Preis nicht.</p>
             </div>
           )}
 
-          {/* Share / Back */}
+          {/* Back */}
           <div className="mt-10 pt-8 border-t border-gray-200 dark:border-zinc-800 flex items-center justify-between">
             <Link
               href="/blog"
@@ -206,9 +211,7 @@ export default async function BlogArticlePage({
         {related.length > 0 && (
           <section className="mt-16" aria-label="Ähnliche Artikel">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                Weiterlesen
-              </h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Weiterlesen</h2>
               <Link
                 href="/blog"
                 className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
