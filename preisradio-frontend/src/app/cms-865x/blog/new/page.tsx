@@ -34,7 +34,7 @@ export default function NewArticlePage() {
         throw new Error(err.error || 'Fehler beim Speichern');
       }
 
-      router.push('/admin/blog');
+      router.push('/cms-865x/blog');
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Fehler beim Speichern');
     }

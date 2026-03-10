@@ -29,7 +29,7 @@ export default function EditArticlePage() {
         setLoading(false);
       })
       .catch(() => {
-        router.push('/admin/blog');
+        router.push('/cms-865x/blog');
       });
   }, [id, router]);
 
@@ -55,7 +55,7 @@ export default function EditArticlePage() {
       });
 
       if (!res.ok) throw new Error('Fehler beim Speichern');
-      router.push('/admin/blog');
+      router.push('/cms-865x/blog');
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Fehler beim Speichern');
     }

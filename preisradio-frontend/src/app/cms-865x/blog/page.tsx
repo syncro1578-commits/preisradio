@@ -109,7 +109,7 @@ export default function AdminBlogPage() {
               Blog ansehen
             </Link>
             <Link
-              href="/admin/blog/new"
+              href="/cms-865x/blog/new"
               className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
             >
               + Neuer Artikel
@@ -123,7 +123,7 @@ export default function AdminBlogPage() {
             <div className="p-12 text-center">
               <p className="text-gray-400 dark:text-gray-500 mb-4">Noch keine Artikel vorhanden</p>
               <Link
-                href="/admin/blog/new"
+                href="/cms-865x/blog/new"
                 className="inline-flex px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
               >
                 Ersten Artikel erstellen
@@ -148,7 +148,7 @@ export default function AdminBlogPage() {
                   >
                     <td className="px-6 py-4">
                       <Link
-                        href={`/admin/blog/${article._id}`}
+                        href={`/cms-865x/blog/${article._id}`}
                         className="text-sm font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       >
                         {article.title}
@@ -176,7 +176,7 @@ export default function AdminBlogPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Link
-                          href={`/admin/blog/${article._id}`}
+                          href={`/cms-865x/blog/${article._id}`}
                           className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium"
                         >
                           Bearbeiten
