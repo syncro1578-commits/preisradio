@@ -9,6 +9,13 @@ CATEGORY_COLORS = {
 }
 
 
+def get_image_url(page):
+    """Get the Cloudinary URL for the blog page's image."""
+    if page.image:
+        return page.image.file.url
+    return ''
+
+
 def serialize_article(page):
     """Convert a BlogPage to a JSON-friendly dict."""
     return {
@@ -19,7 +26,7 @@ def serialize_article(page):
         'content': page.content,
         'category': page.category,
         'categoryColor': CATEGORY_COLORS.get(page.category, CATEGORY_COLORS['Kaufberatung']),
-        'image': page.image,
+        'image': get_image_url(page),
         'amazonKeywords': [k.strip() for k in page.amazon_keywords.split(',') if k.strip()] if page.amazon_keywords else [],
         'author': page.author,
         'readTime': page.read_time,

@@ -33,7 +33,14 @@ class BlogPage(Page):
     excerpt = models.CharField(max_length=500, help_text='Kurzbeschreibung für die Artikelliste')
     content = RichTextField(help_text='Artikel-Inhalt')
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='Kaufberatung')
-    image = models.URLField(blank=True, help_text='Titelbild-URL (Cloudinary)')
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text='Titelbild (wird auf Cloudinary gespeichert)',
+    )
     amazon_keywords = models.CharField(max_length=500, blank=True, help_text='Kommagetrennte Amazon-Keywords')
     author = models.CharField(max_length=100, default='Preisradio Redaktion')
     read_time = models.IntegerField(default=5, help_text='Lesezeit in Minuten')

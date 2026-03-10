@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Cloudinary
+    'cloudinary_storage',
+    'cloudinary',
     # Wagtail
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -294,9 +297,16 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'public', 'static')
 
-# Media files (Uploads)
+# Media files — Cloudinary storage
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'public', 'media')
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default='dumra5wv4'),
+    'API_KEY': config('CLOUDINARY_API_KEY', default=''),
+    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Ensure directories exist
 os.makedirs(STATIC_ROOT, exist_ok=True)
