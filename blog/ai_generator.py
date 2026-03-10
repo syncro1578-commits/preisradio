@@ -1,5 +1,5 @@
 """
-AI article generator using xAI Grok API (OpenAI-compatible).
+AI article generator using Groq API (OpenAI-compatible).
 """
 import json
 import re
@@ -9,13 +9,13 @@ from django.conf import settings
 
 
 def generate_article(topic, category='Kaufberatung'):
-    """Generate a blog article using Grok API.
+    """Generate a blog article using Groq API.
 
     Returns dict with keys: title, excerpt, content, amazon_keywords, read_time
     """
     client = OpenAI(
-        api_key=settings.XAI_API_KEY,
-        base_url="https://api.x.ai/v1",
+        api_key=settings.GROQ_API_KEY,
+        base_url="https://api.groq.com/openai/v1",
     )
 
     prompt = f"""Du bist ein erfahrener Tech-Journalist für Preisradio.de, einen deutschen Preisvergleich für Elektronik (Saturn, MediaMarkt, Otto, Kaufland).
@@ -44,11 +44,11 @@ Regeln:
 - Kein umschließendes ```json``` — nur das JSON-Objekt"""
 
     response = client.chat.completions.create(
-        model=getattr(settings, 'XAI_MODEL', 'grok-3-mini'),
+        model=getattr(settings, 'GROQ_MODEL', 'llama-3.3-70b-versatile'),
         messages=[
             {
                 "role": "system",
-                "content": "Du bist ein Tech-Journalist. Antworte ausschließlich mit validem JSON. Kein Markdown, kein erklärende Text — nur das JSON-Objekt.",
+                "content": "Du bist ein Tech-Journalist. Antworte ausschließlich mit validem JSON. Kein Markdown, kein erklärender Text — nur das JSON-Objekt.",
             },
             {"role": "user", "content": prompt},
         ],

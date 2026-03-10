@@ -241,9 +241,9 @@ except Exception as e:
 GOOGLE_MERCHANT_ID = config('GOOGLE_MERCHANT_ID', default='5698148813')
 GOOGLE_SERVICE_ACCOUNT_KEY = os.path.join(BASE_DIR, 'astute-pride-262723-7f9bd77e07a5.json')
 
-# xAI Grok API Configuration
-XAI_API_KEY = config('XAI_API_KEY', default='')
-XAI_MODEL = config('XAI_MODEL', default='grok-3-mini')
+# Groq API Configuration (AI article generation)
+GROQ_API_KEY = config('GROQ_API_KEY', default='')
+GROQ_MODEL = config('GROQ_MODEL', default='llama-3.3-70b-versatile')
 
 
 # Cache Configuration
