@@ -1,74 +1,32 @@
 """
-Wagtail admin view for AI article generation.
+AJAX endpoint for AI article generation inside the Wagtail page editor.
 """
-import re
+import json
 
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
-from blog.models import BlogPage, BlogIndexPage, CATEGORY_CHOICES
 from blog.ai_generator import generate_article
 
 
-def _slugify_de(text):
-    """Generate a URL-safe slug from German text."""
-    slug = text.lower()
-    # Replace umlauts
-    for src, dst in [('ä', 'ae'), ('ö', 'oe'), ('ü', 'ue'), ('ß', 'ss')]:
-        slug = slug.replace(src, dst)
-    slug = re.sub(r'[^a-z0-9]+', '-', slug).strip('-')
-    return slug[:80]
-
-
+@require_POST
 @staff_member_required
-def ai_generate_view(request):
-    """Admin page: enter a topic → Grok generates a draft BlogPage."""
-    categories = [c[0] for c in CATEGORY_CHOICES]
-
-    if request.method == 'POST':
+def ai_generate_ajax(request):
+    """AJAX: generate article fields from a topic string."""
+    try:
+        body = json.loads(request.body)
+        topic = body.get('topic', '').strip()
+        category = body.get('category', 'Kaufberatung')
+    except (json.JSONDecodeError, AttributeError):
         topic = request.POST.get('topic', '').strip()
         category = request.POST.get('category', 'Kaufberatung')
 
-        if not topic:
-            messages.error(request, 'Bitte ein Thema eingeben.')
-            return render(request, 'blog/ai_generate.html', {
-                'categories': categories,
-            })
+    if not topic:
+        return JsonResponse({'error': 'Kein Thema angegeben.'}, status=400)
 
-        try:
-            result = generate_article(topic, category)
-
-            parent = BlogIndexPage.objects.first()
-            if not parent:
-                messages.error(request, 'BlogIndexPage nicht gefunden. Erstelle zuerst eine Blog-Übersichtsseite.')
-                return render(request, 'blog/ai_generate.html', {
-                    'categories': categories,
-                })
-
-            slug = _slugify_de(result['title'])
-
-            page = BlogPage(
-                title=result['title'],
-                slug=slug,
-                excerpt=result['excerpt'][:500],
-                content=result['content'],
-                category=category,
-                amazon_keywords=result.get('amazon_keywords', ''),
-                read_time=int(result.get('read_time', 5)),
-            )
-            parent.add_child(instance=page)
-            page.save_revision()
-
-            messages.success(
-                request,
-                f'Artikel "{result["title"]}" als Entwurf erstellt. Du kannst ihn jetzt bearbeiten und veröffentlichen.'
-            )
-            return redirect(f'/wagtail-admin/pages/{page.pk}/edit/')
-
-        except Exception as e:
-            messages.error(request, f'Fehler bei der Generierung: {e}')
-
-    return render(request, 'blog/ai_generate.html', {
-        'categories': categories,
-    })
+    try:
+        result = generate_article(topic, category)
+        return JsonResponse(result)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
