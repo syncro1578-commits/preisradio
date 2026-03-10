@@ -60,9 +60,11 @@ if not SITE_PACKAGES:
 
 # 4. Add paths to sys.path
 USER_SITE_PACKAGES = Path('/usr/home/wael/.local/lib/python3.11/site-packages')
+SYSTEM_SITE_PACKAGES = Path('/usr/local/lib/python3.11/site-packages')
 paths_to_add = [
     str(SITE_PACKAGES),
     str(USER_SITE_PACKAGES) if USER_SITE_PACKAGES.exists() else None,
+    str(SYSTEM_SITE_PACKAGES) if SYSTEM_SITE_PACKAGES.exists() else None,
     str(BASE_DIR),
 ]
 paths_to_add = [p for p in paths_to_add if p]
