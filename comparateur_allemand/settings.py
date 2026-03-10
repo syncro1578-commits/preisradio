@@ -43,9 +43,25 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Wagtail
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail',
+    'modelcluster',
+    'taggit',
+    # Apps
     'rest_framework',
     'corsheaders',
     'django_filters',
+    'blog',
     'products',
     'contact',
 ]
@@ -59,6 +75,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'comparateur_allemand.urls'
@@ -87,7 +104,15 @@ WSGI_APPLICATION = 'comparateur_allemand.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.dummy',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('MYSQL_DB', default='m6686_Preisradio'),
+        'USER': config('MYSQL_USER', default='m6686_admin'),
+        'PASSWORD': config('MYSQL_PASSWORD', default=''),
+        'HOST': config('MYSQL_HOST', default='mysql11.serv00.com'),
+        'PORT': config('MYSQL_PORT', default='3306'),
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     }
 }
 
@@ -374,3 +399,9 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='preisradio@preisradio.de')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='preisradio@preisradio.de')
 CONTACT_EMAIL = config('CONTACT_EMAIL', default='team_preisradio@wael.serv00.net')
+
+# Wagtail Settings
+WAGTAIL_SITE_NAME = 'Preisradio Blog'
+WAGTAILADMIN_BASE_URL = 'https://api.preisradio.de'
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10MB
+WAGTAIL_ENABLE_UPDATE_CHECK = False
