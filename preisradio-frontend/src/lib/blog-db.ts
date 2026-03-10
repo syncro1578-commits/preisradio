@@ -1,5 +1,4 @@
-import { connectDB } from './mongodb';
-import Article, { IArticle } from './models/Article';
+const BLOG_API_URL = 'https://api.preisradio.de/api/blog';
 
 const BLOG_CATEGORIES: Record<string, string> = {
   'Kaufberatung': 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
@@ -21,59 +20,55 @@ export interface BlogArticle {
   readTime: number;
   author: string;
   amazonKeywords: string[];
-  status: 'draft' | 'published';
-}
-
-function toArticle(doc: IArticle): BlogArticle {
-  return {
-    _id: doc._id.toString(),
-    slug: doc.slug,
-    title: doc.title,
-    excerpt: doc.excerpt,
-    content: doc.content,
-    category: doc.category,
-    categoryColor: BLOG_CATEGORIES[doc.category] || BLOG_CATEGORIES['Kaufberatung'],
-    image: doc.image,
-    date: doc.createdAt.toISOString().split('T')[0],
-    readTime: doc.readTime,
-    author: doc.author,
-    amazonKeywords: doc.amazonKeywords || [],
-    status: doc.status,
-  };
 }
 
 export async function getPublishedArticles(): Promise<BlogArticle[]> {
-  await connectDB();
-  const docs = await Article.find({ status: 'published' }).sort({ createdAt: -1 }).lean() as IArticle[];
-  return docs.map(toArticle);
+  try {
+    const res = await fetch(`${BLOG_API_URL}/articles/`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
 }
 
 export async function getArticleBySlug(slug: string): Promise<BlogArticle | null> {
-  await connectDB();
-  const doc = await Article.findOne({ slug, status: 'published' }).lean() as IArticle | null;
-  return doc ? toArticle(doc) : null;
+  try {
+    const res = await fetch(`${BLOG_API_URL}/articles/${slug}/`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
 }
 
 export async function getAllSlugs(): Promise<string[]> {
-  await connectDB();
-  const docs = await Article.find({ status: 'published' }, { slug: 1 }).lean();
-  return docs.map((d) => d.slug);
+  try {
+    const res = await fetch(`${BLOG_API_URL}/slugs/`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
 }
 
 export async function getRelatedArticles(currentSlug: string, limit = 3): Promise<BlogArticle[]> {
-  await connectDB();
-  const current = await Article.findOne({ slug: currentSlug }).lean() as IArticle | null;
+  const all = await getPublishedArticles();
+  const current = all.find((a) => a.slug === currentSlug);
   if (!current) return [];
 
-  const docs = await Article.find({
-    slug: { $ne: currentSlug },
-    status: 'published',
-  })
-    .sort({ category: current.category ? 1 : -1, createdAt: -1 })
-    .limit(limit)
-    .lean() as IArticle[];
+  // Prioritize same category, then recent
+  const others = all.filter((a) => a.slug !== currentSlug);
+  const sameCategory = others.filter((a) => a.category === current.category);
+  const different = others.filter((a) => a.category !== current.category);
 
-  return docs.map(toArticle);
+  return [...sameCategory, ...different].slice(0, limit);
 }
 
 export { BLOG_CATEGORIES };
