@@ -62,6 +62,42 @@ Regeln:
         raw = re.sub(r'^```(?:json)?\s*', '', raw)
         raw = re.sub(r'\s*```$', '', raw)
 
+    # Fix invalid control characters inside JSON string values.
+    # LLMs sometimes emit literal newlines/tabs inside strings instead of \n/\t.
+    def _fix_control_chars(s):
+        # Replace control chars (except valid JSON whitespace between tokens)
+        # by working on the raw bytes between quotes.
+        out = []
+        in_string = False
+        escape = False
+        for ch in s:
+            if escape:
+                out.append(ch)
+                escape = False
+                continue
+            if ch == '\\' and in_string:
+                out.append(ch)
+                escape = True
+                continue
+            if ch == '"':
+                in_string = not in_string
+            if in_string and ch != '"':
+                code = ord(ch)
+                if code < 0x20:
+                    # Replace control chars with their escape sequences
+                    if ch == '\n':
+                        out.append('\\n')
+                    elif ch == '\r':
+                        out.append('\\r')
+                    elif ch == '\t':
+                        out.append('\\t')
+                    else:
+                        out.append(f'\\u{code:04x}')
+                    continue
+            out.append(ch)
+        return ''.join(out)
+
+    raw = _fix_control_chars(raw)
     result = json.loads(raw)
 
     # Validate required keys
