@@ -9,6 +9,7 @@ export interface BlogArticle {
   date: string; // ISO date
   readTime: number; // minutes
   author: string;
+  amazonKeywords: string[]; // Amazon affiliate search terms
 }
 
 // Standard image dimensions: 800×450 (16:9 aspect ratio)
@@ -32,6 +33,7 @@ export const blogArticles: BlogArticle[] = [
     date: '2026-03-08',
     readTime: 9,
     author: 'Preisradio Redaktion',
+    amazonKeywords: ['Samsung Galaxy S26', 'Apple iPhone 17', 'Smartphone Hülle'],
     content: `
       <p>Jedes Jahr stehen Millionen von Nutzern vor der gleichen Frage: Samsung oder Apple? Mit dem Galaxy S26 und dem iPhone 17 liefern sich die beiden Smartphone-Giganten 2026 ein besonders spannendes Duell. Beide Geräte bringen bahnbrechende Neuerungen mit — doch sie setzen unterschiedliche Prioritäten. In diesem ausführlichen Vergleich zeigen wir dir, welches Smartphone besser zu deinen Bedürfnissen passt.</p>
 
@@ -136,6 +138,7 @@ export const blogArticles: BlogArticle[] = [
     date: '2026-03-05',
     readTime: 8,
     author: 'Preisradio Redaktion',
+    amazonKeywords: ['Kopfhörer Bluetooth', 'Nintendo Switch Bundle', 'Staubsauger Roboter'],
     content: `
       <p>Black Friday 2026 fällt auf den 27. November — doch die besten Deals starten oft schon zwei Wochen vorher. Laut einer Studie des Handelsverbands Deutschland (HDE) haben 2025 mehr als 67 % der deutschen Online-Käufer am Black Friday eingekauft. Doch nicht jedes Angebot ist ein echtes Schnäppchen. In diesem Ratgeber zeigen wir dir, wie du die besten Deals findest, Fake-Rabatte entlarvst und clever sparst.</p>
 
@@ -242,6 +245,7 @@ export const blogArticles: BlogArticle[] = [
     date: '2026-03-01',
     readTime: 9,
     author: 'Preisradio Redaktion',
+    amazonKeywords: ['OLED Fernseher 55 Zoll', 'Mini LED TV', 'HDMI 2.1 Kabel'],
     content: `
       <p>Der Fernsehmarkt 2026 bietet so viel Auswahl wie nie zuvor — doch die wichtigste Entscheidung bleibt: OLED oder Mini-LED? Beide Technologien haben sich rasant weiterentwickelt. OLED-Fernseher sind günstiger geworden, während RGB-Mini-LED mit beeindruckender Helligkeit und Farbtreue aufholt. In diesem ausführlichen Vergleich erklären wir beide Technologien, nennen konkrete Modelle und helfen dir bei der Kaufentscheidung.</p>
 
@@ -335,6 +339,7 @@ export const blogArticles: BlogArticle[] = [
     date: '2026-02-25',
     readTime: 8,
     author: 'Preisradio Redaktion',
+    amazonKeywords: ['Waschmaschine Energieklasse A', 'Waschmittel Pods', 'Waschmaschinen Untergestell'],
     content: `
       <p>Die Waschmaschine gehört zu den meistgenutzten Haushaltsgeräten — im Durchschnitt läuft sie in deutschen Haushalten 200 Mal pro Jahr. Beim Kauf spielt die Energieeffizienz deshalb eine entscheidende Rolle. Seit 2021 gilt in der EU die neue Energielabel-Skala von A bis G, die das alte System mit A+++, A++ und A+ ersetzt. In diesem Ratgeber erklären wir die neue Skala, berechnen die konkreten Einsparungen und geben dir Empfehlungen für den Kauf.</p>
 
@@ -440,6 +445,7 @@ export const blogArticles: BlogArticle[] = [
     date: '2026-02-18',
     readTime: 9,
     author: 'Preisradio Redaktion',
+    amazonKeywords: ['Philips Hue Starter Set', 'Amazon Echo', 'Smart Steckdose Matter'],
     content: `
       <p>Das Smart Home war lange Zeit ein Flickenteppich aus verschiedenen Apps, Hubs und Protokollen. Wer Philips Hue, einen Aqara-Sensor und einen Amazon Echo besaß, brauchte drei verschiedene Apps — und eine Menge Geduld. Mit dem Matter-Standard ändert sich das seit 2023 grundlegend. 2026 ist das Ökosystem so ausgereift, dass der Einstieg ins Smart Home einfacher ist als je zuvor. In diesem Guide erklären wir, was Matter ist, welche Geräte es unterstützen und wie du Schritt für Schritt dein Smart Home aufbaust.</p>
 
@@ -553,6 +559,7 @@ export const blogArticles: BlogArticle[] = [
     date: '2026-02-10',
     readTime: 9,
     author: 'Preisradio Redaktion',
+    amazonKeywords: ['MacBook Air M4', 'Laptop Ständer', 'Mechanische Tastatur'],
     content: `
       <p>Im Homeoffice verbringst du oft 8 Stunden oder mehr vor dem Laptop. Da muss das Gerät stimmen — nicht nur beim Preis, sondern auch bei der Ergonomie, Akkulaufzeit und Leistung. Doch der Markt ist unübersichtlich: Hunderte Modelle, verschiedene Prozessoren, unterschiedliche Displaygrößen. Dieser ausführliche Ratgeber hilft dir, den perfekten Laptop für dein Homeoffice zu finden — mit konkreten Empfehlungen in drei Preisklassen.</p>
 

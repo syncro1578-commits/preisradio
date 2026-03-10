@@ -22,7 +22,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -504,6 +504,16 @@ div[class*="fc-"][class*="overlay"] {
   border-collapse: collapse;
   margin: 1.5rem 0;
   font-size: 0.9375rem;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.prose thead,
+.prose tbody,
+.prose tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 .prose thead {
   background-color: #f3f4f6;
@@ -525,19 +535,23 @@ div[class*="fc-"][class*="overlay"] {
 }
 
 .prose figure {
-  margin: 1.5rem 0;
+  margin: 2rem auto;
+  max-width: 680px;
 }
 .prose figure img {
   width: 100%;
-  max-width: 800px;
+  height: auto;
+  max-height: 380px;
   aspect-ratio: 16/9;
   object-fit: cover;
   border-radius: 0.75rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 .prose figcaption {
-  margin-top: 0.5rem;
+  margin-top: 0.625rem;
   text-align: center;
   font-size: 0.8125rem;
+  font-style: italic;
   color: #9ca3af;
 }
 

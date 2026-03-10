@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { Inter } from 'next/font/google';
 import Script from 'next/script';
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 import Analytics from "@/components/Analytics";
 import ConsentBanner from "@/components/ConsentBanner";
 import PWAInstall from "@/components/PWAInstall";
@@ -90,8 +97,8 @@ export default function RootLayout({
   const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 
   return (
-    <html lang="de-DE">
-      <body className="antialiased">
+    <html lang="de-DE" className={inter.variable}>
+      <body className={`${inter.className} antialiased`}>
         {/* Google Tag Manager - Next.js will move to <head> automatically */}
         {GTM_ID && (
           <>
