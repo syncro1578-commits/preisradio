@@ -45,7 +45,7 @@ def editor_js():
         const catSelect = document.createElement('select');
         catSelect.id = 'ai-category-select';
         catSelect.style.cssText = 'padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;';
-        ['Kaufberatung','Spartipps','Technik','News'].forEach(function(c) {{
+        ['Kaufberatung','Spartipps','Technik','Nachrichten','Testberichte'].forEach(function(c) {{
             const opt = document.createElement('option');
             opt.value = c; opt.textContent = c;
             catSelect.appendChild(opt);

@@ -8,6 +8,54 @@ from openai import OpenAI
 from django.conf import settings
 
 
+CATEGORY_STRUCTURES = {
+    'Kaufberatung': """
+Struktur für Kaufberatung (Buying Guide):
+1. <h2>Einleitung</h2> — Warum ist dieses Thema wichtig? Für wen ist dieser Ratgeber?
+2. <h2>Worauf beim Kauf achten?</h2> — Die wichtigsten Kaufkriterien als <ul>/<li> Liste
+3. <h2>Unsere Empfehlungen</h2> — 3-5 konkrete Produktempfehlungen mit Preisspanne, Vor-/Nachteile
+4. <h2>Preisvergleich: Wo am günstigsten?</h2> — Saturn, MediaMarkt, Otto, Amazon, Kaufland vergleichen
+5. <h2>Häufige Fehler beim Kauf</h2> — Typische Fallstricke und wie man sie vermeidet
+6. <h2>Fazit</h2> — Zusammenfassung mit klarer Kaufempfehlung""",
+
+    'Spartipps': """
+Struktur für Spartipps (Saving Tips):
+1. <h2>Einleitung</h2> — Wie viel kann man sparen? Überblick
+2. <h2>Die besten Spartipps</h2> — Nummerierte Tipps (mindestens 5), jeweils mit konkretem Sparpotenzial in €
+3. <h2>Preisvergleich nutzen</h2> — Wie man Preisradio.de und andere Tools effektiv einsetzt
+4. <h2>Wann ist der beste Zeitpunkt?</h2> — Saisonale Angebote, Black Friday, Prime Day etc.
+5. <h2>Geheimtipps & Rabattaktionen</h2> — Gutscheine, Newsletter-Rabatte, Cashback
+6. <h2>Fazit</h2> — Die wichtigsten Sparregeln auf einen Blick""",
+
+    'Technik': """
+Struktur für Technik (Technology Deep-Dive):
+1. <h2>Einleitung</h2> — Was ist die Technologie? Warum ist sie relevant?
+2. <h2>So funktioniert es</h2> — Technische Erklärung, verständlich für Laien
+3. <h2>Technische Daten im Überblick</h2> — Spezifikationen als <ul>/<li> oder HTML-Tabelle
+4. <h2>Vorteile und Nachteile</h2> — Pro/Contra als <ul>/<li> Liste
+5. <h2>Für wen lohnt sich das?</h2> — Zielgruppen und Anwendungsbereiche
+6. <h2>Fazit & Ausblick</h2> — Zusammenfassung und Zukunftstrends""",
+
+    'Nachrichten': """
+Struktur für Nachrichten (News):
+1. <h2>Das Wichtigste in Kürze</h2> — 3-5 Key Facts als <ul>/<li> Stichpunkte
+2. <h2>Was ist passiert?</h2> — Die Nachricht im Detail (Wer, Was, Wann, Wo)
+3. <h2>Hintergrund</h2> — Kontext und Einordnung der Nachricht
+4. <h2>Was bedeutet das für Verbraucher?</h2> — Auswirkungen auf Preise, Verfügbarkeit, Markt
+5. <h2>Ausblick</h2> — Was als Nächstes zu erwarten ist""",
+
+    'Testberichte': """
+Struktur für Testberichte (Produkttest & Vergleich):
+1. <h2>Einleitung</h2> — Welche Produkte werden verglichen? Warum dieser Vergleich?
+2. <h2>Die Kandidaten im Überblick</h2> — Kurze Vorstellung jedes Produkts mit Preis und Hauptmerkmalen
+3. <h2>Design & Verarbeitung</h2> — Aussehen, Haptik, Materialqualität
+4. <h2>Leistung & Funktionen</h2> — Performance, Features, Benchmarks im Vergleich
+5. <h2>Preis-Leistungs-Verhältnis</h2> — Kosten vs. gebotene Leistung, Preisvergleich bei Saturn/MediaMarkt/Otto/Amazon
+6. <h2>Stärken & Schwächen</h2> — Pro/Contra für jedes Produkt als <ul>/<li>
+7. <h2>Fazit: Welches Produkt gewinnt?</h2> — Klarer Testsieger mit Begründung, Alternativen für verschiedene Budgets""",
+}
+
+
 def generate_article(topic, category='Kaufberatung'):
     """Generate a blog article using Groq API.
 
@@ -18,10 +66,15 @@ def generate_article(topic, category='Kaufberatung'):
         base_url="https://api.groq.com/openai/v1",
     )
 
+    structure = CATEGORY_STRUCTURES.get(category, CATEGORY_STRUCTURES['Kaufberatung'])
+
     prompt = f"""Du bist ein erfahrener Tech-Journalist für Preisradio.de, einen deutschen Preisvergleich für Elektronik (Saturn, MediaMarkt, Otto, Kaufland).
 
 Schreibe einen ausführlichen Blog-Artikel auf Deutsch zum Thema: "{topic}"
 Kategorie: {category}
+
+Verwende folgende Artikelstruktur:
+{structure}
 
 Antworte ausschließlich mit validem JSON im folgenden Format:
 {{
@@ -36,6 +89,7 @@ Antworte ausschließlich mit validem JSON im folgenden Format:
 
 Regeln:
 - Schreibe professionell, neutral und informativ auf Deutsch
+- Halte dich genau an die vorgegebene Artikelstruktur oben
 - Mindestens 800 Wörter im content
 - Verwende <h2> für Zwischenüberschriften, <b> für wichtige Begriffe
 - Verwende <ul>/<li> für Aufzählungen

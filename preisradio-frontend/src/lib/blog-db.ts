@@ -4,7 +4,8 @@ const BLOG_CATEGORIES: Record<string, string> = {
   'Kaufberatung': 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
   'Spartipps': 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
   'Technik': 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
-  'News': 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+  'Nachrichten': 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+  'Testberichte': 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300',
 };
 
 export interface BlogArticle {

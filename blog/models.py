@@ -9,7 +9,8 @@ CATEGORY_CHOICES = [
     ('Kaufberatung', 'Kaufberatung'),
     ('Spartipps', 'Spartipps'),
     ('Technik', 'Technik'),
-    ('News', 'News'),
+    ('Nachrichten', 'Nachrichten'),
+    ('Testberichte', 'Testberichte'),
 ]
 
 
