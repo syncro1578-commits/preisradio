@@ -104,24 +104,24 @@ export default async function BlogPage() {
           href={`/blog/${hero.slug}`}
           className="group block mb-8 rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-zinc-800"
         >
-          <div className="relative aspect-[21/9] overflow-hidden">
+          <div className="relative aspect-[16/9] sm:aspect-[21/9] overflow-hidden">
             <img
               src={hero.image}
               alt={hero.title}
               className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-            <div className="absolute bottom-0 inset-x-0 p-6 md:p-10">
-              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${hero.categoryColor}`}>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6 md:p-10">
+              <span className={`inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-medium ${hero.categoryColor}`}>
                 {hero.category}
               </span>
-              <h2 className="mt-3 text-xl md:text-3xl font-bold text-white leading-snug max-w-3xl">
+              <h2 className="mt-2 sm:mt-3 text-lg sm:text-xl md:text-3xl font-bold text-white leading-snug max-w-3xl">
                 {hero.title}
               </h2>
-              <p className="mt-2 text-sm md:text-base text-gray-300 max-w-2xl line-clamp-2">
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm md:text-base text-gray-300 max-w-2xl line-clamp-2">
                 {hero.excerpt}
               </p>
-              <div className="mt-3 flex items-center gap-3 text-xs text-gray-400">
+              <div className="mt-2 sm:mt-3 flex items-center gap-2 sm:gap-3 text-[11px] sm:text-xs text-gray-400">
                 <time dateTime={hero.date}>{formatDate(hero.date)}</time>
                 <span className="w-1 h-1 rounded-full bg-gray-500" />
                 <span>{hero.readTime} Min. Lesezeit</span>
@@ -150,14 +150,14 @@ export default async function BlogPage() {
                       {article.category}
                     </span>
                   </div>
-                  <div className="flex flex-col flex-1 p-4">
-                    <h2 className="text-sm md:text-base font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                  <div className="flex flex-col flex-1 p-3 sm:p-4">
+                    <h2 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
                       {article.title}
                     </h2>
-                    <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-2 flex-1">
+                    <p className="mt-1 sm:mt-1.5 text-xs text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-2 flex-1">
                       {article.excerpt}
                     </p>
-                    <div className="mt-3 flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
+                    <div className="mt-2 sm:mt-3 flex items-center justify-between text-[11px] sm:text-xs text-gray-400 dark:text-gray-500">
                       <time dateTime={article.date}>{formatDate(article.date)}</time>
                       <span>{article.readTime} Min.</span>
                     </div>
@@ -167,11 +167,11 @@ export default async function BlogPage() {
             </div>
 
             {/* Newsletter CTA */}
-            <div className="mt-8 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 p-6 md:p-8 text-white">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="mt-8 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 p-4 sm:p-6 md:p-8 text-white">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
                 <div>
-                  <h3 className="text-lg font-bold">Die besten Deals direkt ins Postfach</h3>
-                  <p className="mt-1 text-sm text-blue-100">
+                  <h3 className="text-base sm:text-lg font-bold">Die besten Deals direkt ins Postfach</h3>
+                  <p className="mt-1 text-xs sm:text-sm text-blue-100">
                     Kaufberatung, Spartipps und exklusive Angebote — kostenlos und jederzeit kündbar.
                   </p>
                 </div>
@@ -201,7 +201,7 @@ export default async function BlogPage() {
                     href={`/blog/${article.slug}`}
                     className="group flex gap-4 rounded-xl bg-white dark:bg-zinc-900 p-3 shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-zinc-800"
                   >
-                    <div className="relative w-32 flex-shrink-0 rounded-lg overflow-hidden aspect-video">
+                    <div className="relative w-24 sm:w-32 flex-shrink-0 rounded-lg overflow-hidden aspect-video">
                       <img
                         src={article.image}
                         alt={article.title}

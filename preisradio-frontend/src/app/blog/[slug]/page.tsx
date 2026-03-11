@@ -112,37 +112,37 @@ export default async function BlogArticlePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
 
-      <article className="container mx-auto px-4 py-8 md:py-12">
+      <article className="container mx-auto px-4 py-6 sm:py-8 md:py-12">
         {/* Breadcrumb */}
-        <nav className="mb-6 flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-blue-600 transition-colors">Startseite</Link>
+        <nav className="mb-4 sm:mb-6 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-400 dark:text-gray-500 overflow-hidden" aria-label="Breadcrumb">
+          <Link href="/" className="hover:text-blue-600 transition-colors flex-shrink-0">Startseite</Link>
           <span>/</span>
-          <Link href="/blog" className="hover:text-blue-600 transition-colors">Blog</Link>
+          <Link href="/blog" className="hover:text-blue-600 transition-colors flex-shrink-0">Blog</Link>
           <span>/</span>
-          <span className="text-gray-600 dark:text-gray-300 truncate max-w-[200px]">{article.title}</span>
+          <span className="text-gray-600 dark:text-gray-300 truncate">{article.title}</span>
         </nav>
 
         {/* Hero Image */}
         {article.image && (
-          <div className="relative rounded-2xl overflow-hidden mb-8 aspect-[21/9] max-h-[280px] md:max-h-[360px]">
+          <div className="relative rounded-xl sm:rounded-2xl overflow-hidden mb-6 sm:mb-8 aspect-[16/9] sm:aspect-[21/9] max-h-[220px] sm:max-h-[280px] md:max-h-[360px]">
             <img
               src={article.image}
               alt={article.title}
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 inset-x-0 p-6 md:p-10">
-              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${article.categoryColor}`}>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6 md:p-10">
+              <span className={`inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-medium ${article.categoryColor}`}>
                 {article.category}
               </span>
-              <h1 className="mt-3 text-2xl md:text-4xl font-bold text-white leading-tight max-w-3xl">
+              <h1 className="mt-2 sm:mt-3 text-lg sm:text-2xl md:text-4xl font-bold text-white leading-tight max-w-3xl">
                 {article.title}
               </h1>
-              <div className="mt-3 flex items-center gap-3 text-sm text-gray-300">
+              <div className="mt-2 sm:mt-3 flex flex-wrap items-center gap-x-2 sm:gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-300">
                 <span>{article.author}</span>
-                <span className="w-1 h-1 rounded-full bg-gray-400" />
+                <span className="w-1 h-1 rounded-full bg-gray-400 hidden sm:block" />
                 <time dateTime={article.date}>{formatDate(article.date)}</time>
-                <span className="w-1 h-1 rounded-full bg-gray-400" />
+                <span className="w-1 h-1 rounded-full bg-gray-400 hidden sm:block" />
                 <span>{article.readTime} Min. Lesezeit</span>
               </div>
             </div>
@@ -152,13 +152,13 @@ export default async function BlogArticlePage({
         {/* Content */}
         <div className="max-w-3xl mx-auto">
           <div
-            className="prose prose-lg max-w-none"
+            className="prose max-w-none"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
 
           {/* Amazon Affiliate CTA */}
           {(article.amazonProductUrl || (article.amazonKeywords && article.amazonKeywords.length > 0)) && (
-            <div className="mt-10 rounded-2xl border border-amber-200 dark:border-amber-800/40 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 p-6">
+            <div className="mt-8 sm:mt-10 rounded-xl sm:rounded-2xl border border-amber-200 dark:border-amber-800/40 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 p-4 sm:p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/40">
                   <svg className="h-5 w-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -229,9 +229,9 @@ export default async function BlogArticlePage({
 
         {/* Related Articles */}
         {related.length > 0 && (
-          <section className="mt-16" aria-label="Ähnliche Artikel">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Weiterlesen</h2>
+          <section className="mt-10 sm:mt-16" aria-label="Ähnliche Artikel">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Weiterlesen</h2>
               <Link
                 href="/blog"
                 className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
@@ -239,7 +239,7 @@ export default async function BlogArticlePage({
                 Alle Artikel
               </Link>
             </div>
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 md:grid-cols-3">
               {related.map((rel) => (
                 <Link
                   key={rel.slug}
@@ -256,11 +256,11 @@ export default async function BlogArticlePage({
                       {rel.category}
                     </span>
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                  <div className="p-3 sm:p-4">
+                    <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
                       {rel.title}
                     </h3>
-                    <div className="mt-2 flex items-center gap-2 text-xs text-gray-400">
+                    <div className="mt-1.5 sm:mt-2 flex items-center gap-2 text-[11px] sm:text-xs text-gray-400">
                       <time dateTime={rel.date}>{formatDate(rel.date)}</time>
                       <span>{rel.readTime} Min.</span>
                     </div>
