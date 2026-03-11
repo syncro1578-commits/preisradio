@@ -26,6 +26,8 @@ Kategorie: {category}
 Antworte ausschließlich mit validem JSON im folgenden Format:
 {{
     "title": "Ansprechender Titel (max 100 Zeichen)",
+    "seo_title": "SEO-optimierter Titel für Google (max 60 Zeichen)",
+    "meta_description": "Meta-Beschreibung für Google (max 155 Zeichen)",
     "excerpt": "Kurze Zusammenfassung für die Artikelliste (max 300 Zeichen)",
     "content": "<p>HTML-Inhalt mit <h2>, <p>, <ul>, <li>, <b> Tags...</p>",
     "amazon_keywords": "keyword1, keyword2, keyword3, keyword4, keyword5",
@@ -39,6 +41,8 @@ Regeln:
 - Verwende <ul>/<li> für Aufzählungen
 - Keine <h1> Tags (Titel wird separat angezeigt)
 - Keine Markdown-Syntax, nur HTML
+- seo_title: kurz, mit Hauptkeyword, max 60 Zeichen
+- meta_description: überzeugend, mit Call-to-Action, max 155 Zeichen
 - amazon_keywords: 5 relevante Suchbegriffe, kommagetrennt
 - read_time: geschätzte Lesezeit in Minuten (integer)
 - Kein umschließendes ```json``` — nur das JSON-Objekt"""
