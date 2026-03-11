@@ -23,21 +23,15 @@ def _slugify_de(text):
     return slug[:80]
 
 
-def _unique_slug(base_slug, parent):
-    """Ensure slug is unique among siblings. Appends -2, -3, etc. if needed."""
-    slug = base_slug
-    n = 2
-    while parent.get_children().filter(slug=slug).exists():
-        slug = f'{base_slug[:76]}-{n}'
-        n += 1
-    return slug
-
-
 @csrf_exempt
 @require_POST
 @staff_member_required
 def ai_generate_ajax(request):
-    """AJAX: generate article, create draft BlogPage, return edit URL."""
+    """AJAX: generate article, create draft BlogPage, return edit URL.
+
+    If a page with the same slug already exists, updates it instead of
+    creating a duplicate — keeps the same URL.
+    """
     try:
         body = json.loads(request.body)
         topic = body.get('topic', '').strip()
@@ -55,20 +49,35 @@ def ai_generate_ajax(request):
 
     try:
         result = generate_article(topic, category)
+        slug = _slugify_de(result['title'])
 
-        page = BlogPage(
-            title=result['title'],
-            slug=_unique_slug(_slugify_de(result['title']), parent),
-            excerpt=result['excerpt'][:500],
-            content=result['content'],
-            category=category,
-            amazon_keywords=result.get('amazon_keywords', ''),
-            read_time=int(result.get('read_time', 5)),
-            seo_title=result.get('seo_title', result['title'])[:255],
-            search_description=result.get('meta_description', result['excerpt'])[:255],
-        )
-        parent.add_child(instance=page)
-        page.save_revision()
+        # Update existing page if slug matches, otherwise create new
+        existing = parent.get_children().filter(slug=slug).first()
+        if existing:
+            page = existing.specific
+            page.title = result['title']
+            page.excerpt = result['excerpt'][:500]
+            page.content = result['content']
+            page.category = category
+            page.amazon_keywords = result.get('amazon_keywords', '')
+            page.read_time = int(result.get('read_time', 5))
+            page.seo_title = result.get('seo_title', result['title'])[:255]
+            page.search_description = result.get('meta_description', result['excerpt'])[:255]
+            page.save_revision()
+        else:
+            page = BlogPage(
+                title=result['title'],
+                slug=slug,
+                excerpt=result['excerpt'][:500],
+                content=result['content'],
+                category=category,
+                amazon_keywords=result.get('amazon_keywords', ''),
+                read_time=int(result.get('read_time', 5)),
+                seo_title=result.get('seo_title', result['title'])[:255],
+                search_description=result.get('meta_description', result['excerpt'])[:255],
+            )
+            parent.add_child(instance=page)
+            page.save_revision()
 
         return JsonResponse({
             'success': True,
