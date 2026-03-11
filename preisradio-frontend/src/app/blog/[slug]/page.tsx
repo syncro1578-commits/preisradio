@@ -124,7 +124,7 @@ export default async function BlogArticlePage({
 
         {/* Hero Image */}
         {article.image && (
-          <div className="relative rounded-2xl overflow-hidden mb-8 aspect-[21/9]">
+          <div className="relative rounded-2xl overflow-hidden mb-8 aspect-[21/9] max-h-[280px] md:max-h-[360px]">
             <img
               src={article.image}
               alt={article.title}
