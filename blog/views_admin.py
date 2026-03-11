@@ -7,6 +7,7 @@ import re
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from blog.models import BlogPage, BlogIndexPage
@@ -22,6 +23,7 @@ def _slugify_de(text):
     return slug[:80]
 
 
+@csrf_exempt
 @require_POST
 @staff_member_required
 def ai_generate_ajax(request):
