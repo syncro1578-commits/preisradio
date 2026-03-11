@@ -174,7 +174,7 @@ export default async function BlogArticlePage({
               {/* Direct product link */}
               {article.amazonProductUrl && (
                 <a
-                  href={article.amazonProductUrl.includes('tag=') ? article.amazonProductUrl : `${article.amazonProductUrl}${article.amazonProductUrl.includes('?') ? '&' : '?'}tag=${amazonTag}`}
+                  href={article.amazonProductUrl}
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
                   className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-gray-900 font-bold px-6 py-3.5 text-sm transition-colors shadow-sm"
