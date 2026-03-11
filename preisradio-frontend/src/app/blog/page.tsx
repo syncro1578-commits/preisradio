@@ -140,7 +140,7 @@ export default async function BlogPage() {
                   href={`/blog/${article.slug}`}
                   className="group flex flex-col rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-zinc-800 hover:-translate-y-1"
                 >
-                  <div className="relative aspect-[16/10] overflow-hidden">
+                  <div className="relative aspect-video overflow-hidden">
                     <img
                       src={article.image}
                       alt={article.title}
@@ -201,7 +201,7 @@ export default async function BlogPage() {
                     href={`/blog/${article.slug}`}
                     className="group flex gap-4 rounded-xl bg-white dark:bg-zinc-900 p-3 shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-zinc-800"
                   >
-                    <div className="relative w-28 h-20 flex-shrink-0 rounded-lg overflow-hidden">
+                    <div className="relative w-32 flex-shrink-0 rounded-lg overflow-hidden aspect-video">
                       <img
                         src={article.image}
                         alt={article.title}

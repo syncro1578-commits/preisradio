@@ -39,7 +39,7 @@ export async function generateMetadata({
       siteName: 'Preisradio',
       publishedTime: article.date,
       modifiedTime: article.date,
-      images: article.image ? [{ url: article.image, width: 800, height: 450, alt: article.title }] : [],
+      images: article.image ? [{ url: article.image, width: 1200, height: 630, alt: article.title }] : [],
     },
     alternates: {
       canonical: `${baseUrl}/blog/${article.slug}`,
@@ -157,7 +157,7 @@ export default async function BlogArticlePage({
           />
 
           {/* Amazon Affiliate CTA */}
-          {article.amazonKeywords && article.amazonKeywords.length > 0 && (
+          {(article.amazonProductUrl || (article.amazonKeywords && article.amazonKeywords.length > 0)) && (
             <div className="mt-10 rounded-2xl border border-amber-200 dark:border-amber-800/40 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/40">
@@ -170,25 +170,47 @@ export default async function BlogArticlePage({
                   <p className="text-xs text-gray-500 dark:text-gray-400">Passende Produkte zum Artikel</p>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {article.amazonKeywords.map((keyword) => (
-                  <a
-                    key={keyword}
-                    href={`https://www.amazon.de/s?k=${encodeURIComponent(keyword)}&tag=${amazonTag}`}
-                    target="_blank"
-                    rel="noopener noreferrer nofollow sponsored"
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-gray-800 dark:text-gray-200 hover:bg-amber-100 dark:hover:bg-amber-900/30 hover:border-amber-400 transition-colors shadow-sm"
-                  >
-                    <svg className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M.045 18.02c.07-.116.36-.31.53-.31.13 0 .27.04.39.13 1.15.87 2.38 1.55 3.69 2.04 1.31.49 2.64.74 3.97.74 1.52 0 2.97-.35 4.35-1.04 1.38-.69 2.53-1.66 3.44-2.9l.1.08c.12.09.19.22.19.37 0 .11-.04.21-.12.3C14.54 20.05 11.62 21 8.65 21c-1.54 0-3.04-.31-4.47-.94C2.75 19.43 1.35 18.64.045 18.02zM6.27 7.39c0-1.32.54-2.44 1.6-3.36 1.07-.92 2.42-1.38 4.06-1.38.92 0 1.77.16 2.56.49.79.33 1.4.74 1.81 1.24.42.49.62.97.62 1.42 0 .35-.13.65-.4.89-.27.24-.59.36-.97.36-.32 0-.6-.1-.84-.3-.26-.24-.52-.6-.79-1.07-.34-.59-.7-1.02-1.07-1.28-.37-.27-.87-.4-1.49-.4-.86 0-1.56.3-2.12.89-.55.6-.83 1.33-.83 2.19 0 .69.14 1.3.42 1.84.28.54.66.97 1.14 1.29.48.32 1.01.54 1.58.67.57.13 1.25.2 2.05.33.8.14 1.58.31 2.34.52.76.21 1.47.51 2.14.89.67.38 1.21.91 1.61 1.59.4.68.6 1.53.6 2.55 0 1.09-.29 2.1-.87 3.04-.58.94-1.49 1.7-2.71 2.27-1.23.57-2.71.86-4.44.86-1.33 0-2.55-.19-3.66-.57a8.8 8.8 0 01-2.89-1.61c-.5-.44-.75-.93-.75-1.47 0-.35.13-.66.4-.91.27-.26.6-.39.99-.39.3 0 .56.09.79.26.42.37.81.76 1.18 1.18.36.42.82.78 1.37 1.07.55.3 1.28.44 2.19.44 1.05 0 1.93-.28 2.62-.85.7-.57 1.04-1.26 1.04-2.07 0-.57-.13-1.04-.39-1.39-.26-.36-.61-.65-1.04-.87-.44-.22-.88-.39-1.34-.5-.46-.11-1.1-.24-1.93-.38-1.23-.22-2.28-.52-3.14-.9-.87-.38-1.55-.92-2.05-1.61-.5-.69-.74-1.57-.74-2.64z" />
-                    </svg>
-                    {keyword}
-                    <svg className="h-3 w-3 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                    </svg>
-                  </a>
-                ))}
-              </div>
+
+              {/* Direct product link */}
+              {article.amazonProductUrl && (
+                <a
+                  href={article.amazonProductUrl.includes('tag=') ? article.amazonProductUrl : `${article.amazonProductUrl}${article.amazonProductUrl.includes('?') ? '&' : '?'}tag=${amazonTag}`}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow sponsored"
+                  className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-gray-900 font-bold px-6 py-3.5 text-sm transition-colors shadow-sm"
+                >
+                  <svg className="h-5 w-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M.045 18.02c.07-.116.36-.31.53-.31.13 0 .27.04.39.13 1.15.87 2.38 1.55 3.69 2.04 1.31.49 2.64.74 3.97.74 1.52 0 2.97-.35 4.35-1.04 1.38-.69 2.53-1.66 3.44-2.9l.1.08c.12.09.19.22.19.37 0 .11-.04.21-.12.3C14.54 20.05 11.62 21 8.65 21c-1.54 0-3.04-.31-4.47-.94C2.75 19.43 1.35 18.64.045 18.02zM6.27 7.39c0-1.32.54-2.44 1.6-3.36 1.07-.92 2.42-1.38 4.06-1.38.92 0 1.77.16 2.56.49.79.33 1.4.74 1.81 1.24.42.49.62.97.62 1.42 0 .35-.13.65-.4.89-.27.24-.59.36-.97.36-.32 0-.6-.1-.84-.3-.26-.24-.52-.6-.79-1.07-.34-.59-.7-1.02-1.07-1.28-.37-.27-.87-.4-1.49-.4-.86 0-1.56.3-2.12.89-.55.6-.83 1.33-.83 2.19 0 .69.14 1.3.42 1.84.28.54.66.97 1.14 1.29.48.32 1.01.54 1.58.67.57.13 1.25.2 2.05.33.8.14 1.58.31 2.34.52.76.21 1.47.51 2.14.89.67.38 1.21.91 1.61 1.59.4.68.6 1.53.6 2.55 0 1.09-.29 2.1-.87 3.04-.58.94-1.49 1.7-2.71 2.27-1.23.57-2.71.86-4.44.86-1.33 0-2.55-.19-3.66-.57a8.8 8.8 0 01-2.89-1.61c-.5-.44-.75-.93-.75-1.47 0-.35.13-.66.4-.91.27-.26.6-.39.99-.39.3 0 .56.09.79.26.42.37.81.76 1.18 1.18.36.42.82.78 1.37 1.07.55.3 1.28.44 2.19.44 1.05 0 1.93-.28 2.62-.85.7-.57 1.04-1.26 1.04-2.07 0-.57-.13-1.04-.39-1.39-.26-.36-.61-.65-1.04-.87-.44-.22-.88-.39-1.34-.5-.46-.11-1.1-.24-1.93-.38-1.23-.22-2.28-.52-3.14-.9-.87-.38-1.55-.92-2.05-1.61-.5-.69-.74-1.57-.74-2.64z" />
+                  </svg>
+                  Jetzt auf Amazon kaufen
+                  <svg className="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                  </svg>
+                </a>
+              )}
+
+              {/* Keyword search links */}
+              {article.amazonKeywords && article.amazonKeywords.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {article.amazonKeywords.map((keyword) => (
+                    <a
+                      key={keyword}
+                      href={`https://www.amazon.de/s?k=${encodeURIComponent(keyword)}&tag=${amazonTag}`}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow sponsored"
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm font-medium text-gray-800 dark:text-gray-200 hover:bg-amber-100 dark:hover:bg-amber-900/30 hover:border-amber-400 transition-colors shadow-sm"
+                    >
+                      <svg className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M.045 18.02c.07-.116.36-.31.53-.31.13 0 .27.04.39.13 1.15.87 2.38 1.55 3.69 2.04 1.31.49 2.64.74 3.97.74 1.52 0 2.97-.35 4.35-1.04 1.38-.69 2.53-1.66 3.44-2.9l.1.08c.12.09.19.22.19.37 0 .11-.04.21-.12.3C14.54 20.05 11.62 21 8.65 21c-1.54 0-3.04-.31-4.47-.94C2.75 19.43 1.35 18.64.045 18.02zM6.27 7.39c0-1.32.54-2.44 1.6-3.36 1.07-.92 2.42-1.38 4.06-1.38.92 0 1.77.16 2.56.49.79.33 1.4.74 1.81 1.24.42.49.62.97.62 1.42 0 .35-.13.65-.4.89-.27.24-.59.36-.97.36-.32 0-.6-.1-.84-.3-.26-.24-.52-.6-.79-1.07-.34-.59-.7-1.02-1.07-1.28-.37-.27-.87-.4-1.49-.4-.86 0-1.56.3-2.12.89-.55.6-.83 1.33-.83 2.19 0 .69.14 1.3.42 1.84.28.54.66.97 1.14 1.29.48.32 1.01.54 1.58.67.57.13 1.25.2 2.05.33.8.14 1.58.31 2.34.52.76.21 1.47.51 2.14.89.67.38 1.21.91 1.61 1.59.4.68.6 1.53.6 2.55 0 1.09-.29 2.1-.87 3.04-.58.94-1.49 1.7-2.71 2.27-1.23.57-2.71.86-4.44.86-1.33 0-2.55-.19-3.66-.57a8.8 8.8 0 01-2.89-1.61c-.5-.44-.75-.93-.75-1.47 0-.35.13-.66.4-.91.27-.26.6-.39.99-.39.3 0 .56.09.79.26.42.37.81.76 1.18 1.18.36.42.82.78 1.37 1.07.55.3 1.28.44 2.19.44 1.05 0 1.93-.28 2.62-.85.7-.57 1.04-1.26 1.04-2.07 0-.57-.13-1.04-.39-1.39-.26-.36-.61-.65-1.04-.87-.44-.22-.88-.39-1.34-.5-.46-.11-1.1-.24-1.93-.38-1.23-.22-2.28-.52-3.14-.9-.87-.38-1.55-.92-2.05-1.61-.5-.69-.74-1.57-.74-2.64z" />
+                      </svg>
+                      {keyword}
+                      <svg className="h-3 w-3 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                      </svg>
+                    </a>
+                  ))}
+                </div>
+              )}
               <p className="mt-3 text-[11px] text-gray-400 dark:text-gray-500">* Affiliate-Links — bei einem Kauf erhalten wir eine kleine Provision, für dich ändert sich der Preis nicht.</p>
             </div>
           )}
@@ -226,7 +248,7 @@ export default async function BlogArticlePage({
                   href={`/blog/${rel.slug}`}
                   className="group flex flex-col rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-zinc-800 hover:-translate-y-1"
                 >
-                  <div className="relative aspect-[16/10] overflow-hidden">
+                  <div className="relative aspect-video overflow-hidden">
                     <img
                       src={rel.image}
                       alt={rel.title}

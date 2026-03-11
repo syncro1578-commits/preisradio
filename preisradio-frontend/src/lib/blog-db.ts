@@ -21,6 +21,7 @@ export interface BlogArticle {
   readTime: number;
   author: string;
   amazonKeywords: string[];
+  amazonProductUrl: string;
 }
 
 export async function getPublishedArticles(): Promise<BlogArticle[]> {
