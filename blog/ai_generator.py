@@ -14,9 +14,13 @@ Struktur für Kaufberatung (Buying Guide):
 1. <h2>Einleitung</h2> — Warum ist dieses Thema wichtig? Für wen ist dieser Ratgeber?
 2. <h2>Worauf beim Kauf achten?</h2> — Die wichtigsten Kaufkriterien als <ul>/<li> Liste
 3. <h2>Unsere Empfehlungen</h2> — 3-5 konkrete Produktempfehlungen mit Preisspanne, Vor-/Nachteile
-4. <h2>Preisvergleich: Wo am günstigsten?</h2> — Saturn, MediaMarkt, Otto, Amazon, Kaufland vergleichen
-5. <h2>Häufige Fehler beim Kauf</h2> — Typische Fallstricke und wie man sie vermeidet
-6. <h2>Fazit</h2> — Zusammenfassung mit klarer Kaufempfehlung""",
+4. <h2>Vergleichstabelle</h2> — HTML <table> mit den empfohlenen Produkten:
+   <table><thead><tr><th>Produkt</th><th>Preis (ca.)</th><th>Vorteile</th><th>Nachteile</th><th>Bewertung</th></tr></thead><tbody>...</tbody></table>
+   Styling: style="width:100%;border-collapse:collapse;" und td/th mit style="border:1px solid #e5e7eb;padding:8px 12px;text-align:left;"
+5. <h2>Preisvergleich: Wo am günstigsten?</h2> — Saturn, MediaMarkt, Otto, Amazon, Kaufland vergleichen
+6. <h2>Häufige Fehler beim Kauf</h2> — Typische Fallstricke und wie man sie vermeidet
+7. <h2>Häufig gestellte Fragen (FAQ)</h2> — 5 relevante Fragen mit <h3> für jede Frage und <p> für die Antwort
+8. <h2>Fazit</h2> — Zusammenfassung mit klarer Kaufempfehlung""",
 
     'Spartipps': """
 Struktur für Spartipps (Saving Tips):
@@ -25,16 +29,20 @@ Struktur für Spartipps (Saving Tips):
 3. <h2>Preisvergleich nutzen</h2> — Wie man Preisradio.de und andere Tools effektiv einsetzt
 4. <h2>Wann ist der beste Zeitpunkt?</h2> — Saisonale Angebote, Black Friday, Prime Day etc.
 5. <h2>Geheimtipps & Rabattaktionen</h2> — Gutscheine, Newsletter-Rabatte, Cashback
-6. <h2>Fazit</h2> — Die wichtigsten Sparregeln auf einen Blick""",
+6. <h2>Häufig gestellte Fragen (FAQ)</h2> — 5 relevante Fragen mit <h3> für jede Frage und <p> für die Antwort
+7. <h2>Fazit</h2> — Die wichtigsten Sparregeln auf einen Blick""",
 
     'Technik': """
 Struktur für Technik (Technology Deep-Dive):
 1. <h2>Einleitung</h2> — Was ist die Technologie? Warum ist sie relevant?
 2. <h2>So funktioniert es</h2> — Technische Erklärung, verständlich für Laien
-3. <h2>Technische Daten im Überblick</h2> — Spezifikationen als <ul>/<li> oder HTML-Tabelle
+3. <h2>Technische Daten im Überblick</h2> — HTML <table> mit Spezifikationen:
+   <table><thead><tr><th>Eigenschaft</th><th>Details</th></tr></thead><tbody>...</tbody></table>
+   Styling: style="width:100%;border-collapse:collapse;" und td/th mit style="border:1px solid #e5e7eb;padding:8px 12px;text-align:left;"
 4. <h2>Vorteile und Nachteile</h2> — Pro/Contra als <ul>/<li> Liste
 5. <h2>Für wen lohnt sich das?</h2> — Zielgruppen und Anwendungsbereiche
-6. <h2>Fazit & Ausblick</h2> — Zusammenfassung und Zukunftstrends""",
+6. <h2>Häufig gestellte Fragen (FAQ)</h2> — 5 relevante Fragen mit <h3> für jede Frage und <p> für die Antwort
+7. <h2>Fazit & Ausblick</h2> — Zusammenfassung und Zukunftstrends""",
 
     'Nachrichten': """
 Struktur für Nachrichten (News):
@@ -48,11 +56,21 @@ Struktur für Nachrichten (News):
 Struktur für Testberichte (Produkttest & Vergleich):
 1. <h2>Einleitung</h2> — Welche Produkte werden verglichen? Warum dieser Vergleich?
 2. <h2>Die Kandidaten im Überblick</h2> — Kurze Vorstellung jedes Produkts mit Preis und Hauptmerkmalen
-3. <h2>Design & Verarbeitung</h2> — Aussehen, Haptik, Materialqualität
-4. <h2>Leistung & Funktionen</h2> — Performance, Features, Benchmarks im Vergleich
-5. <h2>Preis-Leistungs-Verhältnis</h2> — Kosten vs. gebotene Leistung, Preisvergleich bei Saturn/MediaMarkt/Otto/Amazon
-6. <h2>Stärken & Schwächen</h2> — Pro/Contra für jedes Produkt als <ul>/<li>
-7. <h2>Fazit: Welches Produkt gewinnt?</h2> — Klarer Testsieger mit Begründung, Alternativen für verschiedene Budgets""",
+3. <h2>Vergleichstabelle</h2> — HTML <table> mit allen Produkten im direkten Vergleich:
+   <table><thead><tr><th>Kriterium</th><th>Produkt A</th><th>Produkt B</th><th>Produkt C</th></tr></thead>
+   <tbody><tr><td>Preis (ca.)</td><td>...</td><td>...</td><td>...</td></tr>
+   <tr><td>Display</td><td>...</td><td>...</td><td>...</td></tr>
+   <tr><td>Akku</td><td>...</td><td>...</td><td>...</td></tr>
+   <tr><td>Besonderheiten</td><td>...</td><td>...</td><td>...</td></tr>
+   <tr><td><b>Bewertung</b></td><td>...</td><td>...</td><td>...</td></tr></tbody></table>
+   Styling: style="width:100%;border-collapse:collapse;" und td/th mit style="border:1px solid #e5e7eb;padding:8px 12px;text-align:left;"
+   Kopfzeile th mit style="...;background:#f9fafb;font-weight:600;"
+4. <h2>Design & Verarbeitung</h2> — Aussehen, Haptik, Materialqualität
+5. <h2>Leistung & Funktionen</h2> — Performance, Features, Benchmarks im Vergleich
+6. <h2>Preis-Leistungs-Verhältnis</h2> — Kosten vs. gebotene Leistung, Preisvergleich bei Saturn/MediaMarkt/Otto/Amazon
+7. <h2>Stärken & Schwächen</h2> — Pro/Contra für jedes Produkt als <ul>/<li>
+8. <h2>Häufig gestellte Fragen (FAQ)</h2> — 5 relevante Fragen mit <h3> für jede Frage und <p> für die Antwort
+9. <h2>Fazit: Welches Produkt gewinnt?</h2> — Klarer Testsieger mit Begründung, Alternativen für verschiedene Budgets""",
 }
 
 
