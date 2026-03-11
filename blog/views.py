@@ -29,6 +29,7 @@ def serialize_article(page):
         'categoryColor': CATEGORY_COLORS.get(page.category, CATEGORY_COLORS['Kaufberatung']),
         'image': get_image_url(page),
         'amazonKeywords': [k.strip() for k in page.amazon_keywords.split(',') if k.strip()] if page.amazon_keywords else [],
+        'amazonProductUrl': page.amazon_product_url or '',
         'author': page.author,
         'readTime': page.read_time,
         'date': page.published_date.isoformat() if page.published_date else page.first_published_at.isoformat() if page.first_published_at else '',
