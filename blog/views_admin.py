@@ -23,6 +23,16 @@ def _slugify_de(text):
     return slug[:80]
 
 
+def _unique_slug(base_slug, parent):
+    """Ensure slug is unique among siblings. Appends -2, -3, etc. if needed."""
+    slug = base_slug
+    n = 2
+    while parent.get_children().filter(slug=slug).exists():
+        slug = f'{base_slug[:76]}-{n}'
+        n += 1
+    return slug
+
+
 @csrf_exempt
 @require_POST
 @staff_member_required
@@ -48,7 +58,7 @@ def ai_generate_ajax(request):
 
         page = BlogPage(
             title=result['title'],
-            slug=_slugify_de(result['title']),
+            slug=_unique_slug(_slugify_de(result['title']), parent),
             excerpt=result['excerpt'][:500],
             content=result['content'],
             category=category,
