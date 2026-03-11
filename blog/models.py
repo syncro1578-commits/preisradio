@@ -32,7 +32,7 @@ class BlogIndexPage(Page):
 class BlogPage(Page):
     """A single blog article."""
     excerpt = models.CharField(max_length=500, help_text='Kurzbeschreibung für die Artikelliste')
-    content = RichTextField(help_text='Artikel-Inhalt')
+    content = models.TextField(help_text='Artikel-Inhalt (HTML)')
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='Kaufberatung')
     image = models.ForeignKey(
         'wagtailimages.Image',
