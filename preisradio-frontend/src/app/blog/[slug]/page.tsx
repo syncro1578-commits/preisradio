@@ -5,6 +5,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { getArticleBySlug, getRelatedArticles, getAllSlugs } from '@/lib/blog-db';
 import BlogProductSection from '@/components/BlogProductSection';
+import BlogInlineProduct from '@/components/BlogInlineProduct';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
@@ -100,7 +101,8 @@ export default async function BlogArticlePage({
 
   const amazonTag = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'bestprice2109-21';
 
-  // Split content: inject BlogProductSection after 2nd <h2> (mid-article)
+  // 3-way split for mid-article product injection
+  // part1 → BlogInlineProduct (1 product card) → part2 → BlogProductSection (comparison) → part3
   const h2Pos: number[] = [];
   let searchFrom = 0;
   while (true) {
@@ -109,9 +111,16 @@ export default async function BlogArticlePage({
     h2Pos.push(idx);
     searchFrom = idx + 1;
   }
-  const splitAt = h2Pos.length >= 3 ? h2Pos[2] : h2Pos.length >= 2 ? h2Pos[1] : -1;
-  const contentPart1 = splitAt > 0 ? article.content.slice(0, splitAt) : article.content;
-  const contentPart2 = splitAt > 0 ? article.content.slice(splitAt) : '';
+  // BlogInlineProduct after 1st section (before 2nd h2)
+  const split1 = h2Pos.length >= 2 ? h2Pos[1] : -1;
+  // BlogProductSection after 2nd section (before 3rd h2)
+  const split2 = h2Pos.length >= 3 ? h2Pos[2] : -1;
+
+  const contentPart1 = split1 > 0 ? article.content.slice(0, split1) : article.content;
+  const contentPart2 = split1 > 0 && split2 > 0
+    ? article.content.slice(split1, split2)
+    : split1 > 0 ? article.content.slice(split1) : '';
+  const contentPart3 = split2 > 0 ? article.content.slice(split2) : '';
   const hasKeywords = article.amazonKeywords && article.amazonKeywords.length > 0;
 
   return (
@@ -166,26 +175,39 @@ export default async function BlogArticlePage({
 
         {/* Content */}
         <div className="max-w-3xl mx-auto">
-          {/* Part 1: intro + first sections */}
+          {/* Part 1: intro + 1st section */}
           <div
             className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none"
             dangerouslySetInnerHTML={{ __html: contentPart1 }}
           />
 
-          {/* Mid-article: real products from our stores */}
+          {/* After 1st section: inline product card (1–2 products) */}
           {hasKeywords && contentPart2 && (
-            <BlogProductSection keywords={article.amazonKeywords} />
+            <BlogInlineProduct keywords={article.amazonKeywords} />
           )}
 
-          {/* Part 2: remaining sections */}
+          {/* Part 2: 2nd section */}
           {contentPart2 && (
             <div
-              className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none mt-6"
+              className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none"
               dangerouslySetInnerHTML={{ __html: contentPart2 }}
             />
           )}
 
-          {/* Product section at end if not shown mid-article */}
+          {/* After 2nd section: full product comparison table */}
+          {hasKeywords && contentPart3 && (
+            <BlogProductSection keywords={article.amazonKeywords} />
+          )}
+
+          {/* Part 3: remaining sections */}
+          {contentPart3 && (
+            <div
+              className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none"
+              dangerouslySetInnerHTML={{ __html: contentPart3 }}
+            />
+          )}
+
+          {/* Fallback: show comparison if no 3-way split possible */}
           {hasKeywords && !contentPart2 && (
             <BlogProductSection keywords={article.amazonKeywords} />
           )}
