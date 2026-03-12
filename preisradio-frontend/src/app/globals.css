@@ -646,3 +646,9 @@ div[class*="fc-"][class*="overlay"] {
 .dark .prose summary { color: #e5e7eb; background-color: #27272a; }
 .dark .prose summary:hover { background-color: #333338; }
 .dark .prose details[open] summary { border-bottom-color: #3f3f46; }
+
+/* ── AI-generated visual elements inside prose ───────────────────────────── */
+/* Ranking cards, tip boxes: reset prose margins/colors via higher specificity */
+.prose div[style] { color: inherit; }
+.prose div[style] p { margin: 0; color: inherit; }
+.prose div[style] div { color: inherit; }

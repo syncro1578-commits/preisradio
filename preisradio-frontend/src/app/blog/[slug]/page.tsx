@@ -100,6 +100,20 @@ export default async function BlogArticlePage({
 
   const amazonTag = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'bestprice2109-21';
 
+  // Split content: inject BlogProductSection after 2nd <h2> (mid-article)
+  const h2Pos: number[] = [];
+  let searchFrom = 0;
+  while (true) {
+    const idx = article.content.indexOf('<h2', searchFrom);
+    if (idx === -1) break;
+    h2Pos.push(idx);
+    searchFrom = idx + 1;
+  }
+  const splitAt = h2Pos.length >= 3 ? h2Pos[2] : h2Pos.length >= 2 ? h2Pos[1] : -1;
+  const contentPart1 = splitAt > 0 ? article.content.slice(0, splitAt) : article.content;
+  const contentPart2 = splitAt > 0 ? article.content.slice(splitAt) : '';
+  const hasKeywords = article.amazonKeywords && article.amazonKeywords.length > 0;
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-950">
       <Navigation />
@@ -152,13 +166,27 @@ export default async function BlogArticlePage({
 
         {/* Content */}
         <div className="max-w-3xl mx-auto">
+          {/* Part 1: intro + first sections */}
           <div
-            className="prose max-w-none"
-            dangerouslySetInnerHTML={{ __html: article.content }}
+            className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none"
+            dangerouslySetInnerHTML={{ __html: contentPart1 }}
           />
 
-          {/* Product comparison + similar products from our stores */}
-          {article.amazonKeywords && article.amazonKeywords.length > 0 && (
+          {/* Mid-article: real products from our stores */}
+          {hasKeywords && contentPart2 && (
+            <BlogProductSection keywords={article.amazonKeywords} />
+          )}
+
+          {/* Part 2: remaining sections */}
+          {contentPart2 && (
+            <div
+              className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none mt-6"
+              dangerouslySetInnerHTML={{ __html: contentPart2 }}
+            />
+          )}
+
+          {/* Product section at end if not shown mid-article */}
+          {hasKeywords && !contentPart2 && (
             <BlogProductSection keywords={article.amazonKeywords} />
           )}
 
