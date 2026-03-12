@@ -149,10 +149,16 @@ def editor_js():
                   #html-preview-pane p{{margin:0 0 0.9em;}}
                   #html-preview-pane ul,#html-preview-pane ol{{padding-left:1.5em;margin:0.6em 0 0.9em;}}
                   #html-preview-pane li{{margin-bottom:0.3em;}}
-                  #html-preview-pane table{{width:100%;border-collapse:collapse;margin:1em 0;font-size:0.9em;}}
-                  #html-preview-pane th,#html-preview-pane td{{border:1px solid #e5e7eb;padding:8px 12px;text-align:left;}}
-                  #html-preview-pane th{{background:#f9fafb;font-weight:600;}}
-                  #html-preview-pane tr:nth-child(even) td{{background:#f9fafb;}}
+                  #html-preview-pane table{{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:0.875em;border-radius:10px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08),0 0 0 1px #e5e7eb;}}
+                  #html-preview-pane thead{{background:#1e293b;}}
+                  #html-preview-pane th{{padding:10px 13px;text-align:left;font-weight:600;font-size:0.75em;text-transform:uppercase;letter-spacing:0.04em;color:#e2e8f0;border:none;border-right:1px solid rgba(255,255,255,0.08);white-space:nowrap;}}
+                  #html-preview-pane th:last-child{{border-right:none;}}
+                  #html-preview-pane td{{padding:9px 13px;color:#374151;border:none;border-bottom:1px solid #f1f5f9;border-right:1px solid #f1f5f9;vertical-align:middle;}}
+                  #html-preview-pane td:last-child{{border-right:none;}}
+                  #html-preview-pane td:first-child{{font-weight:600;color:#1e293b;}}
+                  #html-preview-pane tbody tr:nth-child(even) td{{background:#f8fafc;}}
+                  #html-preview-pane tbody tr:hover td{{background:#eff6ff;}}
+                  #html-preview-pane tbody tr:last-child td{{border-bottom:none;}}
                   #html-preview-pane b,#html-preview-pane strong{{font-weight:700;}}
                 </style>
             `;
