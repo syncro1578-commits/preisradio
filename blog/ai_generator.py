@@ -10,67 +10,73 @@ from django.conf import settings
 
 CATEGORY_STRUCTURES = {
     'Kaufberatung': """
-Struktur für Kaufberatung (Buying Guide):
-1. <h2>Einleitung</h2> — Warum ist dieses Thema wichtig? Für wen ist dieser Ratgeber?
-2. <h2>Worauf beim Kauf achten?</h2> — Die wichtigsten Kaufkriterien als <ul>/<li> Liste
-3. <h2>Unsere Empfehlungen</h2> — 3-5 konkrete Produktempfehlungen mit Preisspanne, Vor-/Nachteile
-4. <h2>Vergleichstabelle</h2> — HTML <table> mit den empfohlenen Produkten:
-   <table><thead><tr><th>Produkt</th><th>Preis (ca.)</th><th>Vorteile</th><th>Nachteile</th><th>Bewertung</th></tr></thead><tbody>...</tbody></table>
-   Styling: style="width:100%;border-collapse:collapse;" und td/th mit style="border:1px solid #e5e7eb;padding:8px 12px;text-align:left;"
-5. <h2>Preisvergleich: Wo am günstigsten?</h2> — Saturn, MediaMarkt, Otto, Amazon, Kaufland vergleichen
-6. <h2>Häufige Fehler beim Kauf</h2> — Typische Fallstricke und wie man sie vermeidet
-7. <h2>Häufig gestellte Fragen (FAQ)</h2> — 5 relevante Fragen mit <h3> für jede Frage und <p> für die Antwort
-8. <h2>Fazit</h2> — Zusammenfassung mit klarer Kaufempfehlung""",
+Struktur für Kaufberatung (Buying Guide) — MINDESTENS 2000 Wörter:
+1. <h2>Einleitung</h2> — Warum ist dieses Thema wichtig? Für wen ist dieser Ratgeber? Welche Fragen beantwortet er? (mind. 150 Wörter)
+2. <h2>Worauf beim Kauf achten?</h2> — Die 6–8 wichtigsten Kaufkriterien, jedes als eigener <h3> mit 2–3 Sätzen Erklärung und einer <ul>/<li> Liste konkreter Punkte
+3. <h2>Unsere Top-Empfehlungen im Überblick</h2> — 4–5 konkrete Produktempfehlungen mit Preisspanne, Kurzprofil (2–3 Sätze), Vor- und Nachteile als <ul>/<li>
+4. <h2>Vergleichstabelle der Empfehlungen</h2> — HTML <table>:
+   <table style="width:100%;border-collapse:collapse;"><thead><tr><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Produkt</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Preis (ca.)</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Stärken</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Schwächen</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Ideal für</th></tr></thead><tbody><!-- mind. 4 Zeilen --></tbody></table>
+5. <h2>Preisvergleich: Wo kauft man am günstigsten?</h2> — Saturn, MediaMarkt, Otto, Kaufland, Amazon vergleichen; Tipps zu Preisschwankungen, wann Preise fallen, wie man Angebote findet (mind. 200 Wörter)
+6. <h2>Häufige Fehler beim Kauf</h2> — 5 typische Fallstricke als nummerierte Liste, jeweils mit kurzer Erläuterung warum das ein Fehler ist und wie man ihn vermeidet
+7. <h2>Praktische Tipps für die Kaufentscheidung</h2> — Checkliste als <ul>/<li>: Was tun vor dem Kauf, im Laden, beim Online-Kauf (mind. 150 Wörter)
+8. <h2>Häufig gestellte Fragen (FAQ)</h2> — 6 Fragen, jede als <h3> mit ausführlicher <p> Antwort (mind. 50 Wörter je Antwort)
+9. <h2>Fazit & Kaufempfehlung</h2> — Zusammenfassung der wichtigsten Punkte, klare Empfehlung für verschiedene Budgets und Zielgruppen (mind. 150 Wörter)""",
 
     'Spartipps': """
-Struktur für Spartipps (Saving Tips):
-1. <h2>Einleitung</h2> — Wie viel kann man sparen? Überblick
-2. <h2>Die besten Spartipps</h2> — Nummerierte Tipps (mindestens 5), jeweils mit konkretem Sparpotenzial in €
-3. <h2>Preisvergleich nutzen</h2> — Wie man Preisradio.de und andere Tools effektiv einsetzt
-4. <h2>Wann ist der beste Zeitpunkt?</h2> — Saisonale Angebote, Black Friday, Prime Day etc.
-5. <h2>Geheimtipps & Rabattaktionen</h2> — Gutscheine, Newsletter-Rabatte, Cashback
-6. <h2>Häufig gestellte Fragen (FAQ)</h2> — 5 relevante Fragen mit <h3> für jede Frage und <p> für die Antwort
-7. <h2>Fazit</h2> — Die wichtigsten Sparregeln auf einen Blick""",
+Struktur für Spartipps (Saving Tips) — MINDESTENS 2000 Wörter:
+1. <h2>Einleitung</h2> — Wie viel kann man sparen? Warum lohnt sich ein Preisvergleich? Überblick was der Artikel bietet (mind. 150 Wörter)
+2. <h2>Die 8 besten Spartipps</h2> — Jeder Tipp als eigener <h3> mit konkretem Sparpotenzial in €, ausführlicher Erklärung (3–4 Sätze), Beispiel und <ul>/<li> mit Untermaßnahmen
+3. <h2>Preisvergleich richtig nutzen</h2> — Wie man Preisradio.de und andere Tools effektiv einsetzt; welche Filter und Funktionen helfen; Preisverlauf verstehen (mind. 200 Wörter)
+4. <h2>Wann sind die besten Kaufzeitpunkte?</h2> — Saisonale Angebote, Black Friday, Prime Day, Cyber Monday, After-Christmas-Sales; <table> mit Monaten und typischen Rabatten:
+   <table style="width:100%;border-collapse:collapse;"><thead><tr><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Zeitraum</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Event</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Typische Ersparnis</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Tipps</th></tr></thead><tbody><!-- mind. 5 Zeilen --></tbody></table>
+5. <h2>Gutscheine, Cashback & Rabattaktionen</h2> — Wo findet man Gutscheincodes? Cashback-Portale erklärt; Newsletter-Rabatte und Treueprogramme (mind. 200 Wörter)
+6. <h2>Refurbished & Gebraucht: Lohnt sich das?</h2> — Chancen und Risiken beim Kauf von generalüberholten Geräten; worauf zu achten ist; Preisersparnis-Beispiele
+7. <h2>Geheimtipps von Experten</h2> — 5 weniger bekannte Tricks als <ul>/<li> mit jeweils 2–3 Sätzen Erklärung
+8. <h2>Häufig gestellte Fragen (FAQ)</h2> — 6 Fragen, jede als <h3> mit ausführlicher <p> Antwort (mind. 50 Wörter je Antwort)
+9. <h2>Fazit: So sparst du am meisten</h2> — Die 5 wichtigsten Regeln auf einen Blick, Abschluss-Motivation (mind. 150 Wörter)""",
 
     'Technik': """
-Struktur für Technik (Technology Deep-Dive):
-1. <h2>Einleitung</h2> — Was ist die Technologie? Warum ist sie relevant?
-2. <h2>So funktioniert es</h2> — Technische Erklärung, verständlich für Laien
-3. <h2>Technische Daten im Überblick</h2> — HTML <table> mit Spezifikationen:
-   <table><thead><tr><th>Eigenschaft</th><th>Details</th></tr></thead><tbody>...</tbody></table>
-   Styling: style="width:100%;border-collapse:collapse;" und td/th mit style="border:1px solid #e5e7eb;padding:8px 12px;text-align:left;"
-4. <h2>Vorteile und Nachteile</h2> — Pro/Contra als <ul>/<li> Liste
-5. <h2>Für wen lohnt sich das?</h2> — Zielgruppen und Anwendungsbereiche
-6. <h2>Häufig gestellte Fragen (FAQ)</h2> — 5 relevante Fragen mit <h3> für jede Frage und <p> für die Antwort
-7. <h2>Fazit & Ausblick</h2> — Zusammenfassung und Zukunftstrends""",
+Struktur für Technik (Technology Deep-Dive) — MINDESTENS 2000 Wörter:
+1. <h2>Einleitung</h2> — Was ist die Technologie? Warum ist sie gerade jetzt relevant? Was lernt der Leser? (mind. 150 Wörter)
+2. <h2>Grundlagen: So funktioniert es</h2> — Technische Erklärung verständlich für Laien, Analogien verwenden, Schritt-für-Schritt als <ol>/<li> (mind. 250 Wörter)
+3. <h2>Technische Spezifikationen im Überblick</h2> — HTML <table> mit mindestens 8 Zeilen:
+   <table style="width:100%;border-collapse:collapse;"><thead><tr><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Eigenschaft</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Wert / Details</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Bedeutung für den Nutzer</th></tr></thead><tbody><!-- mind. 8 Zeilen --></tbody></table>
+4. <h2>Vorteile im Detail</h2> — Jeder Vorteil als eigener <h3> mit ausführlicher Erklärung und Praxisbeispiel (mind. 4 Vorteile)
+5. <h2>Nachteile und Grenzen</h2> — Ehrliche Kritik: Was kann die Technologie nicht? Wo sind die Grenzen? (mind. 3 Punkte mit je 3–4 Sätzen)
+6. <h2>Vergleich: Generationen / Alternativen</h2> — Wie unterscheidet sich die aktuelle Version von der Vorgängergeneration oder Konkurrenzlösungen? Tabelle oder Aufzählung
+7. <h2>Für wen lohnt sich das?</h2> — 3–4 konkrete Zielgruppen als <h3> mit je 2–3 Sätzen Begründung
+8. <h2>Kaufempfehlung: Die besten Modelle</h2> — 3–4 konkrete Produktbeispiele mit Preis, Händler (Saturn/MediaMarkt/Otto/Kaufland), Kurzprofil
+9. <h2>Häufig gestellte Fragen (FAQ)</h2> — 6 Fragen, jede als <h3> mit ausführlicher <p> Antwort (mind. 50 Wörter je Antwort)
+10. <h2>Fazit & Zukunftsausblick</h2> — Zusammenfassung + wohin geht die Technologie in den nächsten Jahren? (mind. 150 Wörter)""",
 
     'Nachrichten': """
-Struktur für Nachrichten (News):
-1. <h2>Das Wichtigste in Kürze</h2> — 3-5 Key Facts als <ul>/<li> Stichpunkte
-2. <h2>Was ist passiert?</h2> — Die Nachricht im Detail (Wer, Was, Wann, Wo)
-3. <h2>Hintergrund</h2> — Kontext und Einordnung der Nachricht
-4. <h2>Was bedeutet das für Verbraucher?</h2> — Auswirkungen auf Preise, Verfügbarkeit, Markt
-5. <h2>Ausblick</h2> — Was als Nächstes zu erwarten ist""",
+Struktur für Nachrichten (News) — MINDESTENS 2000 Wörter:
+1. <h2>Das Wichtigste in Kürze</h2> — 5–6 Key Facts als <ul>/<li> Stichpunkte mit je 1–2 Sätzen
+2. <h2>Was ist passiert? — Die Meldung im Detail</h2> — Vollständige Erklärung (Wer, Was, Wann, Wo, Wie); Chronologie der Ereignisse als <ol>/<li> (mind. 300 Wörter)
+3. <h2>Hintergrund und Kontext</h2> — Wie kam es dazu? Vorgeschichte, Marktentwicklung, beteiligte Unternehmen; ausführliche Einordnung (mind. 300 Wörter)
+4. <h2>Reaktionen aus der Branche</h2> — Wie reagieren Experten, Wettbewerber, Analysten? Verschiedene Perspektiven darstellen (mind. 200 Wörter)
+5. <h2>Was bedeutet das für Verbraucher?</h2> — Konkrete Auswirkungen auf Preise, Produktverfügbarkeit, Auswahl, Service; mit Zahlen und Beispielen (mind. 250 Wörter)
+6. <h2>Vergleich: Vor und nach der Meldung</h2> — HTML <table> mit Gegenüberstellung der Situation davor und danach:
+   <table style="width:100%;border-collapse:collapse;"><thead><tr><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Aspekt</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Vorher</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Nachher</th></tr></thead><tbody><!-- mind. 5 Zeilen --></tbody></table>
+7. <h2>Was sollten Käufer jetzt tun?</h2> — Handlungsempfehlungen als nummerierte Liste; Tipps zum richtigen Zeitpunkt für Käufe (mind. 200 Wörter)
+8. <h2>Häufig gestellte Fragen (FAQ)</h2> — 6 Fragen, jede als <h3> mit ausführlicher <p> Antwort (mind. 50 Wörter je Antwort)
+9. <h2>Ausblick: Was kommt als Nächstes?</h2> — Szenarien und Prognosen; wann gibt es neue Informationen? (mind. 150 Wörter)""",
 
     'Testberichte': """
-Struktur für Testberichte (Produkttest & Vergleich):
-1. <h2>Einleitung</h2> — Welche Produkte werden verglichen? Warum dieser Vergleich?
-2. <h2>Die Kandidaten im Überblick</h2> — Kurze Vorstellung jedes Produkts mit Preis und Hauptmerkmalen
-3. <h2>Vergleichstabelle</h2> — HTML <table> mit allen Produkten im direkten Vergleich:
-   <table><thead><tr><th>Kriterium</th><th>Produkt A</th><th>Produkt B</th><th>Produkt C</th></tr></thead>
-   <tbody><tr><td>Preis (ca.)</td><td>...</td><td>...</td><td>...</td></tr>
-   <tr><td>Display</td><td>...</td><td>...</td><td>...</td></tr>
-   <tr><td>Akku</td><td>...</td><td>...</td><td>...</td></tr>
-   <tr><td>Besonderheiten</td><td>...</td><td>...</td><td>...</td></tr>
-   <tr><td><b>Bewertung</b></td><td>...</td><td>...</td><td>...</td></tr></tbody></table>
-   Styling: style="width:100%;border-collapse:collapse;" und td/th mit style="border:1px solid #e5e7eb;padding:8px 12px;text-align:left;"
-   Kopfzeile th mit style="...;background:#f9fafb;font-weight:600;"
-4. <h2>Design & Verarbeitung</h2> — Aussehen, Haptik, Materialqualität
-5. <h2>Leistung & Funktionen</h2> — Performance, Features, Benchmarks im Vergleich
-6. <h2>Preis-Leistungs-Verhältnis</h2> — Kosten vs. gebotene Leistung, Preisvergleich bei Saturn/MediaMarkt/Otto/Amazon
-7. <h2>Stärken & Schwächen</h2> — Pro/Contra für jedes Produkt als <ul>/<li>
-8. <h2>Häufig gestellte Fragen (FAQ)</h2> — 5 relevante Fragen mit <h3> für jede Frage und <p> für die Antwort
-9. <h2>Fazit: Welches Produkt gewinnt?</h2> — Klarer Testsieger mit Begründung, Alternativen für verschiedene Budgets""",
+Struktur für Testberichte (Produkttest & Vergleich) — MINDESTENS 2000 Wörter:
+1. <h2>Einleitung</h2> — Welche Produkte werden getestet? Warum dieser Vergleich? Wer sollte diesen Artikel lesen? (mind. 150 Wörter)
+2. <h2>Die Testkandidaten im Überblick</h2> — Jedes Produkt als eigener <h3> mit Preis, Hauptmerkmalen, Positionierung im Markt (2–3 Sätze pro Produkt, mind. 3 Produkte)
+3. <h2>Hauptvergleichstabelle</h2> — HTML <table> mit allen Produkten im direkten Vergleich (mind. 10 Kriterienzeilen):
+   <table style="width:100%;border-collapse:collapse;"><thead><tr><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Kriterium</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Produkt A</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Produkt B</th><th style="border:1px solid #e5e7eb;padding:8px 12px;background:#f9fafb;font-weight:600;">Produkt C</th></tr></thead>
+   <tbody><!-- Zeilen: Preis, Display, Prozessor, Akku, Kamera, Speicher, Gewicht, Bewertung, Garantie, Besonderheiten --></tbody></table>
+4. <h2>Design & Verarbeitung</h2> — Aussehen, Materialqualität, Haptik, Größe und Gewicht für jedes Produkt im Vergleich (mind. 200 Wörter)
+5. <h2>Leistung & Performance</h2> — Benchmarks, Alltagsperformance, Gaming/Multitasking, Benchmark-Tabelle wenn möglich (mind. 250 Wörter)
+6. <h2>Akku & Laufzeit</h2> — Akkukapazität, gemessene Laufzeiten in verschiedenen Szenarien, Ladegeschwindigkeit (mind. 150 Wörter)
+7. <h2>Kamera & Multimedia</h2> (falls relevant) — Kameraqualität, Video, Besonderheiten; oder angepasstes Kapitel für andere Produkttypen (mind. 150 Wörter)
+8. <h2>Preis-Leistungs-Verhältnis</h2> — Kosten vs. gebotene Leistung für jedes Gerät; Preisvergleich bei Saturn / MediaMarkt / Otto / Kaufland (mind. 150 Wörter)
+9. <h2>Stärken & Schwächen jedes Produkts</h2> — Pro/Contra als <ul>/<li> für jedes Produkt in eigenem <h3>
+10. <h2>Häufig gestellte Fragen (FAQ)</h2> — 6 Fragen, jede als <h3> mit ausführlicher <p> Antwort (mind. 50 Wörter je Antwort)
+11. <h2>Fazit: Testsieger & Empfehlungen</h2> — Klarer Testsieger mit Begründung; Empfehlungen nach Budget (unter 200€, 200–500€, über 500€); alternative Szenarien (mind. 200 Wörter)""",
 }
 
 
@@ -88,10 +94,10 @@ def generate_article(topic, category='Kaufberatung'):
 
     prompt = f"""Du bist ein erfahrener Tech-Journalist für Preisradio.de, einen deutschen Preisvergleich für Elektronik (Saturn, MediaMarkt, Otto, Kaufland).
 
-Schreibe einen ausführlichen Blog-Artikel auf Deutsch zum Thema: "{topic}"
+Schreibe einen SEHR AUSFÜHRLICHEN Blog-Artikel auf Deutsch zum Thema: "{topic}"
 Kategorie: {category}
 
-Verwende folgende Artikelstruktur:
+Verwende folgende Artikelstruktur — jeder Abschnitt muss vollständig und ausführlich ausgeschrieben werden:
 {structure}
 
 Antworte ausschließlich mit validem JSON im folgenden Format:
@@ -102,33 +108,36 @@ Antworte ausschließlich mit validem JSON im folgenden Format:
     "excerpt": "Kurze Zusammenfassung für die Artikelliste (max 300 Zeichen)",
     "content": "<p>HTML-Inhalt mit <h2>, <p>, <ul>, <li>, <b> Tags...</p>",
     "amazon_keywords": "keyword1, keyword2, keyword3, keyword4, keyword5",
-    "read_time": 7
+    "read_time": 10
 }}
 
-Regeln:
+PFLICHTREGELN — unbedingt einhalten:
+- MINDESTENS 2000 Wörter im content-Feld (zähle die Wörter vor dem Abschicken!)
+- Jeder <h2>-Abschnitt muss mindestens 2–4 Absätze (<p>) enthalten
 - Schreibe professionell, neutral und informativ auf Deutsch
-- Halte dich genau an die vorgegebene Artikelstruktur oben
-- Mindestens 800 Wörter im content
-- Verwende <h2> für Zwischenüberschriften, <b> für wichtige Begriffe
-- Verwende <ul>/<li> für Aufzählungen
+- Halte dich EXAKT an die vorgegebene Artikelstruktur mit ALLEN Abschnitten
+- Verwende <h2> für Hauptabschnitte, <h3> für Unterabschnitte, <b> für wichtige Begriffe
+- Verwende <ul>/<li> für Aufzählungen, <ol>/<li> für nummerierte Listen
+- Baue mindestens 1 HTML-Tabelle (<table>) ein, wie in der Struktur beschrieben
 - Keine <h1> Tags (Titel wird separat angezeigt)
-- Keine Markdown-Syntax, nur HTML
+- Keine Markdown-Syntax, nur reines HTML
 - seo_title: kurz, mit Hauptkeyword, max 60 Zeichen
 - meta_description: überzeugend, mit Call-to-Action, max 155 Zeichen
-- amazon_keywords: 5 relevante Suchbegriffe, kommagetrennt
-- read_time: geschätzte Lesezeit in Minuten (integer)
-- Kein umschließendes ```json``` — nur das JSON-Objekt"""
+- amazon_keywords: 5 relevante deutsche Suchbegriffe, kommagetrennt
+- read_time: Lesezeit in Minuten (bei 2000 Wörtern = 10, bei 2500 = 12)
+- Kein umschließendes ```json``` — nur das reine JSON-Objekt"""
 
     response = client.chat.completions.create(
         model=getattr(settings, 'GROQ_MODEL', 'llama-3.3-70b-versatile'),
         messages=[
             {
                 "role": "system",
-                "content": "Du bist ein Tech-Journalist. Antworte ausschließlich mit validem JSON. Kein Markdown, kein erklärender Text — nur das JSON-Objekt.",
+                "content": "Du bist ein erfahrener Tech-Journalist. Schreibe sehr ausführliche Artikel mit MINDESTENS 2000 Wörtern. Antworte ausschließlich mit validem JSON. Kein Markdown, kein erklärender Text — nur das JSON-Objekt.",
             },
             {"role": "user", "content": prompt},
         ],
         temperature=0.7,
+        max_tokens=8000,
     )
 
     raw = response.choices[0].message.content.strip()
