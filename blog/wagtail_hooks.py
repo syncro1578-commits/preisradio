@@ -83,7 +83,7 @@ def editor_js():
         const baseTextarea = document.createElement('textarea');
         baseTextarea.id = 'ai-base-content';
         baseTextarea.rows = 10;
-        baseTextarea.placeholder = 'Rohtext hier einfügen — z.B. eigene Notizen, Produktbeschreibungen, Testberichte, oder Stichpunkte (mind. 200 Wörter).\n\nBeispiel:\n• Samsung Galaxy S25: 999€, 6,2 Zoll Display, Snapdragon 8 Elite...\n• Akku: 4000 mAh, lädt in 45 min...\n• Kamera: 50MP, gute Nachaufnahmen...';
+        baseTextarea.placeholder = 'Rohtext hier einf\u00fcgen \u2014 z.B. eigene Notizen, Produktbeschreibungen, Stichpunkte (mind. 200 W\u00f6rter). Beispiel: Samsung Galaxy S25: 999\u20ac, 6,2 Zoll Display, Snapdragon 8 Elite, Akku 4000 mAh...';
         baseTextarea.style.cssText = 'width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-family:monospace;line-height:1.5;resize:vertical;box-sizing:border-box;';
 
         const wordCountDisplay = document.createElement('div');
