@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { getArticleBySlug, getRelatedArticles, getAllSlugs } from '@/lib/blog-db';
+import BlogProductSection from '@/components/BlogProductSection';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
@@ -155,6 +156,11 @@ export default async function BlogArticlePage({
             className="prose max-w-none"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
+
+          {/* Product comparison + similar products from our stores */}
+          {article.amazonKeywords && article.amazonKeywords.length > 0 && (
+            <BlogProductSection keywords={article.amazonKeywords} />
+          )}
 
           {/* Amazon Affiliate CTA */}
           {(article.amazonProductUrl || (article.amazonKeywords && article.amazonKeywords.length > 0)) && (
