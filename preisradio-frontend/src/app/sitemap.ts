@@ -12,6 +12,7 @@ export const revalidate = 86400;
 export async function generateSitemaps() {
   return [
     { id: 'static' },
+    { id: 'blog' },
     { id: 'products-index' },
     { id: 'brands' },
     { id: 'categories' },
@@ -130,26 +131,33 @@ export default async function sitemap({
         changeFrequency: 'monthly' as const,
         priority: 0.3,
       },
+    ];
+  }
+
+  // Blog sitemap — /blog index + all article pages
+  if (sitemapId === 'blog') {
+    const entries: MetadataRoute.Sitemap = [
       {
         url: `${baseUrl}/blog`,
         lastModified: new Date(),
-        changeFrequency: 'weekly' as const,
+        changeFrequency: 'daily' as const,
         priority: 0.8,
       },
-      ...(await (async () => {
-        try {
-          const articles = await getPublishedArticles();
-          return articles.map((article) => ({
-            url: `${baseUrl}/blog/${article.slug}`,
-            lastModified: new Date(article.date),
-            changeFrequency: 'monthly' as const,
-            priority: 0.7,
-          }));
-        } catch {
-          return [];
-        }
-      })()),
     ];
+    try {
+      const articles = await getPublishedArticles();
+      articles.forEach((article) => {
+        entries.push({
+          url: `${baseUrl}/blog/${article.slug}`,
+          lastModified: new Date(article.date),
+          changeFrequency: 'weekly' as const,
+          priority: 0.7,
+        });
+      });
+    } catch {
+      // Build resilience — return at least /blog
+    }
+    return entries;
   }
 
   // Products sitemap - load products only for this sitemap
