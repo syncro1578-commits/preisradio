@@ -79,6 +79,67 @@ def editor_js():
             document.head.appendChild(style);
         }}
 
+        // ── HTML Preview Panel ──────────────────────────────────────────
+        const contentField = document.getElementById('id_content');
+        if (contentField) {{
+            const previewBtn = document.createElement('button');
+            previewBtn.type = 'button';
+            previewBtn.id = 'html-preview-btn';
+            previewBtn.textContent = '👁 HTML-Vorschau';
+            previewBtn.style.cssText = 'margin-top:8px;padding:6px 14px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;';
+
+            const previewPane = document.createElement('div');
+            previewPane.id = 'html-preview-pane';
+            previewPane.style.cssText = 'display:none;margin-top:10px;padding:20px 24px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;max-height:600px;overflow-y:auto;font-family:Georgia,serif;font-size:16px;line-height:1.7;color:#111827;';
+
+            // Inline prose styles injected inside the preview div
+            const proseStyles = `
+                <style>
+                  #html-preview-pane h2{{font-size:1.35em;font-weight:700;margin:1.4em 0 0.5em;border-bottom:2px solid #e5e7eb;padding-bottom:0.25em;}}
+                  #html-preview-pane h3{{font-size:1.1em;font-weight:600;margin:1.2em 0 0.4em;color:#1d4ed8;}}
+                  #html-preview-pane p{{margin:0 0 0.9em;}}
+                  #html-preview-pane ul,#html-preview-pane ol{{padding-left:1.5em;margin:0.6em 0 0.9em;}}
+                  #html-preview-pane li{{margin-bottom:0.3em;}}
+                  #html-preview-pane table{{width:100%;border-collapse:collapse;margin:1em 0;font-size:0.9em;}}
+                  #html-preview-pane th,#html-preview-pane td{{border:1px solid #e5e7eb;padding:8px 12px;text-align:left;}}
+                  #html-preview-pane th{{background:#f9fafb;font-weight:600;}}
+                  #html-preview-pane tr:nth-child(even) td{{background:#f9fafb;}}
+                  #html-preview-pane b,#html-preview-pane strong{{font-weight:700;}}
+                </style>
+            `;
+
+            function updatePreview() {{
+                previewPane.innerHTML = proseStyles + contentField.value;
+            }}
+
+            previewBtn.addEventListener('click', function() {{
+                if (previewPane.style.display === 'none') {{
+                    updatePreview();
+                    previewPane.style.display = 'block';
+                    previewBtn.textContent = '✕ Vorschau schließen';
+                    previewBtn.style.background = '#dbeafe';
+                    previewBtn.style.borderColor = '#93c5fd';
+                    previewBtn.style.color = '#1e40af';
+                }} else {{
+                    previewPane.style.display = 'none';
+                    previewBtn.textContent = '👁 HTML-Vorschau';
+                    previewBtn.style.background = '#f3f4f6';
+                    previewBtn.style.borderColor = '#d1d5db';
+                    previewBtn.style.color = '#374151';
+                }}
+            }});
+
+            // Live update on typing
+            contentField.addEventListener('input', function() {{
+                if (previewPane.style.display !== 'none') updatePreview();
+            }});
+
+            const contentWrapper = contentField.closest('[data-field]') || contentField.closest('.w-field') || contentField.parentElement;
+            contentWrapper.appendChild(previewBtn);
+            contentWrapper.appendChild(previewPane);
+        }}
+        // ── End Preview Panel ────────────────────────────────────────────
+
         btn.addEventListener('click', async function() {{
             const topic = input.value.trim();
             if (!topic) {{
