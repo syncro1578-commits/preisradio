@@ -179,8 +179,8 @@ export default async function BlogInlineProduct({ keywords }: { keywords: string
                   rel="noopener noreferrer nofollow sponsored"
                   className="flex-1 flex items-center justify-center gap-1.5 bg-amber-400 hover:bg-amber-500 text-gray-900 font-bold py-2 px-3 rounded-xl text-xs transition-colors"
                 >
-                  <img src="/retailers/amazon.png" alt="Amazon" className="h-3.5" />
-                  Amazon
+                  <img src="/retailers/amazon.png" alt="Amazon" className="h-3.5 flex-shrink-0" />
+                  Bei Amazon
                 </a>
 
                 {/* Store */}
@@ -191,16 +191,14 @@ export default async function BlogInlineProduct({ keywords }: { keywords: string
                   className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold text-white transition-opacity hover:opacity-90"
                   style={{ background: retailerColor }}
                 >
-                  {RETAILER_LOGOS[retailer] ? (
+                  {RETAILER_LOGOS[retailer] && (
                     <img
                       src={RETAILER_LOGOS[retailer]}
-                      alt={RETAILER_LABEL[retailer] || retailer}
-                      className="h-3.5 brightness-0 invert"
+                      alt=""
+                      className="h-3.5 brightness-0 invert flex-shrink-0"
                     />
-                  ) : (
-                    <span className="capitalize">{retailer || 'Shop'}</span>
                   )}
-                  Zum Angebot
+                  {RETAILER_LABEL[retailer] || retailer || 'Shop'}
                 </a>
               </div>
             </div>
