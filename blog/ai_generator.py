@@ -80,6 +80,18 @@ Struktur für Testberichte (Produkttest & Vergleich) — MINDESTENS 2000 Wörter
 }
 
 
+def _sanitize_base_content(text, max_chars=8000):
+    """Strip HTML tags and truncate base_content to a safe size for the prompt."""
+    # Remove HTML tags
+    text = re.sub(r'<[^>]+>', ' ', text)
+    # Collapse whitespace
+    text = re.sub(r'\s+', ' ', text).strip()
+    # Truncate to max_chars
+    if len(text) > max_chars:
+        text = text[:max_chars].rsplit(' ', 1)[0] + ' [...]'
+    return text
+
+
 def generate_article(topic, category='Kaufberatung', base_content=''):
     """Generate a blog article using Groq API.
 
@@ -94,6 +106,10 @@ def generate_article(topic, category='Kaufberatung', base_content=''):
     )
 
     structure = CATEGORY_STRUCTURES.get(category, CATEGORY_STRUCTURES['Kaufberatung'])
+
+    # Sanitize base_content: strip HTML + truncate to ~1600 words max
+    if base_content:
+        base_content = _sanitize_base_content(base_content, max_chars=8000)
 
     if base_content and len(base_content.strip()) > 200:
         # ── Reformulation mode ───────────────────────────────────────────
@@ -234,6 +250,15 @@ PFLICHTREGELN — unbedingt einhalten:
         return ''.join(out)
 
     raw = _fix_control_chars(raw)
+
+    # Guard: if Groq returned an HTML error page instead of JSON
+    if raw.lstrip().startswith('<'):
+        raise ValueError(
+            "Groq hat kein JSON zurückgegeben (HTML-Fehlerseite). "
+            "Möglicherweise war der Rohtext zu lang oder das Modell nicht verfügbar. "
+            f"Antwort-Anfang: {raw[:200]}"
+        )
+
     result = json.loads(raw)
 
     # Validate required keys
