@@ -36,9 +36,11 @@ def ai_generate_ajax(request):
         body = json.loads(request.body)
         topic = body.get('topic', '').strip()
         category = body.get('category', 'Kaufberatung')
+        base_content = body.get('base_content', '').strip()
     except (json.JSONDecodeError, AttributeError):
         topic = request.POST.get('topic', '').strip()
         category = request.POST.get('category', 'Kaufberatung')
+        base_content = request.POST.get('base_content', '').strip()
 
     if not topic:
         return JsonResponse({'error': 'Kein Thema angegeben.'}, status=400)
@@ -48,7 +50,7 @@ def ai_generate_ajax(request):
         return JsonResponse({'error': 'BlogIndexPage nicht gefunden.'}, status=500)
 
     try:
-        result = generate_article(topic, category)
+        result = generate_article(topic, category, base_content)
         slug = _slugify_de(result['title'])
 
         # Update existing page if slug matches, otherwise create new

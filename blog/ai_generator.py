@@ -80,8 +80,11 @@ Struktur für Testberichte (Produkttest & Vergleich) — MINDESTENS 2000 Wörter
 }
 
 
-def generate_article(topic, category='Kaufberatung'):
+def generate_article(topic, category='Kaufberatung', base_content=''):
     """Generate a blog article using Groq API.
+
+    If base_content is provided (500+ words), the AI reformulates and expands it.
+    Otherwise generates from scratch.
 
     Returns dict with keys: title, excerpt, content, amazon_keywords, read_time
     """
@@ -92,7 +95,55 @@ def generate_article(topic, category='Kaufberatung'):
 
     structure = CATEGORY_STRUCTURES.get(category, CATEGORY_STRUCTURES['Kaufberatung'])
 
-    prompt = f"""Du bist ein erfahrener Tech-Journalist für Preisradio.de, einen deutschen Preisvergleich für Elektronik (Saturn, MediaMarkt, Otto, Kaufland).
+    if base_content and len(base_content.strip()) > 200:
+        # ── Reformulation mode ───────────────────────────────────────────
+        prompt = f"""Du bist ein erfahrener Tech-Journalist für Preisradio.de, einen deutschen Preisvergleich für Elektronik (Saturn, MediaMarkt, Otto, Kaufland).
+
+Thema: "{topic}"
+Kategorie: {category}
+
+Du erhältst einen Rohtext als Grundlage. Deine Aufgabe:
+1. Den Inhalt des Rohtexts vollständig aufgreifen und KEINE Informationen weglassen
+2. Den Text professionell umschreiben, strukturieren und auf MINDESTENS 2000 Wörter ausbauen
+3. Fehlende Abschnitte gemäß der Artikelstruktur ergänzen
+4. Eigene Recherchen und Expertise einfließen lassen, um den Artikel zu bereichern
+
+ROHTEXT ZUM UMSCHREIBEN UND ERWEITERN:
+---
+{base_content}
+---
+
+Verwende folgende Artikelstruktur — alle Abschnitte vollständig ausschreiben:
+{structure}
+
+Antworte ausschließlich mit validem JSON im folgenden Format:
+{{
+    "title": "Ansprechender Titel basierend auf dem Rohtext (max 100 Zeichen)",
+    "seo_title": "SEO-optimierter Titel für Google (max 60 Zeichen)",
+    "meta_description": "Meta-Beschreibung für Google (max 155 Zeichen)",
+    "excerpt": "Kurze Zusammenfassung für die Artikelliste (max 300 Zeichen)",
+    "content": "<p>HTML-Inhalt mit <h2>, <p>, <ul>, <li>, <b> Tags...</p>",
+    "amazon_keywords": "keyword1, keyword2, keyword3, keyword4, keyword5",
+    "read_time": 10
+}}
+
+PFLICHTREGELN:
+- MINDESTENS 2000 Wörter im content-Feld
+- Alle Fakten und Informationen aus dem Rohtext übernehmen und ausbauen
+- Jeder <h2>-Abschnitt mindestens 2–4 Absätze (<p>)
+- Verwende <h2> für Hauptabschnitte, <h3> für Unterabschnitte, <b> für Schlüsselbegriffe
+- Verwende <ul>/<li> für Aufzählungen, <ol>/<li> für nummerierte Listen
+- Mindestens 1 HTML-Tabelle (<table>) mit inline style="width:100%;border-collapse:collapse;"
+- Keine <h1> Tags, keine Markdown-Syntax — nur reines HTML
+- seo_title: max 60 Zeichen mit Hauptkeyword
+- meta_description: max 155 Zeichen, überzeugend, mit Call-to-Action
+- amazon_keywords: 5 relevante deutsche Suchbegriffe, kommagetrennt
+- read_time: in Minuten (2000 Wörter = 10 min)
+- Kein umschließendes ```json``` — nur das reine JSON-Objekt"""
+
+    else:
+        # ── Generierung von Grund auf ─────────────────────────────────────
+        prompt = f"""Du bist ein erfahrener Tech-Journalist für Preisradio.de, einen deutschen Preisvergleich für Elektronik (Saturn, MediaMarkt, Otto, Kaufland).
 
 Schreibe einen SEHR AUSFÜHRLICHEN Blog-Artikel auf Deutsch zum Thema: "{topic}"
 Kategorie: {category}

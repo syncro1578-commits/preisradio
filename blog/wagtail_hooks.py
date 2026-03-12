@@ -55,7 +55,7 @@ def editor_js():
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.id = 'ai-generate-btn';
-        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>AI generieren';
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Artikel generieren';
         btn.style.cssText = 'padding:8px 18px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;display:flex;align-items:center;';
 
         container.appendChild(input);
@@ -64,6 +64,55 @@ def editor_js():
 
         const titlePanel = titleField.closest('[data-field]') || titleField.closest('.w-panel') || titleField.parentElement.parentElement;
         titlePanel.parentElement.insertBefore(container, titlePanel.nextSibling);
+
+        // ── Basisinhalt Textarea (Rohtext zum Umschreiben) ───────────────
+        const baseToggle = document.createElement('button');
+        baseToggle.type = 'button';
+        baseToggle.id = 'ai-base-toggle';
+        baseToggle.innerHTML = '📄 Rohtext eingeben (optional — KI reformuliert und erweitert auf 2000+ Wörter)';
+        baseToggle.style.cssText = 'margin-top:6px;padding:6px 14px;background:#f9fafb;color:#374151;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;display:block;width:100%;text-align:left;';
+
+        const basePanel = document.createElement('div');
+        basePanel.id = 'ai-base-panel';
+        basePanel.style.cssText = 'display:none;margin-top:8px;';
+
+        const baseLabel = document.createElement('div');
+        baseLabel.style.cssText = 'font-size:12px;color:#6b7280;margin-bottom:6px;';
+        baseLabel.innerHTML = '<b>Rohtext / Basisinhalt</b> — Mindestens 200 Wörter. Die KI übernimmt alle Fakten und baut sie zu einem strukturierten Artikel mit 2000+ Wörtern aus.';
+
+        const baseTextarea = document.createElement('textarea');
+        baseTextarea.id = 'ai-base-content';
+        baseTextarea.rows = 10;
+        baseTextarea.placeholder = 'Rohtext hier einfügen — z.B. eigene Notizen, Produktbeschreibungen, Testberichte, oder Stichpunkte (mind. 200 Wörter).\n\nBeispiel:\n• Samsung Galaxy S25: 999€, 6,2 Zoll Display, Snapdragon 8 Elite...\n• Akku: 4000 mAh, lädt in 45 min...\n• Kamera: 50MP, gute Nachaufnahmen...';
+        baseTextarea.style.cssText = 'width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-family:monospace;line-height:1.5;resize:vertical;box-sizing:border-box;';
+
+        const wordCountDisplay = document.createElement('div');
+        wordCountDisplay.style.cssText = 'margin-top:4px;font-size:11px;color:#9ca3af;text-align:right;';
+        wordCountDisplay.textContent = '0 Wörter';
+
+        baseTextarea.addEventListener('input', function() {{
+            const words = baseTextarea.value.trim().split(/\s+/).filter(Boolean).length;
+            const color = words >= 200 ? '#059669' : words >= 100 ? '#d97706' : '#9ca3af';
+            wordCountDisplay.style.color = color;
+            wordCountDisplay.textContent = words + ' Wörter' + (words >= 200 ? ' ✓' : words > 0 ? ' (mind. 200 empfohlen)' : '');
+        }});
+
+        basePanel.appendChild(baseLabel);
+        basePanel.appendChild(baseTextarea);
+        basePanel.appendChild(wordCountDisplay);
+
+        baseToggle.addEventListener('click', function() {{
+            const isOpen = basePanel.style.display !== 'none';
+            basePanel.style.display = isOpen ? 'none' : 'block';
+            baseToggle.style.background = isOpen ? '#f9fafb' : '#eff6ff';
+            baseToggle.style.borderColor = isOpen ? '#e5e7eb' : '#93c5fd';
+            baseToggle.style.color = isOpen ? '#374151' : '#1d4ed8';
+            if (!isOpen) baseTextarea.focus();
+        }});
+
+        container.parentElement.insertBefore(baseToggle, container.nextSibling);
+        container.parentElement.insertBefore(basePanel, baseToggle.nextSibling);
+        // ── End Basisinhalt ──────────────────────────────────────────────
 
         // Status
         const status = document.createElement('div');
@@ -154,14 +203,22 @@ def editor_js():
             btn.style.opacity = '0.5';
             btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid #93c5fd;border-top-color:#fff;border-radius:50%;animation:aispin 0.6s linear infinite;margin-right:6px;"></span>Generiert...';
             status.style.display = 'block';
+            const baseForStatus = document.getElementById('ai-base-content')?.value?.trim() || '';
+            const isReformMode = baseForStatus.length > 200;
             status.style.background = '#e0f2fe';
             status.style.color = '#1e40af';
             status.style.border = '1px solid #7dd3fc';
-            status.textContent = 'Groq generiert den Artikel... Bitte warten.';
+            status.textContent = isReformMode
+                ? 'Groq schreibt den Rohtext um und erweitert ihn auf 2000+ Wörter... Bitte warten.'
+                : 'Groq generiert den Artikel mit 2000+ Wörtern... Bitte warten.';
 
             try {{
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value
                     || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+                const baseContent = document.getElementById('ai-base-content')?.value?.trim() || '';
+                const modeLabel = baseContent.length > 200 ? 'Umschreiben & Erweitern' : 'Generieren';
+                btn.querySelector('span') && (btn.querySelector('span').nextSibling.textContent = modeLabel + '...');
 
                 const resp = await fetch('/wagtail-admin/ai-generate/', {{
                     method: 'POST',
@@ -169,7 +226,7 @@ def editor_js():
                         'Content-Type': 'application/json',
                         'X-CSRFToken': csrfToken,
                     }},
-                    body: JSON.stringify({{ topic: topic, category: category }}),
+                    body: JSON.stringify({{ topic: topic, category: category, base_content: baseContent }}),
                 }});
 
                 const data = await resp.json();
