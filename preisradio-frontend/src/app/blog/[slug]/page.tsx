@@ -101,6 +101,13 @@ export default async function BlogArticlePage({
 
   const amazonTag = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'bestprice2109-21';
 
+  // Wrap <table> elements for responsive scrolling + better styling
+  function wrapTables(html: string): string {
+    return html
+      .replace(/<table/gi, '<div class="prose-table-wrap"><table')
+      .replace(/<\/table>/gi, '</table></div>');
+  }
+
   // 3-way split for mid-article product injection
   // part1 → BlogInlineProduct (1 product card) → part2 → BlogProductSection (comparison) → part3
   const h2Pos: number[] = [];
@@ -178,7 +185,7 @@ export default async function BlogArticlePage({
           {/* Part 1: intro + 1st section */}
           <div
             className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none"
-            dangerouslySetInnerHTML={{ __html: contentPart1 }}
+            dangerouslySetInnerHTML={{ __html: wrapTables(contentPart1) }}
           />
 
           {/* After 1st section: inline product card (1–2 products) */}
@@ -190,7 +197,7 @@ export default async function BlogArticlePage({
           {contentPart2 && (
             <div
               className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none"
-              dangerouslySetInnerHTML={{ __html: contentPart2 }}
+              dangerouslySetInnerHTML={{ __html: wrapTables(contentPart2) }}
             />
           )}
 
@@ -203,7 +210,7 @@ export default async function BlogArticlePage({
           {contentPart3 && (
             <div
               className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none"
-              dangerouslySetInnerHTML={{ __html: contentPart3 }}
+              dangerouslySetInnerHTML={{ __html: wrapTables(contentPart3) }}
             />
           )}
 
