@@ -97,10 +97,9 @@ export default function ProductCard({ product, isBestPrice }: ProductCardProps) 
                 target="_blank"
                 rel="noopener noreferrer sponsored"
                 onClick={(e) => e.stopPropagation()}
-                className="mt-1 flex items-center justify-center gap-1 rounded-md bg-[#FF9900] px-2 py-1 text-[8px] sm:text-[10px] font-semibold text-white hover:bg-[#e68a00] transition-colors"
+                className="mt-1 flex items-center justify-center gap-1 rounded-md bg-white border border-gray-200 px-2 py-1 hover:bg-gray-50 transition-colors"
               >
-                <Image src="/retailers/amazon.png" alt="Amazon" width={14} height={14} className="h-3 w-3 object-contain" />
-                Auf Amazon vergleichen
+                <Image src="/retailers/amazon_new.webp" alt="Amazon" width={56} height={17} className="h-3.5 w-auto object-contain" />
               </a>
               <p className="text-[6px] sm:text-[7px] text-gray-400 dark:text-gray-500 text-center mt-0.5 leading-tight">
                 * Affiliate-Link

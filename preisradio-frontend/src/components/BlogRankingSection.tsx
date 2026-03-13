@@ -162,10 +162,9 @@ export default async function BlogRankingSection({ keywords }: { keywords: strin
                     href={productAmazon}
                     target="_blank"
                     rel="noopener noreferrer nofollow sponsored"
-                    className="flex items-center justify-center gap-1.5 bg-amber-400 hover:bg-amber-500 text-gray-900 font-bold py-1.5 rounded-xl text-[11px] transition-colors"
+                    className="flex items-center justify-center py-1.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
                   >
-                    <img src="/retailers/amazon.png" alt="Amazon" className="h-3 flex-shrink-0" />
-                    Amazon
+                    <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-4 w-auto flex-shrink-0" />
                   </a>
                   {product.url && (
                     <a

@@ -163,10 +163,9 @@ export default async function BlogInlineProduct({ keywords }: { keywords: string
                   href={amazonUrl}
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
-                  className="flex-1 flex items-center justify-center gap-1.5 bg-amber-400 hover:bg-amber-500 text-gray-900 font-bold py-2 px-3 rounded-xl text-xs transition-colors"
+                  className="flex-1 flex items-center justify-center py-2 px-3 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
                 >
-                  <img src="/retailers/amazon.png" alt="Amazon" className="h-3.5 flex-shrink-0" />
-                  Bei Amazon
+                  <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-4 w-auto flex-shrink-0" />
                 </a>
 
                 {/* Store */}

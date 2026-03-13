@@ -167,10 +167,9 @@ export default async function BlogProductSection({
                           href={amazonUrl}
                           target="_blank"
                           rel="noopener noreferrer nofollow sponsored"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold text-gray-900 bg-amber-400 hover:bg-amber-500 transition-colors"
+                          className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
                         >
-                          <img src="/retailers/amazon.png" alt="Amazon" className="h-3 flex-shrink-0" />
-                          Amazon
+                          <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-3.5 w-auto flex-shrink-0" />
                         </a>
                       </div>
                     </td>
@@ -249,10 +248,9 @@ export default async function BlogProductSection({
                     href={amazonUrl}
                     target="_blank"
                     rel="noopener noreferrer nofollow sponsored"
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold text-gray-900 bg-amber-400 hover:bg-amber-500 transition-colors"
+                    className="flex-1 flex items-center justify-center py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
                   >
-                    <img src="/retailers/amazon.png" alt="Amazon" className="h-3.5" />
-                    Amazon
+                    <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-4 w-auto" />
                   </a>
                 </div>
               </div>

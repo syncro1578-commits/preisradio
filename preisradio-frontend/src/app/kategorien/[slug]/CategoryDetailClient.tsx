@@ -320,7 +320,7 @@ export default function CategoryDetailClient({
                       <div className="space-y-1">
                         {retailers.map((retailer) => {
                           const names: Record<string, string> = { saturn: 'Saturn', mediamarkt: 'MediaMarkt', otto: 'Otto', kaufland: 'Kaufland', amazon: 'Amazon' };
-                          const icons: Record<string, string> = { saturn: '/retailers/saturn.png', mediamarkt: '/retailers/mediamarkt.png', otto: '/retailers/otto.png', kaufland: '/retailers/kaufland.png', amazon: '/retailers/amazon.png' };
+                          const icons: Record<string, string> = { saturn: '/retailers/saturn.png', mediamarkt: '/retailers/mediamarkt.png', otto: '/retailers/otto.png', kaufland: '/retailers/kaufland.png', amazon: '/retailers/amazon_new.webp' };
                           return (
                             <button
                               key={retailer}

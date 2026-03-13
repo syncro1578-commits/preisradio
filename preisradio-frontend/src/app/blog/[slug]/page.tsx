@@ -271,11 +271,10 @@ export default async function BlogArticlePage({
                   href={article.amazonProductUrl}
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
-                  className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-gray-900 font-bold px-6 py-3.5 text-sm transition-colors shadow-sm"
+                  className="mb-4 flex items-center justify-center gap-3 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 px-6 py-3 transition-colors shadow-sm"
                 >
-                  <img src="/retailers/amazon.png" alt="Amazon" className="h-5" />
-                  Jetzt auf Amazon kaufen
-                  <svg className="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-6 w-auto" />
+                  <svg className="h-4 w-4 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
                   </svg>
                 </a>

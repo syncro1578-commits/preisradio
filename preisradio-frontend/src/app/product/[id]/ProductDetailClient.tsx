@@ -314,11 +314,10 @@ export default function ProductDetailClient({
                     href={`https://www.amazon.de/s?k=${encodeURIComponent(product.title)}&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG}`}
                     target="_blank"
                     rel="noopener noreferrer sponsored"
-                    className="flex items-center justify-center gap-2 rounded-xl bg-[#FF9900] px-3 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#e68a00] hover:shadow-md hover:scale-[1.01] active:scale-95"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-200 px-4 py-2.5 transition-all hover:bg-gray-50 hover:shadow-md hover:scale-[1.01] active:scale-95"
                   >
-                    <Image src="/retailers/amazon.png" alt="Amazon" width={24} height={24} className="h-5 w-5 object-contain" />
-                    Bei Amazon
-                    <svg className="h-3.5 w-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <Image src="/retailers/amazon_new.webp" alt="Amazon" width={80} height={24} className="h-5 w-auto object-contain" />
+                    <svg className="h-3.5 w-3.5 text-gray-400 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                   </a>
