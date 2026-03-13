@@ -5,7 +5,8 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { getArticleBySlug, getRelatedArticles, getAllSlugs } from '@/lib/blog-db';
 import BlogProductSection from '@/components/BlogProductSection';
-import BlogInlineProduct from '@/components/BlogInlineProduct';
+import BlogRankingSection from '@/components/BlogRankingSection';
+import BlogSimilarProducts from '@/components/BlogSimilarProducts';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
@@ -108,8 +109,8 @@ export default async function BlogArticlePage({
       .replace(/<\/table>/gi, '</table></div>');
   }
 
-  // 3-way split for mid-article product injection
-  // part1 → BlogInlineProduct (1 product card) → part2 → BlogProductSection (comparison) → part3
+  // Content split logic:
+  // part1 → BlogRankingSection → part2 → BlogProductSection → part3body → BlogSimilarProducts → faqPart
   const h2Pos: number[] = [];
   let searchFrom = 0;
   while (true) {
@@ -118,16 +119,30 @@ export default async function BlogArticlePage({
     h2Pos.push(idx);
     searchFrom = idx + 1;
   }
-  // BlogInlineProduct after 1st section (before 2nd h2)
+  // Split 1: before 2nd h2 (BlogRankingSection goes here)
   const split1 = h2Pos.length >= 2 ? h2Pos[1] : -1;
-  // BlogProductSection after 2nd section (before 3rd h2)
+  // Split 2: before 3rd h2 (BlogProductSection goes here)
   const split2 = h2Pos.length >= 3 ? h2Pos[2] : -1;
 
   const contentPart1 = split1 > 0 ? article.content.slice(0, split1) : article.content;
   const contentPart2 = split1 > 0 && split2 > 0
     ? article.content.slice(split1, split2)
     : split1 > 0 ? article.content.slice(split1) : '';
-  const contentPart3 = split2 > 0 ? article.content.slice(split2) : '';
+  const contentPart3Full = split2 > 0 ? article.content.slice(split2) : '';
+
+  // Split part3 at LAST h2 = FAQ section (BlogSimilarProducts goes before it)
+  const h2InPart3: number[] = [];
+  let sfrom = 0;
+  while (true) {
+    const i = contentPart3Full.indexOf('<h2', sfrom);
+    if (i === -1) break;
+    h2InPart3.push(i);
+    sfrom = i + 1;
+  }
+  const faqOffset = h2InPart3.length >= 2 ? h2InPart3[h2InPart3.length - 1] : -1;
+  const contentPart3 = faqOffset > 0 ? contentPart3Full.slice(0, faqOffset) : contentPart3Full;
+  const contentFaq = faqOffset > 0 ? contentPart3Full.slice(faqOffset) : '';
+
   const hasKeywords = article.amazonKeywords && article.amazonKeywords.length > 0;
 
   return (
@@ -182,15 +197,15 @@ export default async function BlogArticlePage({
 
         {/* Content */}
         <div className="max-w-3xl mx-auto">
-          {/* Part 1: intro + 1st section */}
+          {/* Part 1: intro */}
           <div
             className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none"
             dangerouslySetInnerHTML={{ __html: wrapTables(contentPart1) }}
           />
 
-          {/* After 1st section: inline product card (1–2 products) */}
+          {/* After intro: "Die besten X" ranking cards (Platz 1–4) */}
           {hasKeywords && contentPart2 && (
-            <BlogInlineProduct keywords={article.amazonKeywords} />
+            <BlogRankingSection keywords={article.amazonKeywords} />
           )}
 
           {/* Part 2: 2nd section */}
@@ -201,12 +216,12 @@ export default async function BlogArticlePage({
             />
           )}
 
-          {/* After 2nd section: full product comparison table */}
-          {hasKeywords && contentPart3 && (
+          {/* After 2nd section: full comparison table */}
+          {hasKeywords && contentPart3Full && (
             <BlogProductSection keywords={article.amazonKeywords} />
           )}
 
-          {/* Part 3: remaining sections */}
+          {/* Part 3 body: remaining sections BEFORE FAQ */}
           {contentPart3 && (
             <div
               className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none"
@@ -214,9 +229,25 @@ export default async function BlogArticlePage({
             />
           )}
 
-          {/* Fallback: show comparison if no 3-way split possible */}
+          {/* Before FAQ: "Weitere [Brand]-Produkte" (tâche 1) */}
+          {hasKeywords && contentFaq && (
+            <BlogSimilarProducts keywords={article.amazonKeywords} />
+          )}
+
+          {/* FAQ section (last h2 of article) */}
+          {contentFaq && (
+            <div
+              className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none"
+              dangerouslySetInnerHTML={{ __html: wrapTables(contentFaq) }}
+            />
+          )}
+
+          {/* Fallback: show comparison + similar if no split possible */}
           {hasKeywords && !contentPart2 && (
-            <BlogProductSection keywords={article.amazonKeywords} />
+            <>
+              <BlogProductSection keywords={article.amazonKeywords} />
+              <BlogSimilarProducts keywords={article.amazonKeywords} />
+            </>
           )}
 
           {/* Amazon Affiliate CTA */}

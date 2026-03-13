@@ -39,23 +39,6 @@ async function fetchProducts(keyword: string, pageSize = 4): Promise<Product[]> 
   }
 }
 
-// Tâche 3: fetch similar products from same brand (different models)
-async function fetchSimilarByBrand(brand: string, excludeIds: string[]): Promise<Product[]> {
-  if (!brand) return [];
-  try {
-    const res = await fetch(
-      `${API_URL}/products/?search=${encodeURIComponent(brand)}&page_size=12`,
-      { next: { revalidate: 3600 } }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return (data.results as Product[])
-      .filter((p) => !excludeIds.includes(p.id))
-      .slice(0, 4);
-  } catch {
-    return [];
-  }
-}
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
@@ -77,12 +60,7 @@ export default async function BlogProductSection({
   if (products.length === 0) return null;
 
   const topProducts = products;
-  const topIds = topProducts.map((p) => p.id);
-  const brand = topProducts[0]?.brand || '';
   const amazonUrl = `https://www.amazon.de/s?k=${encodeURIComponent(searchTerm)}&tag=${AMAZON_TAG}`;
-
-  // Tâche 3: similar products from same brand, excluding top products
-  const similarProducts = await fetchSimilarByBrand(brand, topIds);
 
   return (
     <div className="mt-10 space-y-10 not-prose">
@@ -300,108 +278,6 @@ export default async function BlogProductSection({
         </div>
       </section>
 
-      {/* Tâche 3: Similar products from same BRAND (different models) */}
-      {similarProducts.length > 0 && (
-        <section>
-          <div className="mb-4">
-            <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-1">
-              <span className="w-1 h-5 rounded-full bg-emerald-500 flex-shrink-0" />
-              Weitere {brand ? `${brand}-Produkte` : 'Produkte'} aus unseren Shops
-            </h2>
-            {brand && (
-              <p className="text-xs text-gray-500 dark:text-gray-400 ml-3">
-                Andere Modelle und Alternativen von {brand} — nicht dasselbe Gerät
-              </p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {similarProducts.map((product) => {
-              const retailer = product.retailer || '';
-              const productAmazonUrl = `https://www.amazon.de/s?k=${encodeURIComponent(product.title.slice(0, 60))}&tag=${AMAZON_TAG}`;
-              return (
-                <div
-                  key={product.id}
-                  className="flex flex-col rounded-xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
-                >
-                  {/* Image — links to product page */}
-                  <Link href={`/product/${product.id}`} className="group block">
-                    <div className="aspect-square bg-gray-50 dark:bg-zinc-800 relative overflow-hidden">
-                      {product.image ? (
-                        <img
-                          src={product.image}
-                          alt={product.title}
-                          className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-200 dark:text-zinc-700">
-                          <svg className="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                        </div>
-                      )}
-                      {product.old_price && product.old_price > product.price && (
-                        <span className="absolute top-2 right-2 text-[10px] font-bold bg-red-500 text-white px-1.5 py-0.5 rounded-full leading-none">
-                          -{discountPercent(product.price, product.old_price)}%
-                        </span>
-                      )}
-                    </div>
-                  </Link>
-
-                  {/* Info */}
-                  <div className="p-2.5 flex flex-col flex-1">
-                    <Link href={`/product/${product.id}`}>
-                      <p className="text-[11px] text-gray-600 dark:text-gray-300 line-clamp-2 leading-snug hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        {product.title}
-                      </p>
-                    </Link>
-                    <div className="mt-2 flex items-end justify-between gap-1">
-                      <span className="font-bold text-gray-900 dark:text-white text-sm tabular-nums">
-                        {formatPrice(product.price)}
-                      </span>
-                      {RETAILER_LOGOS[retailer] && (
-                        <img
-                          src={RETAILER_LOGOS[retailer]}
-                          alt={RETAILER_LABEL[retailer] || retailer}
-                          className="h-3.5 object-contain flex-shrink-0"
-                          style={{ maxWidth: '52px' }}
-                        />
-                      )}
-                    </div>
-                    {/* Amazon + store buttons */}
-                    <div className="mt-2 flex gap-1">
-                      <a
-                        href={product.url}
-                        target="_blank"
-                        rel="noopener noreferrer nofollow"
-                        className={`flex-1 flex items-center justify-center py-1.5 rounded-lg text-[10px] font-bold text-white transition-colors ${
-                          RETAILER_COLORS[retailer] || 'bg-blue-600 hover:bg-blue-700'
-                        }`}
-                      >
-                        {RETAILER_LABEL[retailer] || retailer || 'Shop'}
-                      </a>
-                      <a
-                        href={productAmazonUrl}
-                        target="_blank"
-                        rel="noopener noreferrer nofollow sponsored"
-                        className="flex-1 flex items-center justify-center py-1.5 rounded-lg text-[10px] font-bold text-gray-900 bg-amber-400 hover:bg-amber-500 transition-colors"
-                      >
-                        <img src="/retailers/amazon.png" alt="Amazon" className="h-2.5" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-4 text-center">
-            <Link href="/kategorien" className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">
-              Mehr {brand} Produkte entdecken →
-            </Link>
-          </div>
-        </section>
-      )}
     </div>
   );
 }
