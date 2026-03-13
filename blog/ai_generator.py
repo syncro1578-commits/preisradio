@@ -89,12 +89,6 @@ VISUAL_ELEMENTS_GUIDE = """PFLICHT — Visuelle HTML-Elemente zwischen den Absch
    Karten 2–4 — gleiche Struktur, border:1px solid #e5e7eb, background:#fff, Platz-Zahl ändern, kein TESTSIEGER-Badge.
    Testnoten-Farben: 1,0–1,5=SEHR GUT(#059669 grün), 1,6–2,5=GUT(#2563eb blau), 2,6–3,5=BEFRIEDIGEND(#d97706 orange).
 
-2. EXPERTENTIPP-BOX (1–2 mal, nach einem informativen h2-Abschnitt):
-   <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;"><div style="font-weight:700;color:#1d4ed8;margin-bottom:5px;font-size:13px;">&#128161; Expertentipp</div><p style="margin:0;color:#1e3a5f;font-size:14px;line-height:1.65;">Konkreter, umsetzbarer Tipp in 2–3 Sätzen.</p></div>
-
-3. PREISTIPP-BOX (1 mal, beim Preisvergleich- oder Spartipps-Abschnitt):
-   <div style="background:#fefce8;border-left:4px solid #ca8a04;border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;"><div style="font-weight:700;color:#92400e;margin-bottom:5px;font-size:13px;">&#9889; Preistipp</div><p style="margin:0;color:#78350f;font-size:14px;line-height:1.65;">Tipp zum Sparen: wann kaufen, wo günstigsten Preis finden.</p></div>
-
 Diese Elemente kommen ZUSÄTZLICH zu den normalen h2/p/ul/table Blöcken — sie ersetzen keine Textinhalte."""
 
 
