@@ -314,7 +314,7 @@ export default function ProductDetailClient({
                     href={`https://www.amazon.de/s?k=${encodeURIComponent(product.title)}&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG}`}
                     target="_blank"
                     rel="noopener noreferrer sponsored"
-                    className="flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-200 px-4 py-2.5 transition-all hover:bg-gray-50 hover:shadow-md hover:scale-[1.01] active:scale-95"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-200 px-4 py-2.5 hover:border-[#FF9900]/60 hover:shadow-[0_4px_16px_rgba(255,153,0,0.2)] hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                   >
                     <Image src="/retailers/amazon_new.webp" alt="Amazon" width={80} height={24} className="h-5 w-auto object-contain" />
                     <svg className="h-3.5 w-3.5 text-gray-400 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">

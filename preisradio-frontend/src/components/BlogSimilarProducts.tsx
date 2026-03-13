@@ -124,7 +124,7 @@ export default async function BlogSimilarProducts({ keywords }: { keywords: stri
                     href={amazonUrl}
                     target="_blank"
                     rel="noopener noreferrer nofollow sponsored"
-                    className="flex-1 flex items-center justify-center py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
+                    className="flex-1 flex items-center justify-center py-1.5 rounded-lg bg-white border border-gray-200 hover:border-[#FF9900]/60 hover:shadow-[0_2px_10px_rgba(255,153,0,0.18)] hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                   >
                     <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-3.5 w-auto" />
                   </a>

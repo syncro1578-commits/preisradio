@@ -97,7 +97,7 @@ export default function ProductCard({ product, isBestPrice }: ProductCardProps) 
                 target="_blank"
                 rel="noopener noreferrer sponsored"
                 onClick={(e) => e.stopPropagation()}
-                className="mt-1 flex items-center justify-center gap-1 rounded-md bg-white border border-gray-200 px-2 py-1 hover:bg-gray-50 transition-colors"
+                className="mt-1 flex items-center justify-center gap-1 rounded-md bg-white border border-gray-200 px-2 py-1 hover:border-[#FF9900]/60 hover:shadow-[0_2px_10px_rgba(255,153,0,0.18)] hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
               >
                 <Image src="/retailers/amazon_new.webp" alt="Amazon" width={56} height={17} className="h-3.5 w-auto object-contain" />
               </a>

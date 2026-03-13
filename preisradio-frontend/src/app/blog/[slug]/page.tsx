@@ -271,7 +271,7 @@ export default async function BlogArticlePage({
                   href={article.amazonProductUrl}
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
-                  className="mb-4 flex items-center justify-center gap-3 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 px-6 py-3 transition-colors shadow-sm"
+                  className="mb-4 flex items-center justify-center gap-3 rounded-xl bg-white border border-gray-200 px-6 py-3 shadow-sm hover:border-[#FF9900]/60 hover:shadow-[0_4px_16px_rgba(255,153,0,0.2)] hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                 >
                   <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-6 w-auto" />
                   <svg className="h-4 w-4 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
