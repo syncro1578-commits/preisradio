@@ -80,16 +80,6 @@ Struktur für Testberichte (Produkttest & Vergleich) — MINDESTENS 2000 Wörter
 }
 
 
-# ── Visual elements guide (injected in every prompt) ──────────────────────────
-VISUAL_ELEMENTS_GUIDE = """PFLICHT — Visuelle HTML-Elemente zwischen den Abschnitten einbauen:
-
-1. PRODUKT-RANKING-KARTEN nach dem "Empfehlungen"- oder "Testsieger"-Abschnitt (mind. 3 Karten):
-   Karte 1 — Testsieger (blauer Rahmen):
-   <div style="border:2px solid #2563eb;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;background:#eff6ff;margin-bottom:10px;"><div style="text-align:center;min-width:44px;flex-shrink:0;"><div style="font-size:10px;color:#6b7280;font-weight:700;letter-spacing:0.5px;">PLATZ</div><div style="font-size:30px;font-weight:800;color:#1e40af;line-height:1;">1</div><div style="font-size:8px;font-weight:700;background:#2563eb;color:#fff;border-radius:4px;padding:2px 6px;margin-top:3px;">TESTSIEGER</div></div><div style="flex:1;min-width:0;"><div style="font-size:11px;color:#6b7280;">MARKE</div><div style="font-weight:700;font-size:15px;color:#111827;margin:3px 0 8px;">PRODUKTNAME</div><div><span style="color:#059669;font-size:12px;margin-right:10px;">&#10003; Stärke 1</span><span style="color:#059669;font-size:12px;margin-right:10px;">&#10003; Stärke 2</span><span style="color:#dc2626;font-size:12px;">&#10007; Schwäche</span></div></div><div style="text-align:center;flex-shrink:0;"><div style="background:#059669;color:#fff;border-radius:8px;padding:8px 12px;min-width:58px;"><div style="font-size:22px;font-weight:800;line-height:1;">1,1</div><div style="font-size:9px;font-weight:700;margin-top:2px;">SEHR GUT</div></div><div style="font-size:10px;color:#6b7280;margin-top:4px;">Testnote</div></div></div>
-   Karten 2–4 — gleiche Struktur, border:1px solid #e5e7eb, background:#fff, Platz-Zahl ändern, kein TESTSIEGER-Badge.
-   Testnoten-Farben: 1,0–1,5=SEHR GUT(#059669 grün), 1,6–2,5=GUT(#2563eb blau), 2,6–3,5=BEFRIEDIGEND(#d97706 orange).
-
-Diese Elemente kommen ZUSÄTZLICH zu den normalen h2/p/ul/table Blöcken — sie ersetzen keine Textinhalte."""
 
 
 def _sanitize_base_content(text, max_chars=8000):
@@ -144,8 +134,6 @@ ROHTEXT ZUM UMSCHREIBEN UND ERWEITERN:
 Verwende folgende Artikelstruktur — alle Abschnitte vollständig ausschreiben:
 {structure}
 
-{VISUAL_ELEMENTS_GUIDE}
-
 Antworte ausschließlich mit validem JSON im folgenden Format:
 {{
     "title": "Ansprechender Titel basierend auf dem Rohtext (max 100 Zeichen)",
@@ -180,8 +168,6 @@ Kategorie: {category}
 
 Verwende folgende Artikelstruktur — jeder Abschnitt muss vollständig und ausführlich ausgeschrieben werden:
 {structure}
-
-{VISUAL_ELEMENTS_GUIDE}
 
 Antworte ausschließlich mit validem JSON im folgenden Format:
 {{
