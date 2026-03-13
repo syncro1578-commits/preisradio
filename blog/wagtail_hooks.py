@@ -263,10 +263,10 @@ def editor_js():
             btnHtml.addEventListener('click', function() {{ setMode('html'); }});
             btnVisual.addEventListener('click', function() {{ setMode('visual'); }});
 
-            const contentWrapper = contentField.closest('[data-field]') || contentField.closest('.w-field') || contentField.parentElement;
-            contentWrapper.insertBefore(modeBar, contentField);
-            contentWrapper.insertBefore(toolbar, contentField);
-            contentWrapper.appendChild(vePane);
+            const directParent = contentField.parentNode;
+            directParent.insertBefore(modeBar, contentField);
+            directParent.insertBefore(toolbar, contentField);
+            directParent.insertBefore(vePane, contentField.nextSibling);
         }}
         // ── End Visual Editor ────────────────────────────────────────────
 
