@@ -128,72 +128,147 @@ def editor_js():
             document.head.appendChild(style);
         }}
 
-        // ── HTML Preview Panel ──────────────────────────────────────────
+        // ── Visual / HTML Editor ─────────────────────────────────────────
         const contentField = document.getElementById('id_content');
         if (contentField) {{
-            const previewBtn = document.createElement('button');
-            previewBtn.type = 'button';
-            previewBtn.id = 'html-preview-btn';
-            previewBtn.textContent = '👁 HTML-Vorschau';
-            previewBtn.style.cssText = 'margin-top:8px;padding:6px 14px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;';
 
-            const previewPane = document.createElement('div');
-            previewPane.id = 'html-preview-pane';
-            previewPane.style.cssText = 'display:none;margin-top:10px;padding:20px 24px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;max-height:600px;overflow-y:auto;font-family:Georgia,serif;font-size:16px;line-height:1.7;color:#111827;';
-
-            // Inline prose styles injected inside the preview div
-            const proseStyles = `
-                <style>
-                  #html-preview-pane h2{{font-size:1.35em;font-weight:700;margin:1.4em 0 0.5em;border-bottom:2px solid #e5e7eb;padding-bottom:0.25em;}}
-                  #html-preview-pane h3{{font-size:1.1em;font-weight:600;margin:1.2em 0 0.4em;color:#1d4ed8;}}
-                  #html-preview-pane p{{margin:0 0 0.9em;}}
-                  #html-preview-pane ul,#html-preview-pane ol{{padding-left:1.5em;margin:0.6em 0 0.9em;}}
-                  #html-preview-pane li{{margin-bottom:0.3em;}}
-                  #html-preview-pane table{{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:0.875em;border-radius:10px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08),0 0 0 1px #e5e7eb;}}
-                  #html-preview-pane thead{{background:#1e293b;}}
-                  #html-preview-pane th{{padding:10px 13px;text-align:left;font-weight:600;font-size:0.75em;text-transform:uppercase;letter-spacing:0.04em;color:#e2e8f0;border:none;border-right:1px solid rgba(255,255,255,0.08);white-space:nowrap;}}
-                  #html-preview-pane th:last-child{{border-right:none;}}
-                  #html-preview-pane td{{padding:9px 13px;color:#374151;border:none;border-bottom:1px solid #f1f5f9;border-right:1px solid #f1f5f9;vertical-align:middle;}}
-                  #html-preview-pane td:last-child{{border-right:none;}}
-                  #html-preview-pane td:first-child{{font-weight:600;color:#1e293b;}}
-                  #html-preview-pane tbody tr:nth-child(even) td{{background:#f8fafc;}}
-                  #html-preview-pane tbody tr:hover td{{background:#eff6ff;}}
-                  #html-preview-pane tbody tr:last-child td{{border-bottom:none;}}
-                  #html-preview-pane b,#html-preview-pane strong{{font-weight:700;}}
-                </style>
-            `;
-
-            function updatePreview() {{
-                previewPane.innerHTML = proseStyles + contentField.value;
+            // Inject prose styles for the visual editor
+            if (!document.getElementById('ve-prose-style')) {{
+                const veStyle = document.createElement('style');
+                veStyle.id = 've-prose-style';
+                veStyle.textContent = [
+                    '#ve-pane{{font-family:Georgia,serif;font-size:16px;line-height:1.75;color:#111827;padding:20px 24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;background:#fff;min-height:420px;max-height:700px;overflow-y:auto;outline:none;}}',
+                    '#ve-pane h2{{font-size:1.35em;font-weight:700;margin:1.4em 0 0.5em;border-bottom:2px solid #e5e7eb;padding-bottom:0.25em;}}',
+                    '#ve-pane h3{{font-size:1.1em;font-weight:600;margin:1.2em 0 0.4em;color:#1d4ed8;}}',
+                    '#ve-pane p{{margin:0 0 0.9em;}}',
+                    '#ve-pane ul,#ve-pane ol{{padding-left:1.5em;margin:0.6em 0 0.9em;}}',
+                    '#ve-pane li{{margin-bottom:0.3em;}}',
+                    '#ve-pane table{{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:0.875em;border-radius:10px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08),0 0 0 1px #e5e7eb;}}',
+                    '#ve-pane thead{{background:#1e293b;}}',
+                    '#ve-pane th{{padding:10px 13px;text-align:left;font-weight:600;font-size:0.75em;text-transform:uppercase;letter-spacing:0.04em;color:#e2e8f0;border:none;border-right:1px solid rgba(255,255,255,0.08);white-space:nowrap;}}',
+                    '#ve-pane th:last-child{{border-right:none;}}',
+                    '#ve-pane td{{padding:9px 13px;color:#374151;border:none;border-bottom:1px solid #f1f5f9;border-right:1px solid #f1f5f9;vertical-align:middle;}}',
+                    '#ve-pane td:last-child{{border-right:none;}}',
+                    '#ve-pane td:first-child{{font-weight:600;color:#1e293b;}}',
+                    '#ve-pane tbody tr:nth-child(even) td{{background:#f8fafc;}}',
+                    '#ve-pane tbody tr:last-child td{{border-bottom:none;}}',
+                    '#ve-pane b,#ve-pane strong{{font-weight:700;}}',
+                    '#ve-toolbar button:hover{{background:#e5e7eb !important;}}'
+                ].join('');
+                document.head.appendChild(veStyle);
             }}
 
-            previewBtn.addEventListener('click', function() {{
-                if (previewPane.style.display === 'none') {{
-                    updatePreview();
-                    previewPane.style.display = 'block';
-                    previewBtn.textContent = '✕ Vorschau schließen';
-                    previewBtn.style.background = '#dbeafe';
-                    previewBtn.style.borderColor = '#93c5fd';
-                    previewBtn.style.color = '#1e40af';
-                }} else {{
-                    previewPane.style.display = 'none';
-                    previewBtn.textContent = '👁 HTML-Vorschau';
-                    previewBtn.style.background = '#f3f4f6';
-                    previewBtn.style.borderColor = '#d1d5db';
-                    previewBtn.style.color = '#374151';
-                }}
-            }});
+            // Mode toggle bar
+            const modeBar = document.createElement('div');
+            modeBar.style.cssText = 'display:flex;align-items:center;gap:0;margin-top:12px;margin-bottom:0;';
 
-            // Live update on typing
-            contentField.addEventListener('input', function() {{
-                if (previewPane.style.display !== 'none') updatePreview();
+            const btnHtml = document.createElement('button');
+            btnHtml.type = 'button';
+            btnHtml.innerHTML = '</> HTML';
+            btnHtml.style.cssText = 'padding:5px 14px;border:1px solid #2563eb;border-radius:6px 0 0 6px;background:#2563eb;color:#fff;font-size:12px;font-weight:600;cursor:pointer;';
+
+            const btnVisual = document.createElement('button');
+            btnVisual.type = 'button';
+            btnVisual.innerHTML = '&#9998; Visuell';
+            btnVisual.style.cssText = 'padding:5px 14px;border:1px solid #d1d5db;border-left:none;border-radius:0 6px 6px 0;background:#f9fafb;color:#374151;font-size:12px;font-weight:600;cursor:pointer;';
+
+            modeBar.appendChild(btnHtml);
+            modeBar.appendChild(btnVisual);
+
+            // Formatting toolbar (shown in visual mode)
+            const toolbar = document.createElement('div');
+            toolbar.id = 've-toolbar';
+            toolbar.style.cssText = 'display:none;flex-wrap:wrap;gap:3px;align-items:center;padding:6px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px 8px 0 0;margin-top:6px;';
+
+            function mkBtn(html, title, fn) {{
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.title = title;
+                b.innerHTML = html;
+                b.style.cssText = 'padding:3px 8px;border:1px solid #d1d5db;border-radius:4px;background:#fff;cursor:pointer;font-size:13px;min-width:28px;line-height:1.4;';
+                b.addEventListener('mousedown', function(e) {{ e.preventDefault(); fn(); syncToField(); }});
+                return b;
+            }}
+
+            function execCmd(cmd, val) {{ document.execCommand(cmd, false, val || null); }}
+
+            toolbar.appendChild(mkBtn('<b>B</b>', 'Fett', function() {{ execCmd('bold'); }}));
+            toolbar.appendChild(mkBtn('<i>I</i>', 'Kursiv', function() {{ execCmd('italic'); }}));
+            toolbar.appendChild(mkBtn('<u>U</u>', 'Unterstrichen', function() {{ execCmd('underline'); }}));
+
+            const sep1 = document.createElement('span');
+            sep1.style.cssText = 'width:1px;height:18px;background:#e2e8f0;margin:0 3px;';
+            toolbar.appendChild(sep1);
+
+            toolbar.appendChild(mkBtn('H2', 'Überschrift 2', function() {{ execCmd('formatBlock', 'h2'); }}));
+            toolbar.appendChild(mkBtn('H3', 'Überschrift 3', function() {{ execCmd('formatBlock', 'h3'); }}));
+            toolbar.appendChild(mkBtn('P', 'Absatz', function() {{ execCmd('formatBlock', 'p'); }}));
+
+            const sep2 = document.createElement('span');
+            sep2.style.cssText = 'width:1px;height:18px;background:#e2e8f0;margin:0 3px;';
+            toolbar.appendChild(sep2);
+
+            toolbar.appendChild(mkBtn('&#8226; Liste', 'Aufzählung', function() {{ execCmd('insertUnorderedList'); }}));
+            toolbar.appendChild(mkBtn('1. Liste', 'Numm. Liste', function() {{ execCmd('insertOrderedList'); }}));
+
+            const sep3 = document.createElement('span');
+            sep3.style.cssText = 'width:1px;height:18px;background:#e2e8f0;margin:0 3px;';
+            toolbar.appendChild(sep3);
+
+            const linkBtn = mkBtn('&#128279; Link', 'Link einfügen', function() {{}});
+            linkBtn.addEventListener('mousedown', function(e) {{
+                e.preventDefault();
+                const url = prompt('URL:');
+                if (url) {{ execCmd('createLink', url); syncToField(); }}
             }});
+            toolbar.appendChild(linkBtn);
+
+            // Visual editor pane
+            const vePane = document.createElement('div');
+            vePane.id = 've-pane';
+            vePane.contentEditable = 'true';
+            vePane.style.display = 'none';
+
+            function syncToField() {{
+                contentField.value = vePane.innerHTML.replace(/<br\s*\/?>\s*$/i, '');
+            }}
+            function syncFromField() {{
+                vePane.innerHTML = contentField.value;
+            }}
+
+            vePane.addEventListener('input', syncToField);
+            vePane.addEventListener('keyup', syncToField);
+
+            let currentMode = 'html';
+
+            function setMode(mode) {{
+                currentMode = mode;
+                if (mode === 'html') {{
+                    contentField.style.display = '';
+                    toolbar.style.display = 'none';
+                    vePane.style.display = 'none';
+                    btnHtml.style.cssText = 'padding:5px 14px;border:1px solid #2563eb;border-radius:6px 0 0 6px;background:#2563eb;color:#fff;font-size:12px;font-weight:600;cursor:pointer;';
+                    btnVisual.style.cssText = 'padding:5px 14px;border:1px solid #d1d5db;border-left:none;border-radius:0 6px 6px 0;background:#f9fafb;color:#374151;font-size:12px;font-weight:600;cursor:pointer;';
+                }} else {{
+                    syncFromField();
+                    contentField.style.display = 'none';
+                    toolbar.style.display = 'flex';
+                    vePane.style.display = 'block';
+                    btnVisual.style.cssText = 'padding:5px 14px;border:1px solid #2563eb;border-left:none;border-radius:0 6px 6px 0;background:#2563eb;color:#fff;font-size:12px;font-weight:600;cursor:pointer;';
+                    btnHtml.style.cssText = 'padding:5px 14px;border:1px solid #d1d5db;border-radius:6px 0 0 6px;background:#f9fafb;color:#374151;font-size:12px;font-weight:600;cursor:pointer;';
+                    setTimeout(function() {{ vePane.focus(); }}, 50);
+                }}
+            }}
+
+            btnHtml.addEventListener('click', function() {{ setMode('html'); }});
+            btnVisual.addEventListener('click', function() {{ setMode('visual'); }});
 
             const contentWrapper = contentField.closest('[data-field]') || contentField.closest('.w-field') || contentField.parentElement;
-            contentWrapper.appendChild(previewBtn);
-            contentWrapper.appendChild(previewPane);
+            contentWrapper.insertBefore(modeBar, contentField);
+            contentWrapper.insertBefore(toolbar, contentField);
+            contentWrapper.appendChild(vePane);
         }}
-        // ── End Preview Panel ────────────────────────────────────────────
+        // ── End Visual Editor ────────────────────────────────────────────
 
         btn.addEventListener('click', async function() {{
             const topic = input.value.trim();
