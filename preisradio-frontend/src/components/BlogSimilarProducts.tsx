@@ -1,7 +1,6 @@
 import Link from 'next/link';
-import { Product } from '@/lib/types';
+import { fetchRoundRobin, fetchBrandRoundRobin } from '@/lib/blog-utils';
 
-const API_URL = 'https://api.preisradio.de/api';
 const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'bestprice2109-21';
 
 const RETAILER_LOGOS: Record<string, string> = {
@@ -23,36 +22,6 @@ const RETAILER_LABEL: Record<string, string> = {
   kaufland: 'Kaufland',
 };
 
-async function fetchTopProduct(keyword: string): Promise<Product | null> {
-  try {
-    const res = await fetch(
-      `${API_URL}/products/?search=${encodeURIComponent(keyword)}&page_size=4`,
-      { next: { revalidate: 3600 } }
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.results?.[0] || null;
-  } catch {
-    return null;
-  }
-}
-
-async function fetchByBrand(brand: string, excludeIds: string[]): Promise<Product[]> {
-  if (!brand) return [];
-  try {
-    const res = await fetch(
-      `${API_URL}/products/?search=${encodeURIComponent(brand)}&page_size=16`,
-      { next: { revalidate: 3600 } }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return (data.results as Product[])
-      .filter((p) => !excludeIds.includes(p.id))
-      .slice(0, 4);
-  } catch {
-    return [];
-  }
-}
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
@@ -65,11 +34,14 @@ export default async function BlogSimilarProducts({ keywords }: { keywords: stri
   const keyword = keywords[0];
   if (!keyword) return null;
 
-  const top = await fetchTopProduct(keyword);
+  // Get first product to find the brand (round-robin fetch)
+  const topProducts = await fetchRoundRobin(keyword, 4);
+  const top = topProducts[0];
   if (!top?.brand) return null;
 
   const brand = top.brand;
-  const similar = await fetchByBrand(brand, [top.id]);
+  // Similar = same brand, round-robin across retailers, exclude already shown products
+  const similar = await fetchBrandRoundRobin(brand, topProducts.map((p) => p.id), 4);
   if (similar.length === 0) return null;
 
   return (

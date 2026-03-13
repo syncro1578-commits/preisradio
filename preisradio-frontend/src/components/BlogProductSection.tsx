@@ -1,7 +1,6 @@
 import Link from 'next/link';
-import { Product } from '@/lib/types';
+import { fetchRoundRobin } from '@/lib/blog-utils';
 
-const API_URL = 'https://api.preisradio.de/api';
 const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'bestprice2109-21';
 
 const RETAILER_LOGOS: Record<string, string> = {
@@ -25,19 +24,6 @@ const RETAILER_LABEL: Record<string, string> = {
   kaufland: 'Kaufland',
 };
 
-async function fetchProducts(keyword: string, pageSize = 4): Promise<Product[]> {
-  try {
-    const res = await fetch(
-      `${API_URL}/products/?search=${encodeURIComponent(keyword)}&page_size=${pageSize}`,
-      { next: { revalidate: 3600 } }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.results || [];
-  } catch {
-    return [];
-  }
-}
 
 
 function formatPrice(price: number): string {
@@ -56,7 +42,8 @@ export default async function BlogProductSection({
   const searchTerm = keywords[0];
   if (!searchTerm) return null;
 
-  const products = await fetchProducts(searchTerm, 4);
+  // Round-robin: 1 product per retailer (Saturn → MediaMarkt → Otto → Kaufland)
+  const products = await fetchRoundRobin(searchTerm, 4);
   if (products.length === 0) return null;
 
   const topProducts = products;

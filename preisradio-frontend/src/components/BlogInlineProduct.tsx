@@ -1,6 +1,5 @@
-import { Product } from '@/lib/types';
+import { fetchRoundRobin } from '@/lib/blog-utils';
 
-const API_URL = 'https://api.preisradio.de/api';
 const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'bestprice2109-21';
 
 const RETAILER_COLORS: Record<string, string> = {
@@ -24,19 +23,6 @@ const RETAILER_LABEL: Record<string, string> = {
   kaufland: 'Kaufland',
 };
 
-async function fetchTopProducts(keyword: string): Promise<Product[]> {
-  try {
-    const res = await fetch(
-      `${API_URL}/products/?search=${encodeURIComponent(keyword)}&page_size=3`,
-      { next: { revalidate: 3600 } }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.results || [];
-  } catch {
-    return [];
-  }
-}
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
@@ -49,7 +35,7 @@ function discountPercent(price: number, oldPrice: number): number {
 export default async function BlogInlineProduct({ keywords }: { keywords: string[] }) {
   if (!keywords || keywords.length === 0) return null;
 
-  const products = await fetchTopProducts(keywords[0]);
+  const products = await fetchRoundRobin(keywords[0], 2);
   if (products.length === 0) return null;
 
   // Show top 2 products side by side (or 1 if only 1 result)
