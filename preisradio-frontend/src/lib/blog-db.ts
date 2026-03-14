@@ -22,6 +22,7 @@ export interface BlogArticle {
   author: string;
   amazonKeywords: string[];
   amazonProductUrl: string;
+  productNames: string[];
 }
 
 export async function getPublishedArticles(): Promise<BlogArticle[]> {

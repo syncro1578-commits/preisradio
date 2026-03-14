@@ -44,6 +44,7 @@ class BlogPage(Page):
     )
     amazon_keywords = models.CharField(max_length=500, blank=True, help_text='Kommagetrennte Amazon-Keywords')
     amazon_product_url = models.URLField(max_length=500, blank=True, help_text='Amazon-Produkt-URL (falls vorhanden)')
+    product_names = models.CharField(max_length=500, blank=True, help_text='Produktnamen für Produktkarten (kommagetrennt, z.B. Sony WH-1000XM5, Bose QuietComfort 45)')
     author = models.CharField(max_length=100, default='Preisradio Redaktion')
     read_time = models.IntegerField(default=5, help_text='Lesezeit in Minuten')
     published_date = models.DateField(auto_now_add=True)
@@ -55,6 +56,7 @@ class BlogPage(Page):
         FieldPanel('content'),
         FieldPanel('amazon_keywords'),
         FieldPanel('amazon_product_url'),
+        FieldPanel('product_names'),
         FieldPanel('author'),
         FieldPanel('read_time'),
     ]

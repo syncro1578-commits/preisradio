@@ -144,6 +144,10 @@ export default async function BlogArticlePage({
   const contentFaq = faqOffset > 0 ? contentPart3Full.slice(faqOffset) : '';
 
   const hasKeywords = article.amazonKeywords && article.amazonKeywords.length > 0;
+  // productNames takes priority for product card sections; falls back to amazonKeywords
+  const productKeywords = (article.productNames && article.productNames.length > 0)
+    ? article.productNames
+    : article.amazonKeywords;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-950">
@@ -205,7 +209,7 @@ export default async function BlogArticlePage({
 
           {/* After intro: "Die besten X" ranking cards (Platz 1–4) */}
           {hasKeywords && contentPart2 && (
-            <BlogRankingSection keywords={article.amazonKeywords} />
+            <BlogRankingSection keywords={productKeywords} />
           )}
 
           {/* Part 2: 2nd section */}
@@ -218,7 +222,7 @@ export default async function BlogArticlePage({
 
           {/* After 2nd section: full comparison table */}
           {hasKeywords && contentPart3Full && (
-            <BlogProductSection keywords={article.amazonKeywords} />
+            <BlogProductSection keywords={productKeywords} />
           )}
 
           {/* Part 3 body: remaining sections BEFORE FAQ */}
@@ -229,9 +233,9 @@ export default async function BlogArticlePage({
             />
           )}
 
-          {/* Before FAQ: "Weitere [Brand]-Produkte" (tâche 1) */}
+          {/* Before FAQ: "Weitere [Brand]-Produkte" */}
           {hasKeywords && contentFaq && (
-            <BlogSimilarProducts keywords={article.amazonKeywords} />
+            <BlogSimilarProducts keywords={productKeywords} />
           )}
 
           {/* FAQ section (last h2 of article) */}
@@ -245,8 +249,8 @@ export default async function BlogArticlePage({
           {/* Fallback: show comparison + similar if no split possible */}
           {hasKeywords && !contentPart2 && (
             <>
-              <BlogProductSection keywords={article.amazonKeywords} />
-              <BlogSimilarProducts keywords={article.amazonKeywords} />
+              <BlogProductSection keywords={productKeywords} />
+              <BlogSimilarProducts keywords={productKeywords} />
             </>
           )}
 

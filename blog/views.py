@@ -30,6 +30,7 @@ def serialize_article(page):
         'image': get_image_url(page),
         'amazonKeywords': [k.strip() for k in page.amazon_keywords.split(',') if k.strip()] if page.amazon_keywords else [],
         'amazonProductUrl': page.amazon_product_url or '',
+        'productNames': [n.strip() for n in page.product_names.split(',') if n.strip()] if page.product_names else [],
         'author': page.author,
         'readTime': page.read_time,
         'date': page.published_date.isoformat() if page.published_date else page.first_published_at.isoformat() if page.first_published_at else '',
