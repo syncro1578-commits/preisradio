@@ -225,7 +225,9 @@ export default function CategoryDetailClient({
           </div>
         ) : (
           <>
-            <AdSenseDisplay adSlot="1502312871" className="mb-6" />
+            <div className="max-w-sm mb-6">
+              <AdSenseDisplay adSlot="1502312871" />
+            </div>
 
             <div className="lg:grid lg:grid-cols-4 lg:gap-8">
               {/* Sidebar Filters */}
