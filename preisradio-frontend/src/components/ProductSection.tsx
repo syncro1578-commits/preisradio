@@ -3,7 +3,6 @@
 import { useRef } from 'react';
 import Link from 'next/link';
 import ProductCard from './ProductCard';
-import AdSenseInFeed from './AdSenseInFeed';
 import { Product } from '@/lib/types';
 
 interface ProductSectionProps {
@@ -91,19 +90,6 @@ export default function ProductSection({
                 >
                   <ProductCard product={product} />
                 </div>
-                {/* Insert In-Feed ad after every 8th product */}
-                {(index + 1) % 8 === 0 && index < products.length - 1 && (
-                  <div
-                    key={`ad-${index}`}
-                    className="flex-none w-[150px] sm:w-[280px] md:w-[240px] lg:w-[260px] snap-start"
-                  >
-                    <AdSenseInFeed
-                      adSlot="6399181253"
-                      layoutKey="-d4+0+1r-2b-1u"
-                      className="h-full"
-                    />
-                  </div>
-                )}
               </>
             ))}
           </div>

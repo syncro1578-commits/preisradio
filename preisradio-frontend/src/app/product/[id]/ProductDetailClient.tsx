@@ -8,7 +8,6 @@ import api from '@/lib/api';
 import ProductSimilar from '@/components/ProductSimilar';
 import PriceComparison from '@/components/PriceComparison';
 import AdSenseDisplay from '@/components/AdSenseDisplay';
-import AdSenseMultiplex from '@/components/AdSenseMultiplex';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { getRetailerInfo } from '@/lib/retailerUtils';
@@ -379,8 +378,6 @@ export default function ProductDetailClient({
           </div>
         </nav>
 
-        {/* AdSense Multiplex */}
-        <AdSenseMultiplex className="mt-12" />
       </main>
 
       <Footer />

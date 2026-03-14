@@ -10,8 +10,6 @@ import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import AdSenseDisplay from '@/components/AdSenseDisplay';
-import AdSenseInFeed from '@/components/AdSenseInFeed';
-import AdSenseMultiplex from '@/components/AdSenseMultiplex';
 
 interface CategoryDetailClientProps {
   slug: string;
@@ -363,18 +361,8 @@ export default function CategoryDetailClient({
                 </p>
 
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-4">
-                  {sortedProducts.slice(0, pageSize).map((product, index) => (
-                    <>
-                      <ProductCard key={product.id} product={product} />
-                      {(index + 1) % 8 === 0 && index < sortedProducts.length - 1 && (
-                        <div key={`ad-${index}`} className="col-span-2 md:col-span-3 lg:col-span-4">
-                          <AdSenseInFeed
-                            adSlot="6399181253"
-                            layoutKey="-fb+5w+4e-db+86"
-                          />
-                        </div>
-                      )}
-                    </>
+                  {sortedProducts.slice(0, pageSize).map((product) => (
+                    <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
               </div>
@@ -547,8 +535,6 @@ export default function CategoryDetailClient({
               </section>
             )}
 
-            {/* AdSense Multiplex - Before Footer */}
-            <AdSenseMultiplex className="mt-8" />
           </>
         )}
       </main>

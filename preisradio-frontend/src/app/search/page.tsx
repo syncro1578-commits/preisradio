@@ -9,8 +9,6 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import SearchFilters from '@/components/SearchFilters';
 import AdSenseDisplay from '@/components/AdSenseDisplay';
-import AdSenseInFeed from '@/components/AdSenseInFeed';
-import AdSenseMultiplex from '@/components/AdSenseMultiplex';
 import Link from 'next/link';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
@@ -407,20 +405,8 @@ function SearchContent() {
                   </h2>
                 </div>
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-4">
-                  {products.map((product, index) => (
-                    <React.Fragment key={product.id}>
-                      <ProductCard product={product} />
-                      {/* InFeed Ad every 6 products */}
-                      {(index + 1) % 6 === 0 && index < products.length - 1 && (
-                        <div className="col-span-2 lg:col-span-3">
-                          <AdSenseInFeed
-                            adSlot="6399181253"
-                            layoutKey="-fb+5w+4e-db+86"
-                            className="my-4"
-                          />
-                        </div>
-                      )}
-                    </React.Fragment>
+                  {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
 
@@ -488,8 +474,6 @@ function SearchContent() {
             )}
           </div>
         </div>
-        {/* AdSense Multiplex - Before Footer */}
-        <AdSenseMultiplex className="mt-12" />
       </main>
 
       <Footer />

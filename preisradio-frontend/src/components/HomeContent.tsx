@@ -5,7 +5,6 @@ import { Product, Category } from '@/lib/types';
 import api from '@/lib/api';
 import ProductSection from '@/components/ProductSection';
 import AdSenseDisplay from '@/components/AdSenseDisplay';
-import AdSenseMultiplex from '@/components/AdSenseMultiplex';
 import HeroCarousel from '@/components/HeroCarousel';
 import Link from 'next/link';
 
@@ -292,9 +291,6 @@ export default function HomeContent() {
           />
         );
       })}
-
-      {/* AdSense Multiplex - Before Features */}
-      <AdSenseMultiplex className="my-8" />
 
       {/* ── SEO content + USP section ─────────────────────────────── */}
       <section className="my-12 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 shadow-sm overflow-hidden">
