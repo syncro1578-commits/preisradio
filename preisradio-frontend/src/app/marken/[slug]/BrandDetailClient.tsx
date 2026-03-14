@@ -238,8 +238,13 @@ export default function BrandDetailClient({
           </div>
         ) : (
           <>
-            <div className="max-w-sm mb-6">
-              <AdSenseDisplay adSlot="1502312871" />
+            <div className="max-w-[728px] mb-6">
+              <AdSenseDisplay
+                adSlot="1502312871"
+                adFormat=""
+                fullWidthResponsive={false}
+                style={{ display: 'inline-block', width: '728px', height: '90px' }}
+              />
             </div>
 
             <div className="lg:grid lg:grid-cols-4 lg:gap-8">

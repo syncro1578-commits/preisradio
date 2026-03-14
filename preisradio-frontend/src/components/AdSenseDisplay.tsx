@@ -45,8 +45,8 @@ export default function AdSenseDisplay({
       style={style}
       data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}
       data-ad-slot={adSlot}
-      data-ad-format={adFormat}
-      data-full-width-responsive={fullWidthResponsive.toString()}
+      {...(adFormat ? { 'data-ad-format': adFormat } : {})}
+      {...(!fullWidthResponsive ? {} : { 'data-full-width-responsive': 'true' })}
     />
   );
 }
