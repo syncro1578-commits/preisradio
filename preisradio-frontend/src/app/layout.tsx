@@ -20,9 +20,6 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
-  other: {
-    'p:domain_verify': 'a3c8f3e4ba18ee8b6e38be750ff4da28',
-  },
   title: {
     default: 'Preisradio | Bester Preisvergleicher in Deutschland',
     template: '%s | Preisradio'
@@ -89,6 +86,7 @@ export const metadata: Metadata = {
   },
   other: {
     'google-adsense-account': 'ca-pub-8451378376537532',
+    'p:domain_verify': 'a3c8f3e4ba18ee8b6e38be750ff4da28',
   },
 };
 
