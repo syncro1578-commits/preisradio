@@ -211,6 +211,22 @@ def generate_article(topic, category='Kaufberatung', base_content='', provider='
             messages=[{"role": "user", "content": prompt}],
         )
         raw = message.content[0].text.strip()
+    elif provider == 'mistral':
+        # Mistral AI (OpenAI-compatible, EU servers)
+        client = OpenAI(
+            api_key=settings.MISTRAL_API_KEY,
+            base_url="https://api.mistral.ai/v1",
+        )
+        response = client.chat.completions.create(
+            model='mistral-large-latest',
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0.7,
+            max_tokens=8000,
+        )
+        raw = response.choices[0].message.content.strip()
     else:
         # Default: Groq (OpenAI-compatible)
         client = OpenAI(

@@ -248,6 +248,9 @@ GROQ_MODEL = config('GROQ_MODEL', default='llama-3.3-70b-versatile')
 # Anthropic / Claude API Configuration
 ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
 
+# Mistral AI Configuration (EU servers, excellent for German)
+MISTRAL_API_KEY = config('MISTRAL_API_KEY', default='')
+
 
 # Cache Configuration
 # Using local memory cache (simple and effective for single server)

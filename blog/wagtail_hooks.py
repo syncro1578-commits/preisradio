@@ -57,6 +57,7 @@ def editor_js():
         providerSelect.style.cssText = 'padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;';
         [
             {{value:'groq', label:'Groq · Llama 3.3 (gratis)'}},
+            {{value:'mistral', label:'Mistral Large (EU, sehr gut für Deutsch)'}},
             {{value:'claude-sonnet', label:'Claude Sonnet 4.6 (beste Qualität)'}},
             {{value:'claude-haiku', label:'Claude Haiku 4.5 (schnell)'}},
         ].forEach(function(m) {{
@@ -227,6 +228,7 @@ def editor_js():
             const selectedProvider = document.getElementById('ai-provider-select')?.value || 'groq';
             const providerLabel = selectedProvider === 'claude-sonnet' ? 'Claude Sonnet'
                 : selectedProvider === 'claude-haiku' ? 'Claude Haiku'
+                : selectedProvider === 'mistral' ? 'Mistral Large'
                 : 'Groq';
             status.style.background = '#e0f2fe';
             status.style.color = '#1e40af';
