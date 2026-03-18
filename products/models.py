@@ -1,6 +1,6 @@
 from mongoengine import (
     Document, StringField, URLField, DateTimeField,
-    FloatField, IntField, DictField
+    FloatField, IntField
 )
 from datetime import datetime
 
@@ -21,7 +21,7 @@ class SaturnProduct(Document):
     title = StringField(max_length=500, required=True)
     url = URLField(required=True)
     produktbeschreibung = StringField(null=True, blank=True, db_field='Produktbeschreibung')
-    produktdaten = DictField(null=True, blank=True, db_field='Produktdaten')
+    produktdaten = StringField(null=True, blank=True, db_field='Produktdaten')
 
     meta = {
         'collection': 'Db',
@@ -55,7 +55,7 @@ class MediaMarktProduct(Document):
     title = StringField(max_length=500, required=True)
     url = URLField(required=True)
     produktbeschreibung = StringField(null=True, blank=True, db_field='Produktbeschreibung')
-    produktdaten = DictField(null=True, blank=True, db_field='Produktdaten')
+    produktdaten = StringField(null=True, blank=True, db_field='Produktdaten')
 
     meta = {
         'collection': 'Db',
@@ -89,7 +89,7 @@ class OttoProduct(Document):
     title = StringField(max_length=500, required=True)
     url = URLField(required=True)
     produktbeschreibung = StringField(null=True, blank=True, db_field='Produktbeschreibung')
-    produktdaten = DictField(null=True, blank=True, db_field='Produktdaten')
+    produktdaten = StringField(null=True, blank=True, db_field='Produktdaten')
 
     meta = {
         'collection': 'Db',
@@ -123,7 +123,7 @@ class KauflandProduct(Document):
     title = StringField(max_length=500, required=True)
     url = URLField(required=True)
     produktbeschreibung = StringField(null=True, blank=True, db_field='Produktbeschreibung')
-    produktdaten = DictField(null=True, blank=True, db_field='Produktdaten')
+    produktdaten = StringField(null=True, blank=True, db_field='Produktdaten')
 
     meta = {
         'collection': 'Db',

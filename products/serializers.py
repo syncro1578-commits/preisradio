@@ -19,7 +19,7 @@ class BaseProductSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=500)
     url = serializers.URLField()
     produktbeschreibung = serializers.CharField(required=False, allow_null=True)
-    produktdaten = serializers.DictField(required=False, allow_null=True)
+    produktdaten = serializers.CharField(required=False, allow_null=True)
 
 
 class SaturnProductSerializer(BaseProductSerializer):
