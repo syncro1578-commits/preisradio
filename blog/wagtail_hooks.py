@@ -51,6 +51,20 @@ def editor_js():
             catSelect.appendChild(opt);
         }});
 
+        // Provider/model select
+        const providerSelect = document.createElement('select');
+        providerSelect.id = 'ai-provider-select';
+        providerSelect.style.cssText = 'padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;';
+        [
+            {{value:'groq', label:'Groq · Llama 3.3 (gratis)'}},
+            {{value:'claude-sonnet', label:'Claude Sonnet 4.6 (beste Qualität)'}},
+            {{value:'claude-haiku', label:'Claude Haiku 4.5 (schnell)'}},
+        ].forEach(function(m) {{
+            const opt = document.createElement('option');
+            opt.value = m.value; opt.textContent = m.label;
+            providerSelect.appendChild(opt);
+        }});
+
         // Button
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -60,6 +74,7 @@ def editor_js():
 
         container.appendChild(input);
         container.appendChild(catSelect);
+        container.appendChild(providerSelect);
         container.appendChild(btn);
 
         const titlePanel = titleField.closest('[data-field]') || titleField.closest('.w-panel') || titleField.parentElement.parentElement;
@@ -209,18 +224,23 @@ def editor_js():
             status.style.display = 'block';
             const baseForStatus = document.getElementById('ai-base-content')?.value?.trim() || '';
             const isReformMode = baseForStatus.length > 200;
+            const selectedProvider = document.getElementById('ai-provider-select')?.value || 'groq';
+            const providerLabel = selectedProvider === 'claude-sonnet' ? 'Claude Sonnet'
+                : selectedProvider === 'claude-haiku' ? 'Claude Haiku'
+                : 'Groq';
             status.style.background = '#e0f2fe';
             status.style.color = '#1e40af';
             status.style.border = '1px solid #7dd3fc';
             status.textContent = isReformMode
-                ? 'Groq schreibt den Rohtext um und erweitert ihn auf 2000+ Wörter... Bitte warten.'
-                : 'Groq generiert den Artikel mit 2000+ Wörtern... Bitte warten.';
+                ? providerLabel + ' schreibt den Rohtext um und erweitert ihn auf 2000+ Wörter... Bitte warten.'
+                : providerLabel + ' generiert den Artikel mit 2000+ Wörtern... Bitte warten.';
 
             try {{
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value
                     || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
 
                 const baseContent = document.getElementById('ai-base-content')?.value?.trim() || '';
+                const provider = document.getElementById('ai-provider-select')?.value || 'groq';
                 const modeLabel = baseContent.length > 200 ? 'Umschreiben & Erweitern' : 'Generieren';
                 btn.querySelector('span') && (btn.querySelector('span').nextSibling.textContent = modeLabel + '...');
 
@@ -230,7 +250,7 @@ def editor_js():
                         'Content-Type': 'application/json',
                         'X-CSRFToken': csrfToken,
                     }},
-                    body: JSON.stringify({{ topic: topic, category: category, base_content: baseContent }}),
+                    body: JSON.stringify({{ topic: topic, category: category, base_content: baseContent, provider: provider }}),
                 }});
 
                 const data = await resp.json();

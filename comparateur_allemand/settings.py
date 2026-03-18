@@ -245,6 +245,9 @@ GOOGLE_SERVICE_ACCOUNT_KEY = os.path.join(BASE_DIR, 'astute-pride-262723-7f9bd77
 GROQ_API_KEY = config('GROQ_API_KEY', default='')
 GROQ_MODEL = config('GROQ_MODEL', default='llama-3.3-70b-versatile')
 
+# Anthropic / Claude API Configuration
+ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
+
 
 # Cache Configuration
 # Using local memory cache (simple and effective for single server)

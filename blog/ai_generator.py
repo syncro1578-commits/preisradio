@@ -1,5 +1,5 @@
 """
-AI article generator using Groq API (OpenAI-compatible).
+AI article generator — supports Groq (OpenAI-compatible) and Anthropic Claude.
 """
 import json
 import re
@@ -94,28 +94,10 @@ def _sanitize_base_content(text, max_chars=8000):
     return text
 
 
-def generate_article(topic, category='Kaufberatung', base_content=''):
-    """Generate a blog article using Groq API.
-
-    If base_content is provided (500+ words), the AI reformulates and expands it.
-    Otherwise generates from scratch.
-
-    Returns dict with keys: title, excerpt, content, amazon_keywords, read_time
-    """
-    client = OpenAI(
-        api_key=settings.GROQ_API_KEY,
-        base_url="https://api.groq.com/openai/v1",
-    )
-
-    structure = CATEGORY_STRUCTURES.get(category, CATEGORY_STRUCTURES['Kaufberatung'])
-
-    # Sanitize base_content: strip HTML + truncate to ~1600 words max
-    if base_content:
-        base_content = _sanitize_base_content(base_content, max_chars=8000)
-
+def _build_prompt(topic, category, base_content, structure):
+    """Build the generation or reformulation prompt."""
     if base_content and len(base_content.strip()) > 200:
-        # ── Reformulation mode ───────────────────────────────────────────
-        prompt = f"""Du bist ein erfahrener Tech-Journalist für Preisradio.de, einen deutschen Preisvergleich für Elektronik (Saturn, MediaMarkt, Otto, Kaufland).
+        return f"""Du bist ein erfahrener Tech-Journalist für Preisradio.de, einen deutschen Preisvergleich für Elektronik (Saturn, MediaMarkt, Otto, Kaufland).
 
 Thema: "{topic}"
 Kategorie: {category}
@@ -158,10 +140,8 @@ PFLICHTREGELN:
 - amazon_keywords: 5 relevante deutsche Suchbegriffe, kommagetrennt
 - read_time: in Minuten (2000 Wörter = 10 min)
 - Kein umschließendes ```json``` — nur das reine JSON-Objekt"""
-
     else:
-        # ── Generierung von Grund auf ─────────────────────────────────────
-        prompt = f"""Du bist ein erfahrener Tech-Journalist für Preisradio.de, einen deutschen Preisvergleich für Elektronik (Saturn, MediaMarkt, Otto, Kaufland).
+        return f"""Du bist ein erfahrener Tech-Journalist für Preisradio.de, einen deutschen Preisvergleich für Elektronik (Saturn, MediaMarkt, Otto, Kaufland).
 
 Schreibe einen SEHR AUSFÜHRLICHEN Blog-Artikel auf Deutsch zum Thema: "{topic}"
 Kategorie: {category}
@@ -196,20 +176,57 @@ PFLICHTREGELN — unbedingt einhalten:
 - read_time: Lesezeit in Minuten (bei 2000 Wörtern = 10, bei 2500 = 12)
 - Kein umschließendes ```json``` — nur das reine JSON-Objekt"""
 
-    response = client.chat.completions.create(
-        model=getattr(settings, 'GROQ_MODEL', 'llama-3.3-70b-versatile'),
-        messages=[
-            {
-                "role": "system",
-                "content": "Du bist ein erfahrener Tech-Journalist. Schreibe sehr ausführliche Artikel mit MINDESTENS 2000 Wörtern. Antworte ausschließlich mit validem JSON. Kein Markdown, kein erklärender Text — nur das JSON-Objekt.",
-            },
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0.7,
-        max_tokens=8000,
-    )
 
-    raw = response.choices[0].message.content.strip()
+SYSTEM_PROMPT = (
+    "Du bist ein erfahrener Tech-Journalist. Schreibe sehr ausführliche Artikel mit "
+    "MINDESTENS 2000 Wörtern. Antworte ausschließlich mit validem JSON. "
+    "Kein Markdown, kein erklärender Text — nur das JSON-Objekt."
+)
+
+
+def generate_article(topic, category='Kaufberatung', base_content='', provider='groq'):
+    """Generate a blog article using Groq or Claude API.
+
+    provider: 'groq' | 'claude-sonnet' | 'claude-haiku'
+    Returns dict with keys: title, excerpt, content, amazon_keywords, read_time
+    """
+    structure = CATEGORY_STRUCTURES.get(category, CATEGORY_STRUCTURES['Kaufberatung'])
+
+    if base_content:
+        base_content = _sanitize_base_content(base_content, max_chars=8000)
+
+    prompt = _build_prompt(topic, category, base_content, structure)
+
+    if provider.startswith('claude'):
+        import anthropic
+        model_id = (
+            'claude-sonnet-4-6' if provider == 'claude-sonnet'
+            else 'claude-haiku-4-5-20251001'
+        )
+        client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
+        message = client.messages.create(
+            model=model_id,
+            max_tokens=8000,
+            system=SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        raw = message.content[0].text.strip()
+    else:
+        # Default: Groq (OpenAI-compatible)
+        client = OpenAI(
+            api_key=settings.GROQ_API_KEY,
+            base_url="https://api.groq.com/openai/v1",
+        )
+        response = client.chat.completions.create(
+            model=getattr(settings, 'GROQ_MODEL', 'llama-3.3-70b-versatile'),
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0.7,
+            max_tokens=8000,
+        )
+        raw = response.choices[0].message.content.strip()
 
     # Strip markdown code fences if present
     if raw.startswith("```"):
