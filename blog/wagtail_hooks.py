@@ -304,27 +304,36 @@ def editor_js():
             container.parentElement.insertBefore(publishBar, container.nextSibling);
 
             // ── Intercept native Wagtail form submit → block 403 ────────────
-            // The native buttons always give 403 (nginx ModSecurity blocks HTML form POST)
-            const wagtailForm = document.querySelector('form[method="post"], form[method="POST"]');
-            if (wagtailForm) {{
-                wagtailForm.addEventListener('submit', function(e) {{
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    // Flash the green button to direct attention
-                    publishBtn.style.outline = '3px solid #ef4444';
-                    publishBtn.style.transform = 'scale(1.05)';
-                    setTimeout(function() {{
-                        publishBtn.style.outline = '';
-                        publishBtn.style.transform = '';
-                    }}, 1500);
-                    publishBar.scrollIntoView({{behavior: 'smooth', block: 'center'}});
-                    publishStatus.style.display = 'block';
-                    publishStatus.style.background = '#fef3c7';
-                    publishStatus.style.color = '#92400e';
-                    publishStatus.style.border = '1px solid #fcd34d';
-                    publishStatus.innerHTML = '⛔ Dieser Button gibt immer <b>403 Forbidden</b> (nginx-Sperre). Bitte den <b>grünen Button oben</b> verwenden!';
-                }}, true);
+            // 3-layer approach: Wagtail/React may call form.submit() directly (no event fired)
+            function blockNativeSubmit(e) {{
+                if (e && e.preventDefault) {{ e.preventDefault(); e.stopImmediatePropagation(); }}
+                publishBar.scrollIntoView({{behavior: 'smooth', block: 'center'}});
+                publishBtn.style.outline = '3px solid #ef4444';
+                publishBtn.style.transform = 'scale(1.05)';
+                setTimeout(function() {{ publishBtn.style.outline = ''; publishBtn.style.transform = ''; }}, 1500);
+                publishStatus.style.display = 'block';
+                publishStatus.style.background = '#fef3c7';
+                publishStatus.style.color = '#92400e';
+                publishStatus.style.border = '1px solid #fcd34d';
+                publishStatus.innerHTML = '\u26d4 Dieser Button gibt immer <b>403 Forbidden</b> (nginx-Sperre). Bitte den <b>gr\u00fcnen Button oben</b> verwenden!';
             }}
+            // Layer 1: standard submit event (capture phase)
+            const wagtailForm = document.querySelector('form[method="post"], form[method="POST"]') || document.forms[0];
+            if (wagtailForm) {{
+                wagtailForm.addEventListener('submit', blockNativeSubmit, true);
+                // Layer 2: override form.submit() — JS calls this directly, no event is fired
+                wagtailForm.submit = function() {{ blockNativeSubmit(); }};
+                if (wagtailForm.requestSubmit) {{
+                    wagtailForm.requestSubmit = function() {{ blockNativeSubmit(); }};
+                }}
+            }}
+            // Layer 3: event delegation on all submit buttons (catches Wagtail Stimulus/React buttons)
+            document.addEventListener('click', function(e) {{
+                const submitBtn = e.target.closest('button[type="submit"], input[type="submit"]');
+                if (submitBtn && submitBtn.id !== 'json-publish-btn' && submitBtn.id !== 'ai-generate-btn' && submitBtn.id !== 'html-preview-btn') {{
+                    blockNativeSubmit(e);
+                }}
+            }}, true);
             // ── End intercept ────────────────────────────────────────────────
         }}
         // ── End Speichern & Veröffentlichen ──────────────────────────────────
