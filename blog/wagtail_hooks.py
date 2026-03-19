@@ -240,18 +240,18 @@ def editor_js():
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value
                     || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
 
-                // Base64-encode content to bypass ModSecurity XSS rules on <script>/<style> tags
+                // Encode entire payload as base64 — ModSecurity cannot scan HTML inside base64
                 function b64Encode(str) {{
                     try {{ return btoa(unescape(encodeURIComponent(str))); }}
                     catch(e) {{ return btoa(str); }}
                 }}
-                const rawContent = document.getElementById('id_content')?.value || '';
                 const payload = {{
                     page_id: pageId,
                     title: document.getElementById('id_title')?.value || '',
                     slug: document.getElementById('id_slug')?.value || '',
                     excerpt: document.getElementById('id_excerpt')?.value || '',
-                    content_b64: b64Encode(rawContent),
+                    content: document.getElementById('id_content')?.value
+                        || document.querySelector('textarea[name="content"]')?.value || '',
                     category: document.getElementById('id_category')?.value || '',
                     amazon_keywords: document.getElementById('id_amazon_keywords')?.value || '',
                     amazon_product_url: document.getElementById('id_amazon_product_url')?.value || '',
@@ -269,7 +269,7 @@ def editor_js():
                             'Content-Type': 'application/json',
                             'X-CSRFToken': csrfToken,
                         }},
-                        body: JSON.stringify(payload),
+                        body: JSON.stringify({{ data: b64Encode(JSON.stringify(payload)) }}),
                     }});
                     const data = await resp.json();
                     if (!resp.ok) throw new Error(data.error || 'Fehler');

@@ -104,8 +104,13 @@ def save_publish_ajax(request):
     Updates the page and publishes it server-side.
     """
     try:
-        body = json.loads(request.body)
-    except (json.JSONDecodeError, AttributeError):
+        raw = json.loads(request.body)
+        # Support full-payload base64 encoding to bypass ModSecurity
+        if 'data' in raw:
+            body = json.loads(base64.b64decode(raw['data']).decode('utf-8'))
+        else:
+            body = raw
+    except (json.JSONDecodeError, AttributeError, Exception):
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
     page_id = body.get('page_id')
@@ -124,12 +129,7 @@ def save_publish_ajax(request):
         page.slug = body['slug'][:255]
     if body.get('excerpt') is not None:
         page.excerpt = body['excerpt'][:500]
-    if body.get('content_b64') is not None:
-        try:
-            page.content = base64.b64decode(body['content_b64']).decode('utf-8')
-        except Exception:
-            page.content = body['content_b64']
-    elif body.get('content') is not None:
+    if body.get('content') is not None:
         page.content = body['content']
     if body.get('category'):
         page.category = body['category']
