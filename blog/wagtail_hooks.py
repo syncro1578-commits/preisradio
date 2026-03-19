@@ -245,21 +245,27 @@ def editor_js():
                     try {{ return btoa(unescape(encodeURIComponent(str))); }}
                     catch(e) {{ return btoa(str); }}
                 }}
+                // Robust field reader: tries id_<name>, [name=<name>], [id$=_<name>]
+                function getVal(name) {{
+                    return (document.getElementById('id_' + name)
+                        || document.querySelector('[name="' + name + '"]')
+                        || document.querySelector('[id$="_' + name + '"]')
+                        || {{}}).value || '';
+                }}
                 const payload = {{
                     page_id: pageId,
-                    title: document.getElementById('id_title')?.value || '',
-                    slug: document.getElementById('id_slug')?.value || '',
-                    excerpt: document.getElementById('id_excerpt')?.value || '',
-                    content: document.getElementById('id_content')?.value
-                        || document.querySelector('textarea[name="content"]')?.value || '',
-                    category: document.getElementById('id_category')?.value || '',
-                    amazon_keywords: document.getElementById('id_amazon_keywords')?.value || '',
-                    amazon_product_url: document.getElementById('id_amazon_product_url')?.value || '',
-                    product_names: document.getElementById('id_product_names')?.value || '',
-                    author: document.getElementById('id_author')?.value || '',
-                    read_time: document.getElementById('id_read_time')?.value || '',
-                    seo_title: document.getElementById('id_seo_title')?.value || '',
-                    search_description: document.getElementById('id_search_description')?.value || '',
+                    title: getVal('title'),
+                    slug: getVal('slug'),
+                    excerpt: getVal('excerpt'),
+                    content: getVal('content'),
+                    category: getVal('category'),
+                    amazon_keywords: getVal('amazon_keywords'),
+                    amazon_product_url: getVal('amazon_product_url'),
+                    product_names: getVal('product_names'),
+                    author: getVal('author'),
+                    read_time: getVal('read_time'),
+                    seo_title: getVal('seo_title'),
+                    search_description: getVal('search_description'),
                 }};
 
                 try {{
@@ -296,6 +302,30 @@ def editor_js():
             publishBar.appendChild(publishBtn);
             container.parentElement.insertBefore(publishStatus, container.nextSibling);
             container.parentElement.insertBefore(publishBar, container.nextSibling);
+
+            // ── Intercept native Wagtail form submit → block 403 ────────────
+            // The native buttons always give 403 (nginx ModSecurity blocks HTML form POST)
+            const wagtailForm = document.querySelector('form[method="post"], form[method="POST"]');
+            if (wagtailForm) {{
+                wagtailForm.addEventListener('submit', function(e) {{
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    // Flash the green button to direct attention
+                    publishBtn.style.outline = '3px solid #ef4444';
+                    publishBtn.style.transform = 'scale(1.05)';
+                    setTimeout(function() {{
+                        publishBtn.style.outline = '';
+                        publishBtn.style.transform = '';
+                    }}, 1500);
+                    publishBar.scrollIntoView({{behavior: 'smooth', block: 'center'}});
+                    publishStatus.style.display = 'block';
+                    publishStatus.style.background = '#fef3c7';
+                    publishStatus.style.color = '#92400e';
+                    publishStatus.style.border = '1px solid #fcd34d';
+                    publishStatus.innerHTML = '⛔ Dieser Button gibt immer <b>403 Forbidden</b> (nginx-Sperre). Bitte den <b>grünen Button oben</b> verwenden!';
+                }}, true);
+            }}
+            // ── End intercept ────────────────────────────────────────────────
         }}
         // ── End Speichern & Veröffentlichen ──────────────────────────────────
 
