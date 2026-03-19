@@ -7,13 +7,14 @@ from django.utils.html import format_html
 
 from wagtail import hooks
 
-from blog.views_admin import ai_generate_ajax
+from blog.views_admin import ai_generate_ajax, save_publish_ajax
 
 
 @hooks.register('register_admin_urls')
 def register_ai_urls():
     return [
         path('ai-generate/', ai_generate_ajax, name='ai-generate'),
+        path('save-publish/', save_publish_ajax, name='save-publish'),
     ]
 
 
@@ -208,6 +209,89 @@ def editor_js():
             contentWrapper.appendChild(previewPane);
         }}
         // ── End Preview Panel ────────────────────────────────────────────
+
+        // ── Speichern & Veröffentlichen (contourne nginx/ModSecurity) ────────
+        // Extraire l'ID de page depuis l'URL (ex: /wagtail-admin/pages/41/edit/)
+        const pageIdMatch = window.location.pathname.match(/\/pages\/(\d+)\//);
+        if (pageIdMatch) {{
+            const pageId = pageIdMatch[1];
+
+            const publishBar = document.createElement('div');
+            publishBar.style.cssText = 'margin-top:10px;display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;';
+
+            const publishInfo = document.createElement('span');
+            publishInfo.style.cssText = 'font-size:12px;color:#166534;flex:1;';
+            publishInfo.innerHTML = '<b>Tipp:</b> Falls "Veröffentlichen" einen 403-Fehler gibt → diesen Button verwenden (umgeht nginx-Sperre)';
+
+            const publishBtn = document.createElement('button');
+            publishBtn.type = 'button';
+            publishBtn.id = 'json-publish-btn';
+            publishBtn.textContent = '✓ Speichern & Veröffentlichen';
+            publishBtn.style.cssText = 'padding:8px 16px;background:#16a34a;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;';
+
+            const publishStatus = document.createElement('div');
+            publishStatus.id = 'publish-status';
+            publishStatus.style.cssText = 'display:none;margin-top:8px;padding:8px 12px;border-radius:6px;font-size:13px;';
+
+            publishBtn.addEventListener('click', async function() {{
+                publishBtn.disabled = true;
+                publishBtn.textContent = '⏳ Wird veröffentlicht...';
+
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                    || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+                const payload = {{
+                    page_id: pageId,
+                    title: document.getElementById('id_title')?.value || '',
+                    slug: document.getElementById('id_slug')?.value || '',
+                    excerpt: document.getElementById('id_excerpt')?.value || '',
+                    content: document.getElementById('id_content')?.value || '',
+                    category: document.getElementById('id_category')?.value || '',
+                    amazon_keywords: document.getElementById('id_amazon_keywords')?.value || '',
+                    amazon_product_url: document.getElementById('id_amazon_product_url')?.value || '',
+                    product_names: document.getElementById('id_product_names')?.value || '',
+                    author: document.getElementById('id_author')?.value || '',
+                    read_time: document.getElementById('id_read_time')?.value || '',
+                    seo_title: document.getElementById('id_seo_title')?.value || '',
+                    search_description: document.getElementById('id_search_description')?.value || '',
+                }};
+
+                try {{
+                    const resp = await fetch('/wagtail-admin/save-publish/', {{
+                        method: 'POST',
+                        headers: {{
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        }},
+                        body: JSON.stringify(payload),
+                    }});
+                    const data = await resp.json();
+                    if (!resp.ok) throw new Error(data.error || 'Fehler');
+
+                    publishStatus.style.display = 'block';
+                    publishStatus.style.background = '#d1fae5';
+                    publishStatus.style.color = '#065f46';
+                    publishStatus.style.border = '1px solid #6ee7b7';
+                    publishStatus.innerHTML = '✓ Artikel "<b>' + data.title + '</b>" veröffentlicht! <a href="https://preisradio.de' + data.url + '" target="_blank" style="color:#065f46;text-decoration:underline;">Artikel ansehen →</a>';
+                    publishBtn.textContent = '✓ Veröffentlicht';
+                    publishBtn.style.background = '#15803d';
+                }} catch (err) {{
+                    publishStatus.style.display = 'block';
+                    publishStatus.style.background = '#fee2e2';
+                    publishStatus.style.color = '#991b1b';
+                    publishStatus.style.border = '1px solid #fca5a5';
+                    publishStatus.textContent = 'Fehler: ' + err.message;
+                    publishBtn.disabled = false;
+                    publishBtn.textContent = '✓ Speichern & Veröffentlichen';
+                }}
+            }});
+
+            publishBar.appendChild(publishInfo);
+            publishBar.appendChild(publishBtn);
+            container.parentElement.insertBefore(publishStatus, container.nextSibling);
+            container.parentElement.insertBefore(publishBar, container.nextSibling);
+        }}
+        // ── End Speichern & Veröffentlichen ──────────────────────────────────
 
         btn.addEventListener('click', async function() {{
             const topic = input.value.trim();

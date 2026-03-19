@@ -1,6 +1,6 @@
 """
-AJAX endpoint for AI article generation.
-Creates a draft BlogPage server-side and returns its edit URL.
+AJAX endpoints for AI article generation and server-side publish
+(bypasses nginx/ModSecurity which blocks HTML in form POST).
 """
 import json
 import re
@@ -89,5 +89,70 @@ def ai_generate_ajax(request):
             'edit_url': f'/wagtail-admin/pages/{page.pk}/edit/',
         })
 
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_POST
+@staff_member_required
+def save_publish_ajax(request):
+    """Save + publish a BlogPage via JSON POST (bypasses nginx/ModSecurity form block).
+
+    Accepts JSON body with page_id and any fields to update.
+    Updates the page and publishes it server-side.
+    """
+    try:
+        body = json.loads(request.body)
+    except (json.JSONDecodeError, AttributeError):
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    page_id = body.get('page_id')
+    if not page_id:
+        return JsonResponse({'error': 'page_id fehlt'}, status=400)
+
+    try:
+        page = BlogPage.objects.get(pk=page_id)
+    except BlogPage.DoesNotExist:
+        return JsonResponse({'error': f'Seite {page_id} nicht gefunden'}, status=404)
+
+    # Update all provided fields
+    if body.get('title'):
+        page.title = body['title'][:255]
+    if body.get('slug'):
+        page.slug = body['slug'][:255]
+    if body.get('excerpt') is not None:
+        page.excerpt = body['excerpt'][:500]
+    if body.get('content') is not None:
+        page.content = body['content']
+    if body.get('category'):
+        page.category = body['category']
+    if body.get('amazon_keywords') is not None:
+        page.amazon_keywords = body['amazon_keywords'][:500]
+    if body.get('amazon_product_url') is not None:
+        page.amazon_product_url = body['amazon_product_url'][:500]
+    if body.get('product_names') is not None:
+        page.product_names = body['product_names'][:500]
+    if body.get('author'):
+        page.author = body['author'][:100]
+    if body.get('read_time'):
+        try:
+            page.read_time = int(body['read_time'])
+        except (ValueError, TypeError):
+            pass
+    if body.get('seo_title') is not None:
+        page.seo_title = body['seo_title'][:255]
+    if body.get('search_description') is not None:
+        page.search_description = body['search_description'][:255]
+
+    try:
+        revision = page.save_revision()
+        revision.publish()
+        return JsonResponse({
+            'success': True,
+            'title': page.title,
+            'live': page.live,
+            'url': f'/blog/{page.slug}/',
+        })
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
