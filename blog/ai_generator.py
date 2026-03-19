@@ -286,6 +286,10 @@ def generate_article(topic, category='Kaufberatung', base_content='', provider='
 
     raw = _fix_control_chars(raw)
 
+    # Fix invalid JSON escape sequences LLMs sometimes produce: \s, \d, \e, etc.
+    # Valid JSON escapes are: \", \\, \/, \b, \f, \n, \r, \t, \uXXXX — everything else is invalid.
+    raw = re.sub(r'\\(?!["\\\\/bfnrtu]|u[0-9a-fA-F]{4})', r'\\\\', raw)
+
     # Guard: if Groq returned an HTML error page instead of JSON
     if raw.lstrip().startswith('<'):
         raise ValueError(
