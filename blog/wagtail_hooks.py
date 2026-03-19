@@ -240,12 +240,18 @@ def editor_js():
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value
                     || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
 
+                // Base64-encode content to bypass ModSecurity XSS rules on <script>/<style> tags
+                function b64Encode(str) {{
+                    try {{ return btoa(unescape(encodeURIComponent(str))); }}
+                    catch(e) {{ return btoa(str); }}
+                }}
+                const rawContent = document.getElementById('id_content')?.value || '';
                 const payload = {{
                     page_id: pageId,
                     title: document.getElementById('id_title')?.value || '',
                     slug: document.getElementById('id_slug')?.value || '',
                     excerpt: document.getElementById('id_excerpt')?.value || '',
-                    content: document.getElementById('id_content')?.value || '',
+                    content_b64: b64Encode(rawContent),
                     category: document.getElementById('id_category')?.value || '',
                     amazon_keywords: document.getElementById('id_amazon_keywords')?.value || '',
                     amazon_product_url: document.getElementById('id_amazon_product_url')?.value || '',

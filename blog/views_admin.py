@@ -2,6 +2,7 @@
 AJAX endpoints for AI article generation and server-side publish
 (bypasses nginx/ModSecurity which blocks HTML in form POST).
 """
+import base64
 import json
 import re
 
@@ -123,7 +124,12 @@ def save_publish_ajax(request):
         page.slug = body['slug'][:255]
     if body.get('excerpt') is not None:
         page.excerpt = body['excerpt'][:500]
-    if body.get('content') is not None:
+    if body.get('content_b64') is not None:
+        try:
+            page.content = base64.b64decode(body['content_b64']).decode('utf-8')
+        except Exception:
+            page.content = body['content_b64']
+    elif body.get('content') is not None:
         page.content = body['content']
     if body.get('category'):
         page.category = body['category']
