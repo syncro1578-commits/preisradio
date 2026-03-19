@@ -11,6 +11,26 @@ import hashlib
 import logging
 
 logger = logging.getLogger(__name__)
+
+def _german_search_variants(search_query):
+    """Generate search variants for German umlaut substitutions.
+
+    'waermepumpe' → {'waermepumpe', 'wärmepumpe'}
+    'kühlschrank' → {'kühlschrank', 'kuehlschrank'}
+    """
+    variants = {search_query}
+    # ae→ä, oe→ö, ue→ü, ss→ß (user types Latin digraph, DB has umlaut)
+    umlaut = search_query
+    for lat, um in [('ae', 'ä'), ('oe', 'ö'), ('ue', 'ü'), ('ss', 'ß')]:
+        umlaut = umlaut.replace(lat, um)
+    variants.add(umlaut)
+    # ä→ae, ö→oe, ü→ue, ß→ss (user types umlaut, DB has Latin)
+    latin = search_query
+    for um, lat in [('ä', 'ae'), ('ö', 'oe'), ('ü', 'ue'), ('ß', 'ss')]:
+        latin = latin.replace(um, lat)
+    variants.add(latin)
+    return list(variants)
+
 from .models import SaturnProduct, MediaMarktProduct, OttoProduct, KauflandProduct
 from .serializers import (
     SaturnProductSerializer,
@@ -368,15 +388,21 @@ class ProductViewSet(viewsets.ViewSet):
             if brand_filter:
                 query = query.filter(brand=brand_filter)
             if search_query:
-                query = query.filter(
-                    Q(title__icontains=search_query) |
+                search_q = Q()
+                for variant in _german_search_variants(search_query):
+                    search_q |= (
+                        Q(title__icontains=variant) |
+                        Q(description__icontains=variant) |
+                        Q(brand__icontains=variant)
+                    )
+                # SKU/GTIN: no umlaut variants needed
+                search_q |= (
                     Q(sku__icontains=search_query) |
-                    Q(sku=search_query) |  # Exact SKU match
+                    Q(sku=search_query) |
                     Q(gtin__icontains=search_query) |
-                    Q(gtin=search_query) |  # Exact GTIN match
-                    Q(description__icontains=search_query) |
-                    Q(brand__icontains=search_query)
+                    Q(gtin=search_query)
                 )
+                query = query.filter(search_q)
             # Price filters
             if min_price_filter is not None:
                 query = query.filter(price__gte=min_price_filter)
