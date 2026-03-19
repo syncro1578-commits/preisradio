@@ -122,14 +122,14 @@ def save_publish_ajax(request):
     except BlogPage.DoesNotExist:
         return JsonResponse({'error': f'Seite {page_id} nicht gefunden'}, status=404)
 
-    # Update all provided fields
+    # Update all provided fields — only update required CharField if non-empty
     if body.get('title'):
         page.title = body['title'][:255]
     if body.get('slug'):
         page.slug = body['slug'][:255]
-    if body.get('excerpt') is not None:
+    if body.get('excerpt'):          # required CharField — skip if empty to avoid ValidationError
         page.excerpt = body['excerpt'][:500]
-    if body.get('content') is not None:
+    if body.get('content'):          # required TextField — skip if empty
         page.content = body['content']
     if body.get('category'):
         page.category = body['category']
@@ -152,8 +152,10 @@ def save_publish_ajax(request):
         page.search_description = body['search_description'][:255]
 
     try:
-        revision = page.save_revision()
+        # clean=False skips Wagtail's full_clean() so partial updates don't fail validation
+        revision = page.save_revision(clean=False)
         revision.publish()
+        page.refresh_from_db()
         return JsonResponse({
             'success': True,
             'title': page.title,
@@ -161,4 +163,5 @@ def save_publish_ajax(request):
             'url': f'/blog/{page.slug}/',
         })
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        import traceback
+        return JsonResponse({'error': str(e), 'detail': traceback.format_exc()}, status=500)
