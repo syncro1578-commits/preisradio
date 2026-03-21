@@ -55,6 +55,11 @@ function SearchContent() {
       setError(null);
       setCurrentPage(page);
 
+      // Scroll to top when changing page
+      if (page > 1) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
       // Build API params - backend now handles filtering and sorting
       const params: any = {
         page: page,
